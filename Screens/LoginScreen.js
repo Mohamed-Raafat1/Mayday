@@ -23,14 +23,13 @@ function LoginScreen({ navigation }) {
   const [isValid, setIsValid] = useState(false);
   const emailRegex = /\S+@\S+\.\S+/;
 
-  const [correctEmail, setCorrectEmail] = useState(false);
   const [Email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
-  let reg =
-    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  //regex for checking email syntax validity
 
-  const validateEmail = () => {
-    if (emailRegex.test(Email)) {
+  const validateEmail = (text) => {
+    setEmail(text);
+    if (emailRegex.test(text)) {
       setIsValid(true);
     } else {
       setIsValid(false);
@@ -47,24 +46,16 @@ function LoginScreen({ navigation }) {
             style={styles.Item}
             success={isValid}
             error={!isValid}
-            rounded
           >
             <Input
-              onChangeText={(text) => setEmail(text)}
-              onChange={validateEmail}
+              onChangeText={(text) => validateEmail(text)}
               placeholder="Email"
               value={Email}
             />
 
             <Icon name="mail-outline"></Icon>
           </Item>
-          <Item
-            iconRight
-            style={styles.Item}
-            success={false}
-            inlineLabel
-            rounded
-          >
+          <Item iconRight style={styles.Item} success={false} inlineLabel>
             <Input
               textContentType="password"
               secureTextEntry={true}
