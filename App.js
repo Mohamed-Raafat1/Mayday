@@ -10,7 +10,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 const Stack = createStackNavigator();
-
+//exporting fonts needed for nativebase
 export default function App() {
   const [loaded] = useFonts({
     Roboto: require("native-base/Fonts/Roboto.ttf"),
