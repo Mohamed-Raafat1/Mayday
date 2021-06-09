@@ -1,24 +1,13 @@
 import "react-native-gesture-handler";
 import React from "react";
-import { Container, Text, View, Button, Icon } from "native-base";
 
 import { useFonts } from "expo-font";
 
+import LoginScreen from "./Screens/LoginScreen";
 import HomeScreen from "./Screens/HomeScreen";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-
-function DetailsScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Details Screen</Text>
-      <Button onPress={() => navigation.navigate("Home")}>
-        <Text> Go home</Text>
-      </Button>
-    </View>
-  );
-}
 
 const Stack = createStackNavigator();
 
@@ -30,16 +19,17 @@ export default function App() {
   if (!loaded) {
     return null;
   }
-
+  //basic navigation stack login-->homecreen
+  //will be changed later
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          options={{ title: "Welcome" }}
-          name="Home"
-          component={HomeScreen}
+          options={{ title: "Welcome", headerShown: false }}
+          name="Login"
+          component={LoginScreen}
         />
-        <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
