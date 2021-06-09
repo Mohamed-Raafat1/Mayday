@@ -6,6 +6,7 @@ import { useFonts } from "expo-font";
 import LoginScreen from "./Screens/LoginScreen";
 import HomeScreen from "./Screens/HomeScreen";
 import Chat from "./Screens/Chat";
+import ViewNearestHospital from "./Screens/ViewNearestHospital";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -26,16 +27,21 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="Chat"
-          options={{ headerShown: false }}
-          component={Chat}
-        />
-        <Stack.Screen
           options={{ title: "Welcome", headerShown: false }}
           name="Login"
           component={LoginScreen}
         />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen
+          name="ViewNearestHospital"
+          component={ViewNearestHospital}
+          options={{ title: "Map test" }}
+        />
+        <Stack.Screen
+          name="Chat"
+          options={{ headerShown: false }}
+          component={Chat}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
