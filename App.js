@@ -5,6 +5,7 @@ import { useFonts } from "expo-font";
 
 import LoginScreen from "./Screens/LoginScreen";
 import HomeScreen from "./Screens/HomeScreen";
+import Chat from "./Screens/Chat";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -24,6 +25,11 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen
+          name="Chat"
+          options={{ headerShown: false }}
+          component={Chat}
+        />
         <Stack.Screen
           options={{ title: "Welcome", headerShown: false }}
           name="Login"

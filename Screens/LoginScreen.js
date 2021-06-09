@@ -39,7 +39,7 @@ function LoginScreen({ navigation }) {
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <View style={styles.Loginform}>
-        <Text>Welcome Screen</Text>
+        <Text style={{ textAlign: "center" }}>Welcome Screen</Text>
         <Form>
           <Item
             iconRight
