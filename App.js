@@ -15,6 +15,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import CurrentReport from "./Screens/CurrentReport";
 import SOS from "./Screens/SOS";
+import Tabs from "./HomeNavigation/tabs";
+
 
 const Stack = createStackNavigator();
 //exporting fonts needed for nativebase
@@ -36,7 +38,7 @@ export default function App() {
           name="Login"
           component={LoginScreen}
         />
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Home" component={Tabs} />
         <Stack.Screen name="Registration" component={RegistrationScreen} />
         <Stack.Screen
           name="ViewNearestHospital"
@@ -48,6 +50,7 @@ export default function App() {
           options={{ headerShown: false }}
           component={Chat}
         />
+    
       </Stack.Navigator>
     </NavigationContainer>
   );
