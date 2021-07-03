@@ -14,7 +14,7 @@ export default function FirstAidSection() {
   return (
     <Container>
         <Header hasTabs />
-        <Tabs renderTabBar={()=> <ScrollableTab />}>
+        <Tabs >
           <Tab heading="Cuts and Scrapes" tabStyle={{ backgroundColor: "#5078F2" }}
             activeTabStyle={{ backgroundColor: "#5078F2" }}>
             <Tab1 />

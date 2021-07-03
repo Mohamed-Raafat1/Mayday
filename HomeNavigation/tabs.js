@@ -6,12 +6,13 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-import HomeScreen from '../Screens/HomeScreen1'; 
-import FirstAidSection from '../Screens/FirstAidSection';
+import HomeScreen from '../Screens/HomeScreen'; 
+import FirstAidScreen from '../Screens/FirstAidScreen';
 import DoctorsScreen from '../Screens/DoctorsScreen';
 import MoreScreen from '../Screens/MoreScreen';
 import ProfileScreen from '../Screens/ProfileScreen';
 import editProfileScreen from '../Screens/editProfileScreen';
+import FirstAidSection from '../Screens/FirstAidSection';
 
 
 const HomeStack = createStackNavigator();
@@ -39,9 +40,9 @@ function Tabs() {
           />
           <Tab.Screen
             name="First Aid"
-            component={FirstAidStackScreen}
+            component={FirstAidSection}
             options={{
-              tabBarLabel: 'First Aid',
+              tabBarLabel: 'First Aids',
               tabBarIcon: ({ color }) => (
                 <MaterialCommunityIcons name="television-play" color={color} size={26} />
               ),
@@ -75,6 +76,7 @@ const HomeStackScreen = ({navigation}) => (
     <HomeStack.Navigator>
           <HomeStack.Screen name="Home" component={HomeScreen}
             options={{
+            headerLeft:null,
             title:'Home',
             headerRight: () => (
               <View style={styles.iconContainer}>
@@ -102,17 +104,10 @@ const HomeStackScreen = ({navigation}) => (
     </HomeStack.Navigator>
 );
 
-const FirstAidStackScreen = () => (
-  <FirstAidStack.Navigator>
-        <FirstAidStack.Screen name="First Aid" component={FirstAidSection} options={{
-          title:'First Aid'
-        }} />
-  </FirstAidStack.Navigator>
-);
 
 const DoctorsStackScreen = () => (
   <DoctorsStack.Navigator>
-        <DoctorsStack.Screen name="Doctors" component={DoctorsScreen} options={{
+        <DoctorsStack.Screen name="Doctors" component={DoctorsScreen} options={{headerShown:false,
           title:'Doctors'
         }} />
   </DoctorsStack.Navigator>
@@ -120,7 +115,7 @@ const DoctorsStackScreen = () => (
 
 const MoreStackScreen = () => (
   <MoreStack.Navigator>
-        <MoreStack.Screen name="More" component={MoreScreen} options={{
+        <MoreStack.Screen name="More" component={MoreScreen} options={{headerShown:false,
           title:'More'
         }} />
   </MoreStack.Navigator>
@@ -128,7 +123,7 @@ const MoreStackScreen = () => (
 
 const ProfileStackScreen = () => (
   <ProfileStack.Navigator>
-    <ProfileStack.Screen name="Profle" component={ProfileScreen} options={{
+    <ProfileStack.Screen name="Profle" component={ProfileScreen} options={{headerShown:false,
       title:'Profile'
     }}/>
   </ProfileStack.Navigator>

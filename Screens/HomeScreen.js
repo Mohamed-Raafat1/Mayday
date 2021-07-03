@@ -1,17 +1,29 @@
-import React from "react";
-import { Button, Text } from "native-base";
-import { SafeAreaView } from "react-native";
-import GlobalStyles from "../GlobalStyles";
-//Impelement homescreen here
+import React from 'react';
+import { StyleSheet, Button, View, Text, Image } from "react-native";
+
 
 function HomeScreen({ navigation }) {
-  return (
-    <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      <Button onPress={() => navigation.navigate("Login")}>
-        <Text> Go home</Text>
+    return (
+      <View style={styles.container}>
+        <Image style={styles.sosButton}
+        source={require('../assets/red-button.png')}/>
+        <Button title={"banana"} onPress={() => navigation.navigate("Login")}>
       </Button>
-    </SafeAreaView>
-  );
-}
+      </View>
+    );
+  }
 
 export default HomeScreen;
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    sosButton:{
+        width: 350,
+        height: 350,
+    },
+});

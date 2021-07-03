@@ -38,7 +38,7 @@ export default function App() {
           name="Login"
           component={LoginScreen}
         />
-        <Stack.Screen name="Home" component={Tabs} />
+        <Stack.Screen name="Home" options={{headerShown:false}} component={Tabs} />
         <Stack.Screen name="Registration" component={RegistrationScreen} />
         <Stack.Screen
           name="ViewNearestHospital"
