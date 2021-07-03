@@ -5,6 +5,7 @@ import { useFonts } from "expo-font";
 
 import LoginScreen from "./Screens/LoginScreen";
 import HomeScreen from "./Screens/HomeScreen";
+import RegistrationScreen from "./Screens/RegistrationScreen";
 import Chat from "./Screens/Chat";
 import ViewNearestHospital from "./Screens/ViewNearestHospital";
 
@@ -26,6 +27,9 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+
+        <Stack.Screen name="Registration" component={RegistrationScreen} />
+        
         <Stack.Screen
           options={{ title: "Welcome", headerShown: false }}
           name="Login"
