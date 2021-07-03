@@ -89,8 +89,8 @@ function LoginScreen({ navigation }) {
         >
           <Text>LOGIN</Text>
         </Button>
-        <Button transparent block>
-          <Text style={{ color: "black" }}> click me</Text>
+        <Button transparent block onPress={() => navigation.navigate("Registration")}>
+          <Text style={{ color: "black" }}> Register</Text>
         </Button>
       </View>
     </SafeAreaView>
