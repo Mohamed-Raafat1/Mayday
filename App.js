@@ -8,7 +8,9 @@ import HomeScreen from "./Screens/HomeScreen";
 import RegistrationScreen from "./Screens/RegistrationScreen";
 import Chat from "./Screens/Chat";
 import ViewNearestHospital from "./Screens/ViewNearestHospital";
-
+import  UserRating from './Screens/UserRating'
+import FirstAidSection from './Screens/FirstAidSection';
+import RequestAmbulance from './Screens/RequestAmbulance';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -27,15 +29,13 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-
-        <Stack.Screen name="Registration" component={RegistrationScreen} />
-        
         <Stack.Screen
           options={{ title: "Welcome", headerShown: false }}
           name="Login"
           component={LoginScreen}
         />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Registration" component={RegistrationScreen} />
         <Stack.Screen
           name="ViewNearestHospital"
           component={ViewNearestHospital}
