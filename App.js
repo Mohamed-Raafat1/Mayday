@@ -13,6 +13,8 @@ import FirstAidSection from './Screens/FirstAidSection';
 import RequestAmbulance from './Screens/RequestAmbulance';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import CurrentReport from "./Screens/CurrentReport";
+import SOS from "./Screens/SOS";
 
 const Stack = createStackNavigator();
 //exporting fonts needed for nativebase
