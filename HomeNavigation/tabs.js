@@ -12,7 +12,7 @@ import MoreScreen from "../Screens/MoreScreen";
 import ProfileScreen from "../Screens/ProfileScreen";
 import editProfileScreen from "../Screens/editProfileScreen";
 import FirstAidSection from "../Screens/FirstAidSection";
-
+import ViewNearestHospital from "../Screens/ViewNearestHospital";
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
 const DoctorsStack = createStackNavigator();
@@ -118,6 +118,13 @@ const HomeStackScreen = ({ navigation }) => (
         title: "Edit Profile",
       }}
     />
+    <HomeStack.Screen
+      name="ViewNearestHospital"
+      component={ViewNearestHospital}
+      options={{
+        title: "Hospitals Nearby",
+      }}
+    />
   </HomeStack.Navigator>
 );
 
@@ -135,7 +142,7 @@ const FirstAidStackScreen = () => (
     <FirstAidStack.Screen
       name="Doctors"
       component={FirstAidSection}
-      options={{ headerShown: false, title: "Doctors" }}
+      options={{ headerShown: false, title: "First Aid Section" }}
     />
   </FirstAidStack.Navigator>
 );

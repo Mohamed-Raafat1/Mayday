@@ -1,13 +1,16 @@
 import React from "react";
-import { StyleSheet, Button, View, Text, Image } from "react-native";
+import { StyleSheet, View, Text, Image, TouchableOpacity } from "react-native";
+import { Button } from "native-base";
 
 function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.sosButton}
-        source={require("../assets/red-button.png")}
-      />
+      <TouchableOpacity>
+        <Image
+          style={styles.sosButton}
+          source={require("../assets/red-button.png")}
+        />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -22,7 +25,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   sosButton: {
-    width: 350,
-    height: 350,
+    width: 200,
+    height: 200,
   },
 });
