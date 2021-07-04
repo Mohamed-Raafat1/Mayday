@@ -22,6 +22,7 @@ const Tab = createMaterialBottomTabNavigator();
 function Tabs() {
   return (
     <Tab.Navigator
+      backBehavior="none"
       initialRouteName="Home"
       activeColor="#ff1262"
       barStyle={{ backgroundColor: "white" }}
@@ -38,7 +39,7 @@ function Tabs() {
       />
       <Tab.Screen
         name="First Aid"
-        component={FirstAidSection}
+        component={FirstAidStackScreen}
         options={{
           tabBarLabel: "First Aids",
           tabBarIcon: ({ color }) => (
@@ -129,7 +130,15 @@ const DoctorsStackScreen = () => (
     />
   </DoctorsStack.Navigator>
 );
-
+const FirstAidStackScreen = () => (
+  <FirstAidStack.Navigator>
+    <FirstAidStack.Screen
+      name="Doctors"
+      component={FirstAidSection}
+      options={{ headerShown: false, title: "Doctors" }}
+    />
+  </FirstAidStack.Navigator>
+);
 const MoreStackScreen = () => (
   <MoreStack.Navigator>
     <MoreStack.Screen
