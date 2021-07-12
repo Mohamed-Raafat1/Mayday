@@ -50,7 +50,7 @@ export default function App() {
           options={{ headerShown: false }}
           component={Chat}
         />
-    
+    <Stack.Screen name="FirstAid" options={{ title: "Welcome", headerShown: true }} component={FirstAidSection} />
       </Stack.Navigator>
     </NavigationContainer>
   );

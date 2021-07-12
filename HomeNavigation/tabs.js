@@ -1,9 +1,19 @@
 import React from "react";
 
 import { StyleSheet, Button, View, Text, Image } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { createStackNavigator } from '@react-navigation/stack';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
+
+import HomeScreen from '../Screens/HomeScreen'; 
+import FirstAidScreen from '../Screens/FirstAidSection';
+import DoctorsScreen from '../Screens/DoctorsScreen';
+import MoreScreen from '../Screens/MoreScreen';
+import ProfileScreen from '../Screens/ProfileScreen';
+import editProfileScreen from '../Screens/editProfileScreen';
+import FirstAidSection from '../Screens/FirstAidSection';
+
 
 import HomeScreen from "../Screens/HomeScreen";
 import FirstAidScreen from "../Screens/FirstAidScreen";
@@ -20,59 +30,54 @@ const MoreStack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
 function Tabs() {
-  return (
-    <Tab.Navigator
-      backBehavior="initialRoute"
-      initialRouteName="Home"
-      activeColor="#ff1262"
-      barStyle={{ backgroundColor: "white" }}
-    >
-      <Tab.Screen
-        name="Home"
-        component={HomeStackScreen}
-        options={{
-          tabBarLabel: "Home",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" color={color} size={26} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="First Aid"
-        component={FirstAidStackScreen}
-        options={{
-          tabBarLabel: "First Aids",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="television-play"
-              color={color}
-              size={26}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Doctors"
-        component={DoctorsStackScreen}
-        options={{
-          tabBarLabel: "Doctors",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="doctor" color={color} size={26} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="More"
-        component={MoreStackScreen}
-        options={{
-          tabBarLabel: "More",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="menu" color={color} size={26} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
-  );
+    return (
+        <Tab.Navigator
+          initialRouteName="Home"
+          activeColor="#ff1262"
+          barStyle={{ backgroundColor: 'white' }}
+        >
+          <Tab.Screen
+            name="Home"
+            component={HomeStackScreen}
+            options={{
+              tabBarLabel: 'Home',
+              tabBarIcon: ({ color }) => (
+                <MaterialCommunityIcons name="home" color={color} size={26} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="First Aid"
+            component={FirstAidStackScreen}
+            options={{
+              tabBarLabel: 'First Aid',
+              tabBarIcon: ({ color }) => (
+                <MaterialCommunityIcons name="television-play" color={color} size={26} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Doctors"
+            component={DoctorsStackScreen}
+            options={{
+              tabBarLabel: 'Doctors',
+              tabBarIcon: ({ color }) => (
+                <MaterialCommunityIcons name="doctor" color={color} size={26} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="More"
+            component={MoreStackScreen}
+            options={{
+              tabBarLabel: 'More',
+              tabBarIcon: ({ color }) => (
+                <MaterialCommunityIcons name="menu" color={color} size={26} />
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      );
 }
 
 const HomeStackScreen = ({ navigation }) => (
@@ -166,6 +171,14 @@ const ProfileStackScreen = () => (
   </ProfileStack.Navigator>
 );
 
+const FirstAidStackScreen = () => (
+  <FirstAidStack.Navigator>
+        <FirstAidStack.Screen name="FirstAid" component={FirstAidSection} options={{
+            headerLeft:null,
+            title:'FirstAid',
+        }} />
+  </FirstAidStack.Navigator>
+);
 export default Tabs;
 
 const styles = StyleSheet.create({

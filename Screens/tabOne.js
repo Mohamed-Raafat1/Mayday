@@ -31,38 +31,13 @@ export default function tabOne() {
                 <Text>Cover the wound with a bandage.</Text>            
               </Body>
             </CardItem>
-          </Card>
-          <View>
-      <YoutubePlayer
+            <YoutubePlayer
         height={300}
         play={false}
-        videoId={'AiaOSGZTwtY'}
+        videoId={'4e7evinsfm0'}
       />
-    </View>
+          </Card>
         </Content>
       </Container>
   );
 }
-
-const card = {
-  width: 350,
-  height: 150
-}
-const text = {
-  textAlign: 'center',
-  fontWeight: 'bold',
-  color: '#5d1a0c',
-  fontSize: 18,
-}
-const button = {
-  width: 50,
-  height: 50,
-  alignContent: 'center',
-  justifyContent: 'center'
-};
-const video ={
-    marginTop: 20,
-    maxHeight: 200,
-    width: 320,
-    flex: 1
-  }
