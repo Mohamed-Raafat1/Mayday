@@ -6,17 +6,10 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-import HomeScreen from '../Screens/HomeScreen'; 
-import FirstAidScreen from '../Screens/FirstAidSection';
-import DoctorsScreen from '../Screens/DoctorsScreen';
-import MoreScreen from '../Screens/MoreScreen';
-import ProfileScreen from '../Screens/ProfileScreen';
-import editProfileScreen from '../Screens/editProfileScreen';
-import FirstAidSection from '../Screens/FirstAidSection';
 
 
 import HomeScreen from "../Screens/HomeScreen";
-import FirstAidScreen from "../Screens/FirstAidScreen";
+import FirstAidScreen from '../Screens/FirstAidSection';
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import MoreScreen from "../Screens/MoreScreen";
 import ProfileScreen from "../Screens/ProfileScreen";
@@ -142,15 +135,7 @@ const DoctorsStackScreen = () => (
     />
   </DoctorsStack.Navigator>
 );
-const FirstAidStackScreen = () => (
-  <FirstAidStack.Navigator>
-    <FirstAidStack.Screen
-      name="Doctors"
-      component={FirstAidSection}
-      options={{ headerShown: true, title: "First Aid Section" }}
-    />
-  </FirstAidStack.Navigator>
-);
+
 const MoreStackScreen = () => (
   <MoreStack.Navigator>
     <MoreStack.Screen
