@@ -1,30 +1,34 @@
-import React from "react";
 
-import { StyleSheet, Button, View, Text, Image } from "react-native";
+//BUTTONS NATIVE BASE
+
+
+import React from "react";
+//React Native
+import { StyleSheet, Text, Image } from "react-native";
+
+
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-
-
-
+// Screens
 import HomeScreen from "../Screens/HomeScreen";
-import FirstAidScreen from '../Screens/FirstAidSection';
 import DoctorsScreen from "../Screens/DoctorsScreen";
-import MoreScreen from "../Screens/MoreScreen";
 import ProfileScreen from "../Screens/ProfileScreen";
 import editProfileScreen from "../Screens/editProfileScreen";
 import FirstAidSection from "../Screens/FirstAidSection";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
+import { Button ,Container } from "native-base";
+
+
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
-const DoctorsStack = createStackNavigator();
-const MoreStack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
+
 
 function Tabs() {
     return (
-        <Tab.Navigator
+      <Tab.Navigator
           initialRouteName="Home"
           activeColor="#ff1262"
           barStyle={{ backgroundColor: 'white' }}
@@ -49,7 +53,7 @@ function Tabs() {
               ),
             }}
           />
-          <Tab.Screen
+          {/* <Tab.Screen
             name="Doctors"
             component={DoctorsStackScreen}
             options={{
@@ -58,8 +62,8 @@ function Tabs() {
                 <MaterialCommunityIcons name="doctor" color={color} size={26} />
               ),
             }}
-          />
-          <Tab.Screen
+          /> */}
+          {/* <Tab.Screen
             name="More"
             component={MoreStackScreen}
             options={{
@@ -68,28 +72,38 @@ function Tabs() {
                 <MaterialCommunityIcons name="menu" color={color} size={26} />
               ),
             }}
-          />
-        </Tab.Navigator>
+          /> */}
+        </Tab.Navigator>       
       );
 }
 
 const HomeStackScreen = ({ navigation }) => (
+
   <HomeStack.Navigator>
     <HomeStack.Screen
       name="Home"
       component={HomeScreen}
       options={{
-        headerLeft: null,
+        headerLeft: () => (
+          <Container style={styles.moreIcon}>
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => navigation.openDrawer()}
+            />       
+          </Container>
+        ),
         title: "Home",
         headerRight: () => (
-          <View style={styles.iconContainer}>
+          <Container style={styles.iconContainer}>
             <MaterialCommunityIcons
               name="account-circle-outline"
               size={26}
               onPress={() => navigation.navigate("Profile")}
             />
+            <Button > </Button>
             <MaterialCommunityIcons name="bell-outline" size={26} />
-          </View>
+          </Container>
         ),
       }}
     />
@@ -99,13 +113,13 @@ const HomeStackScreen = ({ navigation }) => (
       options={{
         title: "Profile",
         headerRight: () => (
-          <View style={styles.iconContainer}>
+          <Container style={styles.iconContainer}>
             <MaterialCommunityIcons
               name="account-edit-outline"
               size={30}
               onPress={() => navigation.navigate("editProfile")}
             />
-          </View>
+          </Container>
         ),
       }}
     />
@@ -116,45 +130,29 @@ const HomeStackScreen = ({ navigation }) => (
         title: "Edit Profile",
       }}
     />
-    <HomeStack.Screen
-      name="ViewNearestHospital"
-      component={ViewNearestHospital}
-      options={{
-        title: "Hospitals Nearby",
-      }}
-    />
+ 
   </HomeStack.Navigator>
 );
 
-const DoctorsStackScreen = () => (
-  <DoctorsStack.Navigator>
-    <DoctorsStack.Screen
-      name="Doctors"
-      component={DoctorsScreen}
-      options={{ headerShown: false, title: "Doctors" }}
-    />
-  </DoctorsStack.Navigator>
-);
+// const DoctorsStackScreen = () => (
+//   <DoctorsStack.Navigator>
+//     <DoctorsStack.Screen
+//       name="Doctors"
+//       component={DoctorsScreen}
+//       options={{ headerShown: false, title: "Doctors" }}
+//     />
+//   </DoctorsStack.Navigator>
+// );
 
-const MoreStackScreen = () => (
-  <MoreStack.Navigator>
-    <MoreStack.Screen
-      name="More"
-      component={MoreScreen}
-      options={{ headerShown: false, title: "More" }}
-    />
-  </MoreStack.Navigator>
-);
-
-const ProfileStackScreen = () => (
-  <ProfileStack.Navigator>
-    <ProfileStack.Screen
-      name="Profle"
-      component={ProfileScreen}
-      options={{ headerShown: false, title: "Profile" }}
-    />
-  </ProfileStack.Navigator>
-);
+// const MoreStackScreen = () => (
+//   <MoreStack.Navigator>
+//     <MoreStack.Screen
+//       name="More"
+//       component={MoreScreen}
+//       options={{ headerShown: false, title: "More" }}
+//     />
+//   </MoreStack.Navigator>
+// );
 
 const FirstAidStackScreen = () => (
   <FirstAidStack.Navigator>
@@ -172,5 +170,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginLeft: 15,
     width: 70,
+  },
+  moreIcon : {
+    marginLeft:10 ,
   },
 });
