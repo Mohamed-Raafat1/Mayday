@@ -7,8 +7,8 @@ function HomeScreen({ navigation }) {
       <View style={styles.container}>
         <Image style={styles.sosButton}
         source={require('../assets/red-button.png')}/>
-        <Button title={"banana"} onPress={() => navigation.navigate("Login")}>
-      </Button>
+       
+  
       </View>
     );
   }

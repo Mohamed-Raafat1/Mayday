@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import {Header,Container,Text, Content, Card, CardItem, Body, Separator, Left, Right, Button, Icon, Title} from "native-base"
-
+import YoutubePlayer from 'react-native-youtube-iframe';
 export default function tabTwo() {
 
   const navigation = useNavigation();
@@ -29,6 +29,11 @@ export default function tabTwo() {
                 <Text>Promote recovery</Text>
               </Body>
             </CardItem>
+            <YoutubePlayer
+        height={300}
+        play={false}
+        videoId={'8YREVVM2n7g'}
+      />
           </Card>
         </Content>
       </Container>

@@ -7,7 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 
 import HomeScreen from '../Screens/HomeScreen'; 
-import FirstAidScreen from '../Screens/FirstAidScreen';
+import FirstAidScreen from '../Screens/FirstAidSection';
 import DoctorsScreen from '../Screens/DoctorsScreen';
 import MoreScreen from '../Screens/MoreScreen';
 import ProfileScreen from '../Screens/ProfileScreen';
@@ -40,9 +40,9 @@ function Tabs() {
           />
           <Tab.Screen
             name="First Aid"
-            component={FirstAidSection}
+            component={FirstAidStackScreen}
             options={{
-              tabBarLabel: 'First Aids',
+              tabBarLabel: 'First Aid',
               tabBarIcon: ({ color }) => (
                 <MaterialCommunityIcons name="television-play" color={color} size={26} />
               ),
@@ -127,8 +127,16 @@ const ProfileStackScreen = () => (
       title:'Profile'
     }}/>
   </ProfileStack.Navigator>
-)
+);
 
+const FirstAidStackScreen = () => (
+  <FirstAidStack.Navigator>
+        <FirstAidStack.Screen name="FirstAid" component={FirstAidSection} options={{
+            headerLeft:null,
+            title:'FirstAid',
+        }} />
+  </FirstAidStack.Navigator>
+);
 export default Tabs;
 
 const styles = StyleSheet.create({
