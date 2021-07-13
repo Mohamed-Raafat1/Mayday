@@ -4,6 +4,7 @@ import React from "react";
 //React Native
 import { StyleSheet, Image } from "react-native";
 
+
 import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -15,7 +16,9 @@ import ProfileScreen from "../Screens/ProfileScreen";
 import editProfileScreen from "../Screens/editProfileScreen";
 import FirstAidSection from "../Screens/FirstAidSection";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
-import { Button, Icon, Text, Container, Content, Right } from "native-base";
+import { Button, Icon, Text, Container, Content, Right ,View, Row } from "native-base";
+import ChatList from "../Screens/ChatList";
+import Notifications from "../Screens/Notifications";
 
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
@@ -91,18 +94,30 @@ const HomeStackScreen = ({ navigation }) => (
                 onPress={() => navigation.openDrawer()}
               />
             </Button>
-            {/*      */}
           </Content>
         ),
         title: "Appname",
         headerRight: () => (
-          <Content style={styles.iconStyle}>
+          <View style={{ flexDirection:"row"}}>
+             <Button transparent>
+             <MaterialCommunityIcons 
+             name="message-text-outline" 
+             size={24} 
+             color="black" 
+             onPress={() => navigation.navigate("ChatList")}
+             style={styles.icon} 
+             />
+            </Button>
             <Button transparent>
               <MaterialCommunityIcons
                 name="bell-outline"
                 size={26}
+                onPress={() => navigation.navigate("Notifications")}
                 style={styles.icon}
               />
+              </Button>
+
+              <Button transparent>
               <MaterialCommunityIcons
                 name="account-circle-outline"
                 size={26}
@@ -110,7 +125,7 @@ const HomeStackScreen = ({ navigation }) => (
                 style={styles.icon}
               />
             </Button>
-          </Content>
+          </View>
         ),
       }}
     />
@@ -138,6 +153,22 @@ const HomeStackScreen = ({ navigation }) => (
       component={editProfileScreen}
       options={{
         title: "Edit Profile",
+      }}
+    />
+        <HomeStack.Screen
+      name="ChatList"
+      style={styles.icon}
+      component={ChatList}
+      options={{
+        title: "ChatList",
+      }}
+    />
+     <HomeStack.Screen
+      name="Notifications"
+      style={styles.icon}
+      component={Notifications}
+      options={{
+        title: "Notifications",
       }}
     />
   </HomeStack.Navigator>
@@ -185,6 +216,7 @@ const styles = StyleSheet.create({
   icon: {
     marginLeft: 10,
     marginRight: 10,
+
   },
   Item: {
     marginBottom: 10,
