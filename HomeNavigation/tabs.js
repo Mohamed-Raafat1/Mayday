@@ -3,8 +3,7 @@
 import React from "react";
 //React Native
 import { StyleSheet, Image } from "react-native";
-
-
+import { Avatar, Badge, withBadge } from "react-native-elements";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -16,7 +15,16 @@ import ProfileScreen from "../Screens/ProfileScreen";
 import editProfileScreen from "../Screens/editProfileScreen";
 import FirstAidSection from "../Screens/FirstAidSection";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
-import { Button, Icon, Text, Container, Content, Right ,View, Row } from "native-base";
+import {
+  Button,
+  Icon,
+  Text,
+  Container,
+  Content,
+  Right,
+  View,
+  Row,
+} from "native-base";
 import ChatList from "../Screens/ChatList";
 import Notifications from "../Screens/Notifications";
 
@@ -28,7 +36,7 @@ function Tabs() {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      activeColor="#ff1262"
+      activeColor="#cf5b72"
       barStyle={{ backgroundColor: "white" }}
     >
       <Tab.Screen
@@ -98,26 +106,38 @@ const HomeStackScreen = ({ navigation }) => (
         ),
         title: "Appname",
         headerRight: () => (
-          <View style={{ flexDirection:"row"}}>
-             <Button transparent>
-             <MaterialCommunityIcons 
-             name="message-text-outline" 
-             size={24} 
-             color="black" 
-             onPress={() => navigation.navigate("ChatList")}
-             style={styles.icon} 
-             />
+          <View style={{ flexDirection: "row" }}>
+            <Button transparent>
+              <Badge
+                badgeStyle={{}}
+                value="3"
+                status="primary"
+                containerStyle={{ position: "absolute", top: -4, right: -4 }}
+              />
+              <MaterialCommunityIcons
+                name="message-text-outline"
+                size={24}
+                color="black"
+                onPress={() => navigation.navigate("ChatList")}
+                style={styles.icon}
+              />
             </Button>
             <Button transparent>
+              <Badge
+                badgeStyle={{}}
+                value="99"
+                status="primary"
+                containerStyle={{ position: "absolute", top: -4, right: -4 }}
+              />
               <MaterialCommunityIcons
                 name="bell-outline"
                 size={26}
                 onPress={() => navigation.navigate("Notifications")}
                 style={styles.icon}
               />
-              </Button>
+            </Button>
 
-              <Button transparent>
+            <Button transparent>
               <MaterialCommunityIcons
                 name="account-circle-outline"
                 size={26}
@@ -155,7 +175,7 @@ const HomeStackScreen = ({ navigation }) => (
         title: "Edit Profile",
       }}
     />
-        <HomeStack.Screen
+    <HomeStack.Screen
       name="ChatList"
       style={styles.icon}
       component={ChatList}
@@ -163,7 +183,7 @@ const HomeStackScreen = ({ navigation }) => (
         title: "ChatList",
       }}
     />
-     <HomeStack.Screen
+    <HomeStack.Screen
       name="Notifications"
       style={styles.icon}
       component={Notifications}
@@ -216,7 +236,6 @@ const styles = StyleSheet.create({
   icon: {
     marginLeft: 10,
     marginRight: 10,
-
   },
   Item: {
     marginBottom: 10,
