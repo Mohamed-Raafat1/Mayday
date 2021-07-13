@@ -125,7 +125,7 @@ const HomeStackScreen = ({ navigation }) => (
             <Button transparent>
               <Badge
                 badgeStyle={{}}
-                value="99"
+                value="4"
                 status="primary"
                 containerStyle={{ position: "absolute", top: -4, right: -4 }}
               />
@@ -226,6 +226,8 @@ const FirstAidStackScreen = () => (
     />
   </FirstAidStack.Navigator>
 );
+
+
 export default Tabs;
 const styles = StyleSheet.create({
   iconStyle: {

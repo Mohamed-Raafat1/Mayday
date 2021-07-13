@@ -1,15 +1,25 @@
 import React ,{ useState } from 'react';
 import { Container, Header, Content, Button, ListItem, Text, Icon, Left, Body, Right, Switch, Title ,Input} from 'native-base';
+import { StyleSheet } from 'react-native';
 
 function SOS() {
+  
+    //Toggle Switch to enable SOS
     const [isEnabled, setIsEnabled] = useState(false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
+    //To save contact numbers (first contact only right now as a Test)
+    const [Numbers,SetNumbers]= useState("");
+    const printme = () => {console.log("Contact1 = "+Numbers);}
+
     return(
+
     <Container>
         <Header style={{backgroundColor: "#CD113B"}} >
         <Title>SOS Emergency Contacts</Title>
         </Header>
         <Content>
+          {/* Switch  */}
           <ListItem icon style={{marginBottom:50}}>
             <Left>
               <Button style={{ backgroundColor: "#FF9501" }}>
@@ -23,15 +33,17 @@ function SOS() {
               <Switch onValueChange={toggleSwitch}  value={isEnabled} />
             </Right>
           </ListItem>
-
+  
           <ListItem icon style={{marginBottom:10}}>
             <Left>
             <Text>1.</Text>
             </Left>
+                  {/* Emergency Number */}
             <Body>
-                <Input placeholder='First Contact' />
+                <Input placeholder='First Contact' onChangeText={SetNumbers} value={Numbers} />
             </Body>
             <Right>
+              {/* Get from Contacts Button */}
             <Button style={{ backgroundColor: "#9FE6A0" }}>
                 <Icon active name="person" />
               </Button>
@@ -89,6 +101,11 @@ function SOS() {
               </Button>
             </Right>
           </ListItem>
+          <Button onPress={printme} 
+             style={styles.button}
+            primary iconRight rounded block>
+              <Text>Save</Text>
+            </Button> 
         </Content>
       </Container>
 
@@ -96,3 +113,13 @@ function SOS() {
 }
 
 export default SOS;
+
+const styles = StyleSheet.create(
+  {
+    button:{
+        marginTop: 50,
+        marginBottom: 10,
+        alignContent: "center",
+        backgroundColor: "rgb(250,91,90)"
+    } 
+  });

@@ -7,11 +7,56 @@ const Notifications = () => {
           <List>
             <ListItem thumbnail>
               <Left>
-              <Thumbnail source={{ uri: 'https://i.pinimg.com/474x/dc/e6/c0/dce6c0923a316554572841bb6f857c31.jpg' }} />
+              <Thumbnail source={{ uri: 'https://www.leasurgery.co.uk/media/content/images/doctor.jpg' }} />
               </Left>
               <Body>
-                <Text>Sankhadeep</Text>
-                <Text note numberOfLines={1}>Its time to build a difference . .</Text>
+                <Text>The Doctor is on his way to the location..</Text>
+                <Text note numberOfLines={2}>Doctor Request</Text>
+              </Body>
+              <Right>
+                <Button transparent>
+                  <Text>View</Text>
+                </Button>
+              </Right>
+            </ListItem>
+            
+            <ListItem thumbnail>
+              <Left>
+              <Thumbnail source={{ uri: 'https://www.yorkpress.co.uk/resources/images/10546995/' }} />
+              </Left>
+              <Body>
+                <Text>Ambulance is arriving to the location..</Text>
+                <Text note numberOfLines={2}>Ambulance Request</Text>
+              </Body>
+              <Right>
+                <Button transparent>
+                  <Text>View</Text>
+                </Button>
+              </Right>
+            </ListItem>
+
+            <ListItem thumbnail>
+              <Left>
+              <Thumbnail source={{ uri: 'https://i.pinimg.com/originals/37/34/8a/37348a499514a3d8e8414aeca055ea22.jpg' }} />
+              </Left>
+              <Body>
+                <Text>Emergency Contacts were Notified Successfully..</Text>
+                <Text note numberOfLines={2}>SOS Request</Text>
+              </Body>
+              <Right>
+                <Button transparent>
+                  <Text>View</Text>
+                </Button>
+              </Right>
+            </ListItem>
+
+            <ListItem thumbnail>
+              <Left>
+              <Thumbnail source={{ uri: 'https://cdn-systematic.nozebrahosting.dk/media/g0sj1tbg/hospital-building-001-global.jpg?cropAlias=hero_large&width=992&height=483&quality=80&mode=crop&null' }} />
+              </Left>
+              <Body>
+                <Text>Nearest Hospital was located Successfully..</Text>
+                <Text note numberOfLines={2}>Nearest Hospital Request</Text>
               </Body>
               <Right>
                 <Button transparent>
