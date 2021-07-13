@@ -16,6 +16,10 @@ import ProfileScreen from "../Screens/ProfileScreen";
 import editProfileScreen from "../Screens/editProfileScreen";
 import FirstAidSection from "../Screens/FirstAidSection";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
+import Hypothermia from "../Screens/Hypothermia";
+import Meningitis from "../Screens/Meningitis";
+import Poisoning from "../Screens/Poisoning";
+
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
 const DoctorsStack = createStackNavigator();
@@ -156,11 +160,24 @@ const ProfileStackScreen = () => (
   </ProfileStack.Navigator>
 );
 
-const FirstAidStackScreen = () => (
+const FirstAidStackScreen = ({ navigation }) => (
   <FirstAidStack.Navigator>
-        <FirstAidStack.Screen name="FirstAid" component={FirstAidSection} options={{
-            headerLeft:null,
-            title:'FirstAid',
+        <FirstAidStack.Screen name="FirstAid" component={FirstAidSection} 
+        options={{
+        title: "First-Aid",
+        headerLeft:null
+        }} />
+        <FirstAidStack.Screen name="Hypothermia" component={Hypothermia} 
+        options={{
+            title:'Hypothermia',
+        }} />
+        <FirstAidStack.Screen name="Meningitis" component={Meningitis} 
+        options={{
+            title:'Meningitis',
+        }} />
+        <FirstAidStack.Screen name="Poisoning" component={Poisoning} 
+        options={{
+            title:'Poisoning',
         }} />
   </FirstAidStack.Navigator>
 );
@@ -172,5 +189,5 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginLeft: 15,
     width: 70,
-  },
+  }
 });
