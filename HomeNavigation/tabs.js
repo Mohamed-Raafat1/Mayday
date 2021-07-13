@@ -28,11 +28,21 @@ import {
 import ChatList from "../Screens/ChatList";
 import Notifications from "../Screens/Notifications";
 
+
+
+
+//Stacks Navigation
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
+const ChatListStack = createStackNavigator();
+
+//Tab Navigation
 const Tab = createMaterialBottomTabNavigator();
 
+
 function Tabs() {
+
+  //2 Tabs Home , First Aid  
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -87,6 +97,7 @@ function Tabs() {
   );
 }
 
+//
 const HomeStackScreen = ({ navigation }) => (
   <HomeStack.Navigator>
     <HomeStack.Screen
@@ -180,7 +191,7 @@ const HomeStackScreen = ({ navigation }) => (
       style={styles.icon}
       component={ChatList}
       options={{
-        title: "ChatList",
+        title: "Chats",
       }}
     />
     <HomeStack.Screen
@@ -204,14 +215,15 @@ const HomeStackScreen = ({ navigation }) => (
 //   </DoctorsStack.Navigator>
 // );
 
-// const MoreStackScreen = () => (
-//   <MoreStack.Navigator>
-//     <MoreStack.Screen
+// ChatList --> each Chat.js (soon)
+// const ChatListStackScreen = () => (
+//   <ChatList.Navigator>
+//     <ChatList.Screen
 //       name="More"
-//       component={MoreScreen}
-//       options={{ headerShown: false, title: "More" }}
+//       component={ChatList}
+//       options={{ title: "Chats" }}
 //     />
-//   </MoreStack.Navigator>
+//   </ChatList.Navigator>
 // );
 
 const FirstAidStackScreen = () => (

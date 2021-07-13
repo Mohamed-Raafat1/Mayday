@@ -31,6 +31,10 @@ export default function App() {
   }
   //basic navigation stack login-->homecreen
   //will be changed later
+
+  //2 Stack Screens --> Home Drawer (or RegisterScreen) --> HomeDrawer first item is Tabs.js 
+  // Tab.js consists of two tabs (Home Stack , First Aid Stack) 
+  //Tab 1 (Home Stack) consists of 5 Screens (one of them will be chatlist Stack )
   return (
     <NavigationContainer>
 
