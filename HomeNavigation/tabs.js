@@ -27,8 +27,7 @@ import {
 } from "native-base";
 import ChatList from "../Screens/ChatList";
 import Notifications from "../Screens/Notifications";
-
-
+import Chat from "../Screens/Chat";
 
 
 //Stacks Navigation
@@ -189,8 +188,9 @@ const HomeStackScreen = ({ navigation }) => (
     <HomeStack.Screen
       name="ChatList"
       style={styles.icon}
-      component={ChatList}
+      component={ChatListStackScreen}
       options={{
+        headerShown: false ,
         title: "Chats",
       }}
     />
@@ -205,27 +205,24 @@ const HomeStackScreen = ({ navigation }) => (
   </HomeStack.Navigator>
 );
 
-// const DoctorsStackScreen = () => (
-//   <DoctorsStack.Navigator>
-//     <DoctorsStack.Screen
-//       name="Doctors"
-//       component={DoctorsScreen}
-//       options={{ headerShown: false, title: "Doctors" }}
-//     />
-//   </DoctorsStack.Navigator>
-// );
 
-// ChatList --> each Chat.js (soon)
-// const ChatListStackScreen = () => (
-//   <ChatList.Navigator>
-//     <ChatList.Screen
-//       name="More"
-//       component={ChatList}
-//       options={{ title: "Chats" }}
-//     />
-//   </ChatList.Navigator>
-// );
+// Navigate ChatList --> each Chat.js dynamically (soon)
+const ChatListStackScreen = () => (
+  <ChatListStack.Navigator>
+    <ChatListStack.Screen
+      name="ChatList"
+      component={ChatList}
+      options={{ title: "Chats" }}
+    />
+   <ChatListStack.Screen
+      name="Chat"
+      component={Chat}
+      options={{ title: "Chat" }}
+    />
+  </ChatListStack.Navigator>
+);
 
+// FirstAid Stack for Each category stack
 const FirstAidStackScreen = () => (
   <FirstAidStack.Navigator>
     <FirstAidStack.Screen
@@ -241,6 +238,8 @@ const FirstAidStackScreen = () => (
 
 
 export default Tabs;
+
+
 const styles = StyleSheet.create({
   iconStyle: {
     alignContent: "center",
