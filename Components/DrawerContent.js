@@ -88,23 +88,11 @@ export function DrawerContent(props) {
                 />
               )}
               label="Settings"
-              //   onPress={() => {
-              // props.navigation.navigate("SettingsScreen");
-              //   }}
+              onPress={() => {
+                props.navigation.navigate("Settings");
+              }}
             />
-            <DrawerItem
-              icon={({ color, size }) => (
-                <MaterialCommunityIcons
-                  name="account-check-outline"
-                  color={"black"}
-                  size={size}
-                />
-              )}
-              label="Support"
-              //   onPress={() => {
-              // props.navigation.navigate("SupportScreen");
-              //   }}
-            />
+
             <DrawerItem
               icon={({ color, size }) => (
                 <MaterialCommunityIcons
@@ -131,6 +119,19 @@ export function DrawerContent(props) {
         </View>
       </DrawerContentScrollView>
       <Drawer.Section style={styles.bottomDrawerSection}>
+        <DrawerItem
+          icon={({ color, size }) => (
+            <MaterialCommunityIcons
+              name="account-check-outline"
+              color={"black"}
+              size={size}
+            />
+          )}
+          label="Support"
+          //   onPress={() => {
+          // props.navigation.navigate("SupportScreen");
+          //   }}
+        />
         <DrawerItem
           icon={({ color, size }) => (
             <MaterialCommunityIcons

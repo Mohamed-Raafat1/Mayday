@@ -17,6 +17,7 @@ import {
 import { StyleSheet } from "react-native";
 
 function SOS({ navigation }) {
+  const buttonColor = "#0A81AB";
   //Toggle Switch to enable SOS
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
@@ -29,12 +30,9 @@ function SOS({ navigation }) {
 
   return (
     <Container>
-      <Header style={{ backgroundColor: "white" }}>
-        <Title style={{ color: "black" }}>SOS Emergency Contacts</Title>
-      </Header>
       <Content>
         {/* Switch  */}
-        <ListItem icon style={{ marginBottom: 50 }}>
+        {/* <ListItem icon style={{ marginBottom: 50 }}>
           <Left>
             <Button style={{ backgroundColor: "#FF9501" }}>
               <Icon active name="person" />
@@ -46,9 +44,9 @@ function SOS({ navigation }) {
           <Right>
             <Switch onValueChange={toggleSwitch} value={isEnabled} />
           </Right>
-        </ListItem>
+        </ListItem> */}
 
-        <ListItem icon style={{ marginBottom: 10 }}>
+        <ListItem icon style={{ marginBottom: 10, marginTop: 10 }}>
           <Left>
             <Text>1.</Text>
           </Left>
@@ -62,7 +60,7 @@ function SOS({ navigation }) {
           </Body>
           <Right>
             {/* Get from Contacts Button */}
-            <Button style={{ backgroundColor: "#9FE6A0" }}>
+            <Button style={{ backgroundColor: buttonColor }}>
               <Icon active name="person" />
             </Button>
           </Right>
@@ -75,7 +73,7 @@ function SOS({ navigation }) {
             <Input placeholder="Second Contact" />
           </Body>
           <Right>
-            <Button style={{ backgroundColor: "#9FE6A0" }}>
+            <Button style={{ backgroundColor: buttonColor }}>
               <Icon active name="person" />
             </Button>
           </Right>
@@ -88,7 +86,7 @@ function SOS({ navigation }) {
             <Input placeholder="Third Contact" />
           </Body>
           <Right>
-            <Button style={{ backgroundColor: "#9FE6A0" }}>
+            <Button style={{ backgroundColor: buttonColor }}>
               <Icon active name="person" />
             </Button>
           </Right>
@@ -101,7 +99,7 @@ function SOS({ navigation }) {
             <Input placeholder="Fourth Contact" />
           </Body>
           <Right>
-            <Button style={{ backgroundColor: "#9FE6A0" }}>
+            <Button style={{ backgroundColor: buttonColor }}>
               <Icon active name="person" />
             </Button>
           </Right>
@@ -114,7 +112,7 @@ function SOS({ navigation }) {
             <Input placeholder="Fifth Contact" />
           </Body>
           <Right>
-            <Button style={{ backgroundColor: "#9FE6A0" }}>
+            <Button style={{ backgroundColor: buttonColor }}>
               <Icon active name="person" />
             </Button>
           </Right>
@@ -140,6 +138,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 50,
     marginBottom: 10,
+    marginHorizontal: 10,
     alignContent: "center",
     backgroundColor: "rgb(250,91,90)",
   },

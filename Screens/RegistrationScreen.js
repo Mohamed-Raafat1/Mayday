@@ -29,7 +29,7 @@ function RegistrationScreen({ navigation }) {
   const [Password, setPassword] = useState("");
   const [ConfirmPass, setConfirmPass] = useState("");
   const [NationalID, setNationalID] = useState("");
-  const [PhoneNumber, setPhoneNumber] = useState("+");
+  const [PhoneNumber, setPhoneNumber] = useState("+20");
   const [FirstName, setFirstName] = useState("");
   const [LastName, setLastName] = useState("");
 
