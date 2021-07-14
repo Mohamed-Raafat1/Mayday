@@ -16,6 +16,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import CurrentReport from "./Screens/CurrentReport";
 import SOS from "./Screens/SOS";
 import Tabs from "./HomeNavigation/tabs";
+import HomeDrawer from "./Components/HomeDrawer";
 
 
 const Stack = createStackNavigator();
@@ -30,27 +31,23 @@ export default function App() {
   }
   //basic navigation stack login-->homecreen
   //will be changed later
+
+  //2 Stack Screens --> Home Drawer (or RegisterScreen) --> HomeDrawer first item is Tabs.js 
+  // Tabs.js consists of two tabs (Home Stack , First Aid Stack) 
+  //Tab 1 (Home Stack) consists of 5 Screens (one of them will be chatlist Stack )
+  //ChatList Stack consists of screens (Chats)
   return (
     <NavigationContainer>
+
       <Stack.Navigator>
         <Stack.Screen
           options={{ title: "Welcome", headerShown: false }}
           name="Login"
           component={LoginScreen}
         />
-        <Stack.Screen name="Home" options={{headerShown:false}} component={Tabs} />
+        <Stack.Screen name="Home" options={{headerShown:false}} component={HomeDrawer} />
         <Stack.Screen name="Registration" component={RegistrationScreen} />
-        <Stack.Screen
-          name="ViewNearestHospital"
-          component={ViewNearestHospital}
-          options={{ title: "Map test" }}
-        />
-        <Stack.Screen
-          name="Chat"
-          options={{ headerShown: false }}
-          component={Chat}
-        />
-    <Stack.Screen name="FirstAid" options={{ title: "Welcome", headerShown: true }} component={FirstAidSection} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

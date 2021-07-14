@@ -1,59 +1,79 @@
+//BUTTONS NATIVE BASE
+
 import React from "react";
+//React Native
+import { StyleSheet, Image } from "react-native";
+import { Avatar, Badge, withBadge } from "react-native-elements";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-import { StyleSheet, Button, View, Text, Image } from "react-native";
-import { createStackNavigator } from '@react-navigation/stack';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
-
-
-
+// Screens
 import HomeScreen from "../Screens/HomeScreen";
-import FirstAidScreen from '../Screens/FirstAidSection';
 import DoctorsScreen from "../Screens/DoctorsScreen";
-import MoreScreen from "../Screens/MoreScreen";
 import ProfileScreen from "../Screens/ProfileScreen";
 import editProfileScreen from "../Screens/editProfileScreen";
 import FirstAidSection from "../Screens/FirstAidSection";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
+import {
+  Button,
+  Icon,
+  Text,
+  Container,
+  Content,
+  Right,
+  View,
+  Row,
+} from "native-base";
+import ChatList from "../Screens/ChatList";
+import Notifications from "../Screens/Notifications";
+import Chat from "../Screens/Chat";
+
+//Stacks Navigation
 import Hypothermia from "../Screens/Hypothermia";
 import Meningitis from "../Screens/Meningitis";
 import Poisoning from "../Screens/Poisoning";
 
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
-const DoctorsStack = createStackNavigator();
-const MoreStack = createStackNavigator();
+const ChatListStack = createStackNavigator();
+
+//Tab Navigation
 const Tab = createMaterialBottomTabNavigator();
 
 function Tabs() {
-    return (
-        <Tab.Navigator
-          initialRouteName="Home"
-          activeColor="#ff1262"
-          barStyle={{ backgroundColor: 'white' }}
-        >
-          <Tab.Screen
-            name="Home"
-            component={HomeStackScreen}
-            options={{
-              tabBarLabel: 'Home',
-              tabBarIcon: ({ color }) => (
-                <MaterialCommunityIcons name="home" color={color} size={26} />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="First Aid"
-            component={FirstAidStackScreen}
-            options={{
-              tabBarLabel: 'First Aid',
-              tabBarIcon: ({ color }) => (
-                <MaterialCommunityIcons name="television-play" color={color} size={26} />
-              ),
-            }}
-          />
-          <Tab.Screen
+  //2 Tabs Home , First Aid
+  return (
+    <Tab.Navigator
+      initialRouteName="Home"
+      activeColor="#cf5b72"
+      barStyle={{ backgroundColor: "white" }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeStackScreen}
+        options={{
+          tabBarLabel: "Home",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="home" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="First Aid"
+        component={FirstAidStackScreen}
+        options={{
+          tabBarLabel: "First Aid",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="television-play"
+              color={color}
+              size={26}
+            />
+          ),
+        }}
+      />
+      {/* <Tab.Screen
             name="Doctors"
             component={DoctorsStackScreen}
             options={{
@@ -62,8 +82,8 @@ function Tabs() {
                 <MaterialCommunityIcons name="doctor" color={color} size={26} />
               ),
             }}
-          />
-          <Tab.Screen
+          /> */}
+      {/* <Tab.Screen
             name="More"
             component={MoreStackScreen}
             options={{
@@ -72,27 +92,70 @@ function Tabs() {
                 <MaterialCommunityIcons name="menu" color={color} size={26} />
               ),
             }}
-          />
-        </Tab.Navigator>
-      );
+          /> */}
+    </Tab.Navigator>
+  );
 }
 
+//
 const HomeStackScreen = ({ navigation }) => (
   <HomeStack.Navigator>
     <HomeStack.Screen
       name="Home"
       component={HomeScreen}
       options={{
-        headerLeft: null,
-        title: "Home",
+        headerLeft: () => (
+          <Content style={styles.iconStyle}>
+            <Button transparent>
+              <MaterialCommunityIcons
+                name="menu"
+                size={26}
+                onPress={() => navigation.openDrawer()}
+              />
+            </Button>
+          </Content>
+        ),
+        title: "Appname",
         headerRight: () => (
-          <View style={styles.iconContainer}>
-            <MaterialCommunityIcons
-              name="account-circle-outline"
-              size={26}
-              onPress={() => navigation.navigate("Profile")}
-            />
-            <MaterialCommunityIcons name="bell-outline" size={26} />
+          <View style={{ flexDirection: "row" }}>
+            <Button transparent>
+              <Badge
+                badgeStyle={{}}
+                value="3"
+                status="primary"
+                containerStyle={{ position: "absolute", top: -4, right: -4 }}
+              />
+              <MaterialCommunityIcons
+                name="message-text-outline"
+                size={24}
+                color="black"
+                onPress={() => navigation.navigate("ChatList")}
+                style={styles.icon}
+              />
+            </Button>
+            <Button transparent>
+              <Badge
+                badgeStyle={{}}
+                value="4"
+                status="primary"
+                containerStyle={{ position: "absolute", top: -4, right: -4 }}
+              />
+              <MaterialCommunityIcons
+                name="bell-outline"
+                size={26}
+                onPress={() => navigation.navigate("Notifications")}
+                style={styles.icon}
+              />
+            </Button>
+
+            <Button transparent>
+              <MaterialCommunityIcons
+                name="account-circle-outline"
+                size={26}
+                onPress={() => navigation.navigate("Profile")}
+                style={styles.icon}
+              />
+            </Button>
           </View>
         ),
       }}
@@ -103,91 +166,109 @@ const HomeStackScreen = ({ navigation }) => (
       options={{
         title: "Profile",
         headerRight: () => (
-          <View style={styles.iconContainer}>
-            <MaterialCommunityIcons
-              name="account-edit-outline"
-              size={30}
-              onPress={() => navigation.navigate("editProfile")}
-            />
-          </View>
+          <Content style={styles.iconStyle}>
+            <Button transparent>
+              <MaterialCommunityIcons
+                name="account-edit-outline"
+                size={30}
+                onPress={() => navigation.navigate("editProfile")}
+              />
+            </Button>
+          </Content>
         ),
       }}
     />
     <HomeStack.Screen
       name="editProfile"
+      style={styles.icon}
       component={editProfileScreen}
       options={{
         title: "Edit Profile",
       }}
     />
     <HomeStack.Screen
-      name="ViewNearestHospital"
-      component={ViewNearestHospital}
+      name="ChatList"
+      style={styles.icon}
+      component={ChatListStackScreen}
       options={{
-        title: "Hospitals Nearby",
+        headerShown: false,
+        title: "Chats",
+      }}
+    />
+    <HomeStack.Screen
+      name="Notifications"
+      style={styles.icon}
+      component={Notifications}
+      options={{
+        title: "Notifications",
       }}
     />
   </HomeStack.Navigator>
 );
 
-const DoctorsStackScreen = () => (
-  <DoctorsStack.Navigator>
-    <DoctorsStack.Screen
-      name="Doctors"
-      component={DoctorsScreen}
-      options={{ headerShown: false, title: "Doctors" }}
+// Navigate ChatList --> each Chat.js dynamically (soon)
+const ChatListStackScreen = () => (
+  <ChatListStack.Navigator>
+    <ChatListStack.Screen
+      name="ChatList"
+      component={ChatList}
+      options={{ title: "Chats" }}
     />
-  </DoctorsStack.Navigator>
-);
-
-const MoreStackScreen = () => (
-  <MoreStack.Navigator>
-    <MoreStack.Screen
-      name="More"
-      component={MoreScreen}
-      options={{ headerShown: false, title: "More" }}
+    <ChatListStack.Screen
+      name="Chat"
+      component={Chat}
+      options={{ title: "Chat" }}
     />
-  </MoreStack.Navigator>
-);
-
-const ProfileStackScreen = () => (
-  <ProfileStack.Navigator>
-    <ProfileStack.Screen
-      name="Profle"
-      component={ProfileScreen}
-      options={{ headerShown: false, title: "Profile" }}
-    />
-  </ProfileStack.Navigator>
+  </ChatListStack.Navigator>
 );
 
 const FirstAidStackScreen = ({ navigation }) => (
   <FirstAidStack.Navigator>
-        <FirstAidStack.Screen name="FirstAid" component={FirstAidSection} 
-        options={{
+    <FirstAidStack.Screen
+      name="FirstAid"
+      component={FirstAidSection}
+      options={{
         title: "First-Aid",
-        headerLeft:null
-        }} />
-        <FirstAidStack.Screen name="Hypothermia" component={Hypothermia} 
-        options={{
-            title:'Hypothermia',
-        }} />
-        <FirstAidStack.Screen name="Meningitis" component={Meningitis} 
-        options={{
-            title:'Meningitis',
-        }} />
-        <FirstAidStack.Screen name="Poisoning" component={Poisoning} 
-        options={{
-            title:'Poisoning',
-        }} />
+        headerLeft: null,
+      }}
+    />
+    <FirstAidStack.Screen
+      name="Hypothermia"
+      component={Hypothermia}
+      options={{
+        title: "Hypothermia",
+      }}
+    />
+    <FirstAidStack.Screen
+      name="Meningitis"
+      component={Meningitis}
+      options={{
+        title: "Meningitis",
+      }}
+    />
+    <FirstAidStack.Screen
+      name="Poisoning"
+      component={Poisoning}
+      options={{
+        title: "Poisoning",
+      }}
+    />
   </FirstAidStack.Navigator>
 );
+
 export default Tabs;
 
 const styles = StyleSheet.create({
-  iconContainer: {
-    flexDirection: "row-reverse",
-    justifyContent: "space-between",
-    marginLeft: 15,
-    width: 70,
-  }
+  iconStyle: {
+    alignContent: "center",
+    marginLeft: 10,
+    marginTop: 5,
+  },
+  icon: {
+    marginLeft: 10,
+    marginRight: 10,
+  },
+  Item: {
+    marginBottom: 10,
+  },
 });
