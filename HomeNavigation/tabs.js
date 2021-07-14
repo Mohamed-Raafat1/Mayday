@@ -29,8 +29,11 @@ import ChatList from "../Screens/ChatList";
 import Notifications from "../Screens/Notifications";
 import Chat from "../Screens/Chat";
 
-
 //Stacks Navigation
+import Hypothermia from "../Screens/Hypothermia";
+import Meningitis from "../Screens/Meningitis";
+import Poisoning from "../Screens/Poisoning";
+
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
 const ChatListStack = createStackNavigator();
@@ -38,10 +41,8 @@ const ChatListStack = createStackNavigator();
 //Tab Navigation
 const Tab = createMaterialBottomTabNavigator();
 
-
 function Tabs() {
-
-  //2 Tabs Home , First Aid  
+  //2 Tabs Home , First Aid
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -190,7 +191,7 @@ const HomeStackScreen = ({ navigation }) => (
       style={styles.icon}
       component={ChatListStackScreen}
       options={{
-        headerShown: false ,
+        headerShown: false,
         title: "Chats",
       }}
     />
@@ -205,7 +206,6 @@ const HomeStackScreen = ({ navigation }) => (
   </HomeStack.Navigator>
 );
 
-
 // Navigate ChatList --> each Chat.js dynamically (soon)
 const ChatListStackScreen = () => (
   <ChatListStack.Navigator>
@@ -214,7 +214,7 @@ const ChatListStackScreen = () => (
       component={ChatList}
       options={{ title: "Chats" }}
     />
-   <ChatListStack.Screen
+    <ChatListStack.Screen
       name="Chat"
       component={Chat}
       options={{ title: "Chat" }}
@@ -222,23 +222,41 @@ const ChatListStackScreen = () => (
   </ChatListStack.Navigator>
 );
 
-// FirstAid Stack for Each category stack
-const FirstAidStackScreen = () => (
+const FirstAidStackScreen = ({ navigation }) => (
   <FirstAidStack.Navigator>
     <FirstAidStack.Screen
       name="FirstAid"
       component={FirstAidSection}
       options={{
+        title: "First-Aid",
         headerLeft: null,
-        title: "FirstAid",
+      }}
+    />
+    <FirstAidStack.Screen
+      name="Hypothermia"
+      component={Hypothermia}
+      options={{
+        title: "Hypothermia",
+      }}
+    />
+    <FirstAidStack.Screen
+      name="Meningitis"
+      component={Meningitis}
+      options={{
+        title: "Meningitis",
+      }}
+    />
+    <FirstAidStack.Screen
+      name="Poisoning"
+      component={Poisoning}
+      options={{
+        title: "Poisoning",
       }}
     />
   </FirstAidStack.Navigator>
 );
 
-
 export default Tabs;
-
 
 const styles = StyleSheet.create({
   iconStyle: {
