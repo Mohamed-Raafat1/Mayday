@@ -1,13 +1,22 @@
 import "react-native-gesture-handler";
 import React, { useState } from "react";
 
-import { Text,
-    Button,
-    Icon,
-    Form,
-    Container, Header, Content, Item, Input, ListItem, CheckBox } from 'native-base';
+import {
+  Text,
+  Button,
+  Icon,
+  Form,
+  Container,
+  Header,
+  Content,
+  Item,
+  Input,
+  ListItem,
+  CheckBox,
+} from "native-base";
 import { View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import GlobalStyles from "../GlobalStyles";
+import { AuthContext } from "../Components/context";
 
 function RegistrationScreen({ navigation }) {
   //regex for checking email validity
@@ -25,7 +34,7 @@ function RegistrationScreen({ navigation }) {
   const [LastName, setLastName] = useState("");
 
   //regex for checking email syntax validity
-
+  const { signUp } = React.useContext(AuthContext);
   const validateEmail = (text) => {
     setEmail(text);
     if (emailRegex.test(text)) {
@@ -37,10 +46,9 @@ function RegistrationScreen({ navigation }) {
 
   const ComparePassword = (text) => {
     setConfirmPass(text);
-      if (Password===text) setEqual(true);
-      else setEqual(false);
-  }
-
+    if (Password === text) setEqual(true);
+    else setEqual(false);
+  };
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
@@ -48,7 +56,6 @@ function RegistrationScreen({ navigation }) {
         <Form>
           <Item
             iconRight
-            
             underline
             style={styles.Item}
             success={isValid}
@@ -58,81 +65,50 @@ function RegistrationScreen({ navigation }) {
               onChangeText={(text) => validateEmail(text)}
               placeholder="Email"
               placeholderTextColor="gray"
-
               value={Email}
             />
 
             <Icon name="mail-outline"></Icon>
           </Item>
 
-          <Item
-          
-            underline
-            iconRight
-            style={styles.Item}
-
-          >
+          <Item underline iconRight style={styles.Item}>
             <Input
-            onChangeText={(text) => setFirstName(text)}
+              onChangeText={(text) => setFirstName(text)}
               placeholder="First Name"
               placeholderTextColor="gray"
-
               value={FirstName}
             />
-
           </Item>
 
-          <Item
-            iconRight
-            
-            underline
-            style={styles.Item}
-          >
+          <Item iconRight underline style={styles.Item}>
             <Input
-            onChangeText={(text) => setLastName(text)}
+              onChangeText={(text) => setLastName(text)}
               placeholder="Last Name"
               placeholderTextColor="gray"
-
               value={LastName}
             />
-
           </Item>
 
-          <Item
-            iconRight
-            
-            underline
-            style={styles.Item}
-          >
+          <Item iconRight underline style={styles.Item}>
             <Input
-            onChangeText={(text) => setNationalID(text)}
-                keyboardType ="numeric"
+              onChangeText={(text) => setNationalID(text)}
+              keyboardType="numeric"
               placeholder="National ID"
               placeholderTextColor="gray"
-
               value={NationalID}
             />
-
           </Item>
 
-          <Item
-            iconRight
-            underline
-            style={styles.Item}
-          >
+          <Item iconRight underline style={styles.Item}>
             <Input
-            onChangeText={(text) => setPhoneNumber(text)}
-                keyboardType ="numeric"
+              onChangeText={(text) => setPhoneNumber(text)}
+              keyboardType="numeric"
               placeholder="Phone Number"
               placeholderTextColor="gray"
-
               value={PhoneNumber}
             />
             <Icon name="call-outline"></Icon>
-
           </Item>
-
-         
 
           <Item underline iconRight style={styles.Item} success={false}>
             <Input
@@ -146,13 +122,13 @@ function RegistrationScreen({ navigation }) {
             <Icon name="lock-closed-outline"></Icon>
           </Item>
 
-          <Item 
-            underline 
+          <Item
+            underline
             success={isEqual}
             error={!isEqual}
             iconRight
             style={styles.Item}
-            >
+          >
             <Input
               onChangeText={(text) => ComparePassword(text)}
               textContentType="password"
@@ -164,34 +140,31 @@ function RegistrationScreen({ navigation }) {
             <Icon name="lock-closed-outline"></Icon>
           </Item>
           <ListItem>
+            <CheckBox
+              checked={isChecked}
+              onPress={() => setIsChecked(isChecked ? false : true)}
+              color="rgb(250,91,90)"
+            />
 
-            <CheckBox checked={isChecked} onPress={() => setIsChecked(isChecked ? false : true)} color="rgb(250,91,90)" />
-            
-
-            <Text style={{
-                marginLeft:10,}}
+            <Text
+              style={{
+                marginLeft: 10,
+              }}
             >
               Register as medical Personnel
-              </Text>
+            </Text>
           </ListItem>
-
-
-
         </Form>
-
-
 
         <Text
           style={{
             textAlign: "right",
             marginBottom: 10,
           }}
-          onPress = {() => navigation.navigate("Login")}
+          onPress={() => navigation.navigate("Login")}
         >
           Already have an account?
         </Text>
-
-
 
         <Button
           style={{
@@ -202,12 +175,11 @@ function RegistrationScreen({ navigation }) {
           primary
           iconRight
           rounded
-          onPress={() => navigation.navigate("Home")}
+          onPress={signUp}
           block
         >
           <Text>Register</Text>
         </Button>
-        
       </ScrollView>
     </SafeAreaView>
   );
@@ -224,7 +196,7 @@ const styles = StyleSheet.create({
   },
   Item: {
     marginBottom: 10,
-    marginLeft:10,
+    marginLeft: 10,
     paddingLeft: 10,
   },
 });

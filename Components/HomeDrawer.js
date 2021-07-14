@@ -7,21 +7,33 @@ import Tabs from "../HomeNavigation/tabs";
 import UserRating from "../Screens/UserRating";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
 import DoctorsScreen from "../Screens/DoctorsScreen";
-import LoginScreen from "../Screens/LoginScreen";
+import { DrawerContent } from "./DrawerContent";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Content, Button } from "native-base";
 import Settings from "../Screens/Settings Screens/Settings";
 import AccountSettings from "../Screens/Settings Screens/AccountSettings";
 import editProfileScreen from "../Screens/editProfileScreen";
 import LocationSettings from "../Screens/Settings Screens/LocationSettings";
+import { useNavigation } from "@react-navigation/native";
 const Drawer = createDrawerNavigator();
 
 const HomeDrawer = () => {
   return (
-    <Drawer.Navigator>
+    <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={Tabs} />
-      <Drawer.Screen options={{ headerShown: false }} name="Emergency Contacts"component={SOS} />
+      <Drawer.Screen
+        options={{
+          headerShown: true,
+        }}
+        name="Emergency Contacts"
+        component={SOS}
+      />
       <Drawer.Screen name="Current Report" component={CurrentReport} />
       <Drawer.Screen name="User Rating" component={UserRating} />
-      <Drawer.Screen name="View Nearest Hospital"component={ViewNearestHospital} />
+      <Drawer.Screen
+        name="View Nearest Hospital"
+        component={ViewNearestHospital}
+      />
       <Drawer.Screen name="Request Doctor" component={DoctorsScreen} />
       <Drawer.Screen name="Settings" component={SettingsStackScreen} />
     </Drawer.Navigator>
@@ -45,7 +57,7 @@ const SettingsStackScreen = () => (
     <SettingsStack.Screen
       name="editProfile"
       component={editProfileScreen}
-      options={{title: "Edit Medical ID"}}
+      options={{ title: "Edit Medical ID" }}
     />
     <SettingsStack.Screen
       name="LocationSettings"
