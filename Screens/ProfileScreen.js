@@ -1,10 +1,11 @@
 import React from 'react';
-import {View, SafeAreaView, StyleSheet, Button} from 'react-native';
+import {SafeAreaView, StyleSheet} from 'react-native';
+import { Container, Text, Content, Card, CardItem, Body, Left, View } from "native-base"
+
 import {
   Avatar,
   Title,
   Caption,
-  Text,
   TouchableRipple,
 } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -12,8 +13,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 function ProfileScreen() {
     return(
-        <SafeAreaView style={styles.container}>
+        <Container style={styles.container}>
             <View style={styles.userInfoSection}>
+              
                 <View style={styles.avatar}>
                     <Avatar.Image
                       source={{uri: 'https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png',}}
@@ -23,9 +25,12 @@ function ProfileScreen() {
                 <View>
                   <Title style={styles.title}>Omar Hesham</Title>
                 </View>
+                <View>
+                  <Text style={{color:"#777777", textAlign: 'center'}}>5 May, 2000 (21 years)</Text>
+                </View>
             </View>
 
-            <View style={styles.userInfoSection}>
+            <View>
               <View style={styles.row}>
                 <MaterialCommunityIcons name="phone" color="#777777" size={20}/>
                 <Text style={{color:"#777777", marginLeft: 20}}>0123456789</Text>
@@ -41,21 +46,28 @@ function ProfileScreen() {
                 borderBottomWidth: 1,
               }}
             />
-            <View style={styles.medicalID}>
-              <View>
-                <Text style={styles.medicalIDTitle}>Medical ID</Text>
-              </View>
-              <View>
-                <Text style={styles.medicalIDItem}>Gender: M</Text>
-              </View>
-              <View>
-                <Text style={styles.medicalIDItem}>Age: 20</Text>
-              </View>
-              <View>
-                <Text style={styles.medicalIDItem}>Blood Type: O</Text>
-              </View>
+            
+      <Content padder>
+        <Card>
+          <CardItem header bordered>
+            <Text>Medical ID</Text>
+          </CardItem>
+          <CardItem style={{ flexDirection: 'column'}}bordered>
+            <View style={{ marginBottom:15, alignSelf: 'flex-start',flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text>
+              Blood type:
+              </Text>
             </View>
-        </SafeAreaView>
+
+            <View style={{ marginBottom:15, alignSelf: 'flex-start',flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text>
+              Blood type:
+              </Text>
+            </View>
+          </CardItem>
+        </Card>
+      </Content>
+    </Container>
     )
 }
 
@@ -69,7 +81,8 @@ const styles = StyleSheet.create({
     },
     userInfoSection: {
       paddingHorizontal: 30,
-      marginBottom: 25,
+      paddingBottom: 35,
+      backgroundColor: "#e8fbff",
     },
     avatar:{
       alignItems: 'center',
