@@ -9,6 +9,8 @@ import DoctorsScreen from "../Screens/DoctorsScreen";
 import LoginScreen from "../Screens/LoginScreen";
 import { AuthContext } from "./context";
 import { DrawerContent } from "./DrawerContent";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Content, Button } from "native-base";
 const Drawer = createDrawerNavigator();
 
 const HomeDrawer = () => {
@@ -16,7 +18,16 @@ const HomeDrawer = () => {
     <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={Tabs} />
       <Drawer.Screen
-        options={{ headerShown: false }}
+        options={{
+          headerShown: true,
+          headerLeft: () => (
+            <Content>
+              <Button transparent>
+                <MaterialCommunityIcons name="menu" size={26} />
+              </Button>
+            </Content>
+          ),
+        }}
         name="Emergency Contacts"
         component={SOS}
       />
