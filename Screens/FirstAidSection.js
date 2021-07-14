@@ -8,16 +8,12 @@ export default function FirstAidSection() {
 
   const navigation = useNavigation();
 
-  function FirstAidNav() {
-    navigation.navigate("Home");
-  }
-
   return (
 
     <Container>
         <Content>
           <List>
-            <ListItem avatar onPress={() => navigation.push("Hypothermia")}>
+            <ListItem avatar onPress={() => navigation.navigate("Hypothermia")}>
               <Left>
               <Thumbnail resizeMode="contain" style={{width: 20, height: 20}} source={require("../assets/Ice.png")} />
               </Left>
@@ -25,7 +21,7 @@ export default function FirstAidSection() {
               <Text>Hypothermia</Text>
               </Body>
             </ListItem>
-            <ListItem avatar onPress={() => navigation.push("Meningitis")}>
+            <ListItem avatar onPress={() => navigation.navigate("Meningitis")}>
               <Left>
               <Thumbnail resizeMode="contain" style={{width: 20, height: 20}} source={require("../assets/Meningitis.png")} />
               </Left>
@@ -33,7 +29,7 @@ export default function FirstAidSection() {
               <Text>Meningitis</Text>
               </Body>
             </ListItem>
-            <ListItem avatar onPress={() => navigation.push("Poisoning")}>
+            <ListItem avatar onPress={() => navigation.navigate("Poisoning")}>
               <Left>
               <Thumbnail resizeMode="contain" style={{width: 20, height: 20}} source={require("../assets/Poisoning.png")} />
               </Left>
