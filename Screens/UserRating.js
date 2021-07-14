@@ -17,8 +17,8 @@ export default function UserRating() {
 
   return (
     <Container style={styles.container}>
-      <Header style={{backgroundColor: "#CD113B"}} >
-        <Title>Please Rate Our Doctor</Title>
+      <Header style={{backgroundColor: "white"}} >
+        <Title style={{marginTop:10}}>Please Rate Our Doctor</Title>
         </Header>
       <Content>
       <Card>
