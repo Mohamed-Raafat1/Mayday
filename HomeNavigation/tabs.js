@@ -11,7 +11,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 // Screens
 import HomeScreen from "../Screens/HomeScreen";
 import DoctorsScreen from "../Screens/DoctorsScreen";
-import ProfileScreen from "../Screens/ProfileScreen";
+import MedicalIdScreen from "../Screens/MedicalIdScreen";
 import editProfileScreen from "../Screens/editProfileScreen";
 import FirstAidSection from "../Screens/FirstAidSection";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
@@ -152,7 +152,7 @@ const HomeStackScreen = ({ navigation }) => (
               <MaterialCommunityIcons
                 name="account-circle-outline"
                 size={26}
-                onPress={() => navigation.navigate("Profile")}
+                onPress={() => navigation.navigate("Medical ID")}
                 style={styles.icon}
               />
             </Button>
@@ -161,10 +161,10 @@ const HomeStackScreen = ({ navigation }) => (
       }}
     />
     <HomeStack.Screen
-      name="Profile"
-      component={ProfileScreen}
+      name="Medical ID"
+      component={MedicalIdScreen}
       options={{
-        title: "Profile",
+        title: "Medical ID",
         headerRight: () => (
           <Content style={styles.iconStyle}>
             <Button transparent>

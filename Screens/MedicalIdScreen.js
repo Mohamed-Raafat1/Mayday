@@ -11,7 +11,7 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-function ProfileScreen() {
+function MedicalIdScreen() {
     return(
         <Container style={styles.container}>
             <View style={styles.userInfoSection}>
@@ -64,7 +64,7 @@ function ProfileScreen() {
     )
 }
 
-export default ProfileScreen;
+export default MedicalIdScreen;
 
 
 
