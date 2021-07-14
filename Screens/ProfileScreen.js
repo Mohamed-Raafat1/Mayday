@@ -22,51 +22,44 @@ function ProfileScreen() {
                       size={80}
                     />
                 </View>
+
                 <View>
                   <Title style={styles.title}>Omar Hesham</Title>
                 </View>
                 <View>
                   <Text style={{color:"#777777", textAlign: 'center'}}>5 May, 2000 (21 years)</Text>
                 </View>
+
+            </View>
+            
+            
+            <View style={{flexDirection:'row', justifyContent: 'space-evenly', marginTop:10,}}>
+              <Text style={{fontSize: 18, color:"#777777"}}>HEIGHT{"\n"}<Text>170 cm</Text></Text>
+              <Text style={{fontSize: 18, color:"#777777"}}>WEIGHT{"\n"}<Text>70 kg</Text></Text>
+              <Text style={{fontSize: 18, color:"#777777"}}>BLOOD TYPE{"\n"}<Text>A+</Text></Text>
             </View>
 
-            <View>
-              <View style={styles.row}>
-                <MaterialCommunityIcons name="phone" color="#777777" size={20}/>
-                <Text style={{color:"#777777", marginLeft: 20}}>0123456789</Text>
-              </View>
-              <View style={styles.row}>
-                <MaterialCommunityIcons name="email" color="#777777" size={20}/>
-                <Text style={{color:"#777777", marginLeft: 20}}>omar@gmail.com</Text>
-              </View>
-            </View>
             <View
               style={{
                 borderBottomColor: 'black',
-                borderBottomWidth: 1,
+                borderBottomWidth: 0.5,
+                marginTop: 20
               }}
             />
-            
-      <Content padder>
-        <Card>
-          <CardItem header bordered>
-            <Text>Medical ID</Text>
-          </CardItem>
-          <CardItem style={{ flexDirection: 'column'}}bordered>
-            <View style={{ marginBottom:15, alignSelf: 'flex-start',flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text>
-              Blood type:
-              </Text>
-            </View>
 
-            <View style={{ marginBottom:15, alignSelf: 'flex-start',flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text>
-              Blood type:
-              </Text>
+            <View>
+              <Text style={styles.medicalIDItem}>MEDICAL CONDITIONS</Text>
+              <Text style={styles.medicalIdData}>Asthma</Text>
+              <Text style={styles.medicalIDItem}>ALLERGIES</Text>
+              <Text style={styles.medicalIdData}>Peanut allergy</Text>
+              <Text style={styles.medicalIDItem}>MEDICATIONS</Text>
+              <Text style={styles.medicalIdData}>Atenolol once a day</Text>
+              
             </View>
-          </CardItem>
-        </Card>
-      </Content>
+           
+            
+
+
     </Container>
     )
 }
@@ -113,9 +106,14 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
     },
     medicalIDItem:{
-      marginTop:10,
+      marginTop:20,
+      marginLeft:15,
       fontSize: 20,
-      color:"#777777",
+      color:"#8fccd9",
+      fontWeight: 'bold',
+    },
+    medicalIdData:{
+      marginLeft:15,
     },
     infoBoxWrapper: {
       borderBottomColor: '#dddddd',
