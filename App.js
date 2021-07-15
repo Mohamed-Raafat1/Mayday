@@ -1,54 +1,71 @@
 import "react-native-gesture-handler";
-import React from "react";
-
+import React, { useState, useEffect, useMemo } from "react";
+import { ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 
-import LoginScreen from "./Screens/LoginScreen";
-import HomeScreen from "./Screens/HomeScreen";
-import RegistrationScreen from "./Screens/RegistrationScreen";
-import Chat from "./Screens/Chat";
-import ViewNearestHospital from "./Screens/ViewNearestHospital";
-import  UserRating from './Screens/UserRating'
-import FirstAidSection from './Screens/FirstAidSection';
-import RequestAmbulance from './Screens/RequestAmbulance';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import CurrentReport from "./Screens/CurrentReport";
-import SOS from "./Screens/SOS";
-import Tabs from "./HomeNavigation/tabs";
-import HomeDrawer from "./Components/HomeDrawer";
 
+import RootStackScreen from "./Screens/RootStackScreen";
+import { View } from "native-base";
+import { AuthContext } from "./Components/context";
+import HomeDrawer from "./Components/HomeDrawer";
 
 const Stack = createStackNavigator();
 //exporting fonts needed for nativebase
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [userToken, setUserToken] = useState(null);
+  const authContext = useMemo(() => ({
+    signIn: () => {
+      setUserToken("token");
+      setIsLoading(false);
+    },
+
+    signUp: () => {
+      setUserToken("token");
+      setIsLoading(false);
+    },
+    signOut: () => {
+      setUserToken(null);
+      setIsLoading(false);
+    },
+  }));
   const [loaded] = useFonts({
     Roboto: require("native-base/Fonts/Roboto.ttf"),
     Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
   });
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 700);
+  }, []);
   if (!loaded) {
     return null;
+  }
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator color="red" size="large"></ActivityIndicator>
+      </View>
+    );
   }
   //basic navigation stack login-->homecreen
   //will be changed later
 
-  //2 Stack Screens --> Home Drawer (or RegisterScreen) --> HomeDrawer first item is Tabs.js 
-  // Tabs.js consists of two tabs (Home Stack , First Aid Stack) 
+  //2 Stack Screens --> Home Drawer (or RegisterScreen) --> HomeDrawer first item is Tabs.js
+  // Tabs.js consists of two tabs (Home Stack , First Aid Stack)
   //Tab 1 (Home Stack) consists of 5 Screens (one of them will be chatlist Stack )
   //ChatList Stack consists of screens (Chats)
   return (
-    <NavigationContainer>
-
-      <Stack.Navigator>
-        <Stack.Screen
-          options={{ title: "Welcome", headerShown: false }}
-          name="Login"
-          component={LoginScreen}
-        />
-        <Stack.Screen name="Home" options={{headerShown:false}} component={HomeDrawer} />
-        <Stack.Screen name="Registration" component={RegistrationScreen} />
-
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthContext.Provider value={authContext}>
+      <NavigationContainer>
+        {userToken == null ? (
+          <RootStackScreen></RootStackScreen>
+        ) : (
+          <HomeDrawer></HomeDrawer>
+        )}
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 }

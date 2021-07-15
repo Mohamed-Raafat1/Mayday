@@ -130,7 +130,7 @@ const HomeStackScreen = ({ navigation }) => (
                 badgeStyle={{}}
                 value="3"
                 status="primary"
-                containerStyle={{ position: "absolute", top: -4, right: -4 }}
+                containerStyle={{ position: "absolute", top: -2, right: -2 }}
               />
               <MaterialCommunityIcons
                 name="message-text-outline"
@@ -145,7 +145,7 @@ const HomeStackScreen = ({ navigation }) => (
                 badgeStyle={{}}
                 value="4"
                 status="primary"
-                containerStyle={{ position: "absolute", top: -4, right: -4 }}
+                containerStyle={{ position: "absolute", top: -2, right: -2 }}
               />
               <MaterialCommunityIcons
                 name="bell-outline"
