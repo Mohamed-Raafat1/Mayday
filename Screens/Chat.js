@@ -55,7 +55,7 @@ function Chat() {
         {...props}
         wrapperStyle={{
           right: {
-            backgroundColor: "green",
+            backgroundColor: "grey",
           },
         }}
         textStyle={{
