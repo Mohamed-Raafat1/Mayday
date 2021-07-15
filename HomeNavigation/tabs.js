@@ -12,7 +12,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import HomeScreen from "../Screens/HomeScreen";
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import MedicalIdScreen from "../Screens/MedicalIdScreen";
-import editProfileScreen from "../Screens/editProfileScreen";
+import EditProfileScreen from "../Screens/EditProfileScreen";
 import FirstAidSection from "../Screens/FirstAidSection";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
 import {
@@ -33,6 +33,7 @@ import Chat from "../Screens/Chat";
 import Hypothermia from "../Screens/Hypothermia";
 import Meningitis from "../Screens/Meningitis";
 import Poisoning from "../Screens/Poisoning";
+import DiagnosisScreen from "../Screens/DiagnosisScreen";
 
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
@@ -45,14 +46,18 @@ function Tabs() {
   //2 Tabs Home , First Aid
   return (
     <Tab.Navigator
+  
+    
       initialRouteName="Home"
       activeColor="#cf5b72"
       barStyle={{ backgroundColor: "white" }}
     >
       <Tab.Screen
+      
         name="Home"
         component={HomeStackScreen}
         options={{
+          
           tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="home" color={color} size={26} />
@@ -99,11 +104,13 @@ function Tabs() {
 
 //
 const HomeStackScreen = ({ navigation }) => (
-  <HomeStack.Navigator>
+  <HomeStack.Navigator
+  >
     <HomeStack.Screen
       name="Home"
       component={HomeScreen}
       options={{
+       
         headerLeft: () => (
           <Content style={styles.iconStyle}>
             <Button transparent>
@@ -171,19 +178,27 @@ const HomeStackScreen = ({ navigation }) => (
               <MaterialCommunityIcons
                 name="account-edit-outline"
                 size={30}
-                onPress={() => navigation.navigate("editProfile")}
+                onPress={() => navigation.navigate("EditProfile")}
               />
             </Button>
           </Content>
         ),
       }}
+      
     />
     <HomeStack.Screen
-      name="editProfile"
+      name="EditProfile"
       style={styles.icon}
-      component={editProfileScreen}
+      component={EditProfileScreen}
       options={{
+        headerRight: () => (
+          <Content style={styles.iconStyle}>
+            <Button transparent onPress={() => navigation.navigate("Profile")}>
+              <Text>Save</Text>
+            </Button>
+          </Content>),
         title: "Edit Profile",
+
       }}
     />
     <HomeStack.Screen
@@ -195,6 +210,23 @@ const HomeStackScreen = ({ navigation }) => (
         title: "Chats",
       }}
     />
+    <HomeStack.Screen
+      name="DiagnosisScreen"
+      style={styles.icon}
+      component={DiagnosisScreen}
+      options={{
+        headerRight: () => (
+          <Content style={styles.iconStyle}>
+            <Button transparent onPress={() => navigation.navigate("Current Report")}>
+              <Text>Skip</Text>
+            </Button>
+          </Content>),
+        title: "Diagnosis",
+        }}
+    />
+
+
+
     <HomeStack.Screen
       name="Notifications"
       style={styles.icon}
@@ -221,6 +253,7 @@ const ChatListStackScreen = () => (
     />
   </ChatListStack.Navigator>
 );
+
 
 const FirstAidStackScreen = ({ navigation }) => (
   <FirstAidStack.Navigator>

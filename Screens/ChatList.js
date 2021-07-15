@@ -54,7 +54,7 @@ const ChatList = ({navigation}) => {
     )
 }
 
-export default ChatList
+export default ChatList;
 const styles = StyleSheet.create(
     {
       button:{

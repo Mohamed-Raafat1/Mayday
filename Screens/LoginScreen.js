@@ -81,7 +81,7 @@ function LoginScreen({ navigation }) {
             alignContent: "center",
             backgroundColor: "rgb(250,91,90)",
           }}
-          primary
+          
           iconRight
           rounded
           onPress={() => navigation.navigate("Home")}
