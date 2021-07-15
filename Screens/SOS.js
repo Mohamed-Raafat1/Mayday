@@ -19,8 +19,8 @@ import { StyleSheet } from "react-native";
 function SOS({ navigation }) {
   const buttonColor = "#0A81AB";
   //Toggle Switch to enable SOS
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+  // const [isEnabled, setIsEnabled] = useState(false);
+  // const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   //To save contact numbers (first contact only right now as a Test)
   const [Numbers, SetNumbers] = useState("");

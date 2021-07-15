@@ -28,7 +28,6 @@ const HomeDrawer = () => {
         name="Emergency Contacts"
         component={SOS}
       />
-      <Drawer.Screen name="Current Report" component={CurrentReport} />
       <Drawer.Screen name="User Rating" component={UserRating} />
       <Drawer.Screen
         name="View Nearest Hospital"

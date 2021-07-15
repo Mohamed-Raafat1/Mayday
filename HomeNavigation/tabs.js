@@ -12,7 +12,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import HomeScreen from "../Screens/HomeScreen";
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import MedicalIdScreen from "../Screens/MedicalIdScreen";
-import EditProfileScreen from "../Screens/EditProfileScreen";
+import EditProfileScreen from "../Screens/editProfileScreen";
 import FirstAidSection from "../Screens/FirstAidSection";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
 import {
@@ -34,6 +34,7 @@ import Hypothermia from "../Screens/Hypothermia";
 import Meningitis from "../Screens/Meningitis";
 import Poisoning from "../Screens/Poisoning";
 import DiagnosisScreen from "../Screens/DiagnosisScreen";
+import CurrentReport from "../Screens/CurrentReport";
 
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
@@ -174,12 +175,13 @@ const HomeStackScreen = ({ navigation }) => (
         title: "Medical ID",
         headerRight: () => (
           <Content style={styles.iconStyle}>
-            <Button transparent>
-              <MaterialCommunityIcons
+            <Button transparent onPress={() => navigation.navigate("EditProfile")}>
+              {/* <MaterialCommunityIcons
                 name="account-edit-outline"
                 size={30}
                 onPress={() => navigation.navigate("EditProfile")}
-              />
+              /> */}
+              <Text>Edit</Text>
             </Button>
           </Content>
         ),
@@ -217,7 +219,7 @@ const HomeStackScreen = ({ navigation }) => (
       options={{
         headerRight: () => (
           <Content style={styles.iconStyle}>
-            <Button transparent onPress={() => navigation.navigate("Current Report")}>
+            <Button transparent onPress={() => navigation.navigate("CurrentReport")}>
               <Text>Skip</Text>
             </Button>
           </Content>),
@@ -233,6 +235,14 @@ const HomeStackScreen = ({ navigation }) => (
       component={Notifications}
       options={{
         title: "Notifications",
+      }}
+    />
+    <HomeStack.Screen
+      name="CurrentReport"
+      style={styles.icon}
+      component={CurrentReport}
+      options={{
+        title: "Current Report",
       }}
     />
   </HomeStack.Navigator>
