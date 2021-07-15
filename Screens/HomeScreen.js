@@ -1,17 +1,20 @@
 import React from "react";
-import { StyleSheet, View, Text, Image, TouchableOpacity } from "react-native";
-import { Button } from "native-base";
+import { StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import { Button, Container, Content, View } from "native-base";
 
 function HomeScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <TouchableOpacity>
+    <Container style={styles.container}>
+        <View>
+      <TouchableOpacity onPress={()=> navigation.navigate("DiagnosisScreen")}>
         <Image
           style={styles.sosButton}
           source={require("../assets/red-button.png")}
+          on
         />
       </TouchableOpacity>
-    </View>
+      </View>
+    </Container>
   );
 }
 

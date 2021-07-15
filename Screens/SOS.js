@@ -121,7 +121,6 @@ function SOS({ navigation }) {
           onPress={() => navigation.goBack()}
           style={styles.button}
           primary
-          iconRight
           rounded
           block
         >

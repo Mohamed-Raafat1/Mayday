@@ -1,0 +1,55 @@
+
+ const navigation = useNavigation();
+  const cards = [
+    {
+      text: 'Does the person have any rash, itchiness?',
+      name: 'One',
+    },
+    {
+      text: 'Is the person vomitting?',
+      name: 'two',
+    },
+  ];
+  
+
+  return (
+
+    <Container>
+        <Header />
+        <View>
+          <DeckSwiper
+            ref={(c) => deckSwiper = c}
+            dataSource={cards}
+            renderEmpty={() =>
+              <View style={{ alignSelf: "center" }}>
+                <Text>Over</Text>
+              </View>
+            }
+            renderItem={item =>
+              <Card style={{ elevation: 3 }}>
+                <CardItem>
+                  
+                    <Body>
+                      <Text>{item.text}</Text>
+                      
+                    </Body>
+                  
+                </CardItem>
+            
+              </Card>
+            }
+          />
+        </View>
+        <View style={{ flexDirection: "row", flex: 1, position: "absolute", bottom: 50, left: 0, right: 0, justifyContent: 'space-between', padding: 15 }}>
+          <Button iconLeft onPress={() => this._deckSwiper._root.swipeLeft()}>
+            <Icon name="arrow-back" />
+            <Text>No</Text>
+          </Button>
+          <Button iconRight onPress={() => this._deckSwiper._root.swipeRight()}>
+            <Icon name="arrow-forward" />
+            <Text>Yes</Text>
+          </Button>
+        </View>
+      </Container>
+    );
+}
