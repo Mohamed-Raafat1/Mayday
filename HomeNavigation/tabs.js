@@ -34,6 +34,7 @@ import Hypothermia from "../Screens/Hypothermia";
 import Meningitis from "../Screens/Meningitis";
 import Poisoning from "../Screens/Poisoning";
 import DiagnosisScreen from "../Screens/DiagnosisScreen";
+import CurrentReport from "../Screens/CurrentReport";
 
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
@@ -168,12 +169,16 @@ const HomeStackScreen = ({ navigation }) => (
         title: "Medical ID",
         headerRight: () => (
           <Content style={styles.iconStyle}>
-            <Button transparent>
-              <MaterialCommunityIcons
+            <Button
+              transparent
+              onPress={() => navigation.navigate("EditProfile")}
+            >
+              {/* <MaterialCommunityIcons
                 name="account-edit-outline"
                 size={30}
                 onPress={() => navigation.navigate("EditProfile")}
-              />
+              /> */}
+              <Text>Edit</Text>
             </Button>
           </Content>
         ),
@@ -215,7 +220,7 @@ const HomeStackScreen = ({ navigation }) => (
           <Content style={styles.iconStyle}>
             <Button
               transparent
-              onPress={() => navigation.navigate("Current Report")}
+              onPress={() => navigation.navigate("CurrentReport")}
             >
               <Text>Skip</Text>
             </Button>
@@ -231,6 +236,14 @@ const HomeStackScreen = ({ navigation }) => (
       component={Notifications}
       options={{
         title: "Notifications",
+      }}
+    />
+    <HomeStack.Screen
+      name="CurrentReport"
+      style={styles.icon}
+      component={CurrentReport}
+      options={{
+        title: "Current Report",
       }}
     />
   </HomeStack.Navigator>

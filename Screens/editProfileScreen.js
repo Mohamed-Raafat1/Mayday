@@ -49,12 +49,9 @@ function EditProfileScreen({navigation}) {
               <Input />
             </Item>
             <Textarea rowSpan={5} bordered placeholder="Current Medications" />
-            <Item floatingLabel last style={{padding:10}}>
+            <Item floatingLabel last style={{padding:50}}>
               <Label>Treatment Considerations or Restrictions</Label>
-              <Label>Treatment Considerations or Restrictions</Label>
-              <Label>Treatment Considerations or Restrictions</Label>
-              <Label>Treatment Considerations or Restrictions</Label>
-              <Label>Treatment Considerations or Restrictions</Label>
+
               <Input />
             </Item>
             

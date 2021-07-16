@@ -1,3 +1,6 @@
+
+//REACT NATIVE 
+
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import {
@@ -16,7 +19,7 @@ import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import { AuthContext } from "./context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Icon } from "native-base";
+
 
 export function DrawerContent(props) {
   const { signOut } = React.useContext(AuthContext);
@@ -82,20 +85,6 @@ export function DrawerContent(props) {
             <DrawerItem
               icon={({ color, size }) => (
                 <MaterialCommunityIcons
-                  name="cog-outline"
-                  size={25}
-                  color="black"
-                />
-              )}
-              label="Settings"
-              onPress={() => {
-                props.navigation.navigate("Settings");
-              }}
-            />
-
-            <DrawerItem
-              icon={({ color, size }) => (
-                <MaterialCommunityIcons
                   name="hospital-box-outline"
                   color={"black"}
                   size={size}
@@ -112,7 +101,20 @@ export function DrawerContent(props) {
               )}
               label="User Rating"
               onPress={() => {
-                props.navigation.navigate("View Nearest Hospital");
+                props.navigation.navigate("User Rating");
+              }}
+            />
+           <DrawerItem
+              icon={({ color, size }) => (
+                <MaterialCommunityIcons
+                  name="cog-outline"
+                  size={25}
+                  color="black"
+                />
+              )}
+              label="Settings"
+              onPress={() => {
+                props.navigation.navigate("Settings");
               }}
             />
           </Drawer.Section>
