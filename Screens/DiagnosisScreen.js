@@ -6,8 +6,19 @@ import YoutubePlayer from 'react-native-youtube-iframe';
 
 function DiagnosisScreen() {
 
-  const [isChecked, setIsChecked] = useState(false);
-
+  const [isChecked1, setIsChecked1] = useState(false);
+  const [isChecked2, setIsChecked2] = useState(false);
+  const [isChecked3, setIsChecked3] = useState(false);
+  const [isChecked4, setIsChecked4] = useState(false);
+  const [isChecked5, setIsChecked5] = useState(false);
+  const [isChecked6, setIsChecked6] = useState(false);
+  const [isChecked7, setIsChecked7] = useState(false);
+  const [isChecked8, setIsChecked8] = useState(false);
+  const [isChecked9, setIsChecked9] = useState(false);
+  const [isChecked10, setIsChecked10] = useState(false);
+  const [isChecked11, setIsChecked11] = useState(false);
+  const [isChecked12, setIsChecked12] = useState(false);
+  
   return (
 
     <Container>
@@ -23,7 +34,7 @@ function DiagnosisScreen() {
 
               </Text>
               <Right>
-                <CheckBox checked={isChecked} onPress={() => setIsChecked(isChecked ? false : true)} color="rgb(250,91,90)" />
+                <CheckBox checked={isChecked1} onPress={() => setIsChecked1(isChecked1 ? false : true)} color="rgb(250,91,90)" />
               </Right>
             </View>
             <View style={{ marginBottom: 10, alignSelf: 'flex-start', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -31,7 +42,7 @@ function DiagnosisScreen() {
                 Is the person vomitting?
               </Text>
               <Right>
-                <CheckBox checked={isChecked} onPress={() => setIsChecked(isChecked ? false : true)} color="rgb(250,91,90)" />
+                <CheckBox checked={isChecked2} onPress={() => setIsChecked2(isChecked2 ? false : true)} color="rgb(250,91,90)" />
               </Right>
             </View>
           </CardItem>
@@ -47,7 +58,7 @@ function DiagnosisScreen() {
                 Can the person raise their arms?
               </Text>
               <Right>
-                <CheckBox checked={isChecked} onPress={() => setIsChecked(isChecked ? false : true)} color="rgb(250,91,90)" />
+                <CheckBox checked={isChecked3} onPress={() => setIsChecked3(isChecked3 ? false : true)} color="rgb(250,91,90)" />
               </Right>
             </View>
           </CardItem >
@@ -58,7 +69,7 @@ function DiagnosisScreen() {
                 does the person have dizziness?
               </Text>
               <Right>
-                <CheckBox checked={isChecked} onPress={() => setIsChecked(isChecked ? false : true)} color="rgb(250,91,90)" />
+                <CheckBox checked={isChecked4} onPress={() => setIsChecked4(isChecked4 ? false : true)} color="rgb(250,91,90)" />
               </Right>
             </View>
           </CardItem>
@@ -68,7 +79,7 @@ function DiagnosisScreen() {
                 does the person have numbness?
               </Text>
               <Right>
-                <CheckBox checked={isChecked} onPress={() => setIsChecked(isChecked ? false : true)} color="rgb(250,91,90)" />
+                <CheckBox checked={isChecked5} onPress={() => setIsChecked5(isChecked5 ? false : true)} color="rgb(250,91,90)" />
               </Right>
             </View>
           </CardItem>
@@ -78,7 +89,7 @@ function DiagnosisScreen() {
                 does the person have sudden sever headache?
               </Text>
               <Right>
-                <CheckBox checked={isChecked} onPress={() => setIsChecked(isChecked ? false : true)} color="rgb(250,91,90)" />
+                <CheckBox checked={isChecked6} onPress={() => setIsChecked6(isChecked6 ? false : true)} color="rgb(250,91,90)" />
               </Right>
             </View>
           </CardItem>
@@ -88,7 +99,7 @@ function DiagnosisScreen() {
                 does the person have difficulty maintaining balance?
               </Text>
               <Right>
-                <CheckBox checked={isChecked} onPress={() => setIsChecked(isChecked ? false : true)} color="rgb(250,91,90)" />
+                <CheckBox checked={isChecked7} onPress={() => setIsChecked7(isChecked7 ? false : true)} color="rgb(250,91,90)" />
               </Right>
             </View>
           </CardItem>
@@ -98,7 +109,7 @@ function DiagnosisScreen() {
                 does the person have difficulty in expressing themselves or understanding other people?
               </Text>
               <Right>
-                <CheckBox checked={isChecked} onPress={() => setIsChecked(isChecked ? false : true)} color="rgb(250,91,90)" />
+                <CheckBox checked={isChecked8} onPress={() => setIsChecked8(isChecked8 ? false : true)} color="rgb(250,91,90)" />
               </Right>
             </View>
           </CardItem>
@@ -110,7 +121,7 @@ function DiagnosisScreen() {
                 </Text>
               </Body>
               <Right>
-                <CheckBox checked={isChecked} onPress={() => setIsChecked(isChecked ? false : true)} color="rgb(250,91,90)" />
+                <CheckBox checked={isChecked9} onPress={() => setIsChecked9(isChecked9 ? false : true)} color="rgb(250,91,90)" />
               </Right>
             </View>
           </CardItem>
@@ -126,7 +137,7 @@ function DiagnosisScreen() {
                 Does the person stopped talking suddenly, turned red or clutching his/her throat?
               </Text>
               <Right>
-                <CheckBox checked={isChecked} onPress={() => setIsChecked(isChecked ? false : true)} color="rgb(250,91,90)" />
+                <CheckBox checked={isChecked10} onPress={() => setIsChecked10(isChecked10 ? false : true)} color="rgb(250,91,90)" />
               </Right>
             </View>
           </CardItem>
@@ -143,7 +154,7 @@ function DiagnosisScreen() {
 
               </Text>
               <Right>
-                <CheckBox checked={isChecked} onPress={() => setIsChecked(isChecked ? false : true)} color="rgb(250,91,90)" />
+                <CheckBox checked={isChecked11} onPress={() => setIsChecked11(isChecked11 ? false : true)} color="rgb(250,91,90)" />
               </Right>
             </View>
           </CardItem>
@@ -161,7 +172,7 @@ function DiagnosisScreen() {
 
               </Text>
               <Right>
-                <CheckBox checked={isChecked} onPress={() => setIsChecked(isChecked ? false : true)} color="rgb(250,91,90)" />
+                <CheckBox checked={isChecked12} onPress={() => setIsChecked12(isChecked12 ? false : true)} color="rgb(250,91,90)" />
               </Right>
             </View>
           </CardItem>
