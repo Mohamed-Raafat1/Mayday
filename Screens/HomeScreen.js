@@ -1,12 +1,33 @@
 import React from "react";
-import { StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, Image, TouchableOpacity, Alert } from "react-native";
 import { Button, Container, Content, View } from "native-base";
 
 function HomeScreen({ navigation }) {
+  
+  const RequestType = () =>
+  Alert.alert(
+    "Request Type",
+    "Send Help For",
+    [
+      {
+        text: "ME",
+        onPress: () => {
+          navigation.navigate("RequestDoctor")},
+        
+      },
+      {
+        text: "Someone Else",
+        onPress: () => {navigation.navigate("EmergencyTab")}
+      }
+    ],
+    {
+      cancelable: true,
+    }
+  );
   return (
     <Container style={styles.container}>
         <View>
-      <TouchableOpacity onPress={()=> navigation.navigate("DiagnosisScreen")}>
+      <TouchableOpacity onPress={RequestType}>
         <Image
           style={styles.sosButton}
           source={require("../assets/red-button.png")}
@@ -17,6 +38,8 @@ function HomeScreen({ navigation }) {
     </Container>
   );
 }
+
+
 
 export default HomeScreen;
 

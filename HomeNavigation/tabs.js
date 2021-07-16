@@ -7,6 +7,8 @@ import { Avatar, Badge, withBadge } from "react-native-elements";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import EmergencyTab from "./EmergencyTab";
+// import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 // Screens
 import HomeScreen from "../Screens/HomeScreen";
@@ -42,6 +44,7 @@ const ChatListStack = createStackNavigator();
 
 //Tab Navigation
 const Tab = createMaterialBottomTabNavigator();
+// const EmergencyTab = createMaterialTopTabNavigator();
 
 function Tabs() {
   //2 Tabs Home , First Aid
@@ -98,6 +101,16 @@ function Tabs() {
     </Tab.Navigator>
   );
 }
+
+// function EmergencyTab (){
+//   return (
+//     <Tab.Navigator>
+//       <Tab.Screen name="RequestDoctor" component={DoctorsScreen} />
+//       <Tab.Screen name="ChatList" component={ChatList} />
+//       <Tab.Screen name="View Nearest Hospital" component={ViewNearestHospital}/>
+//     </Tab.Navigator>
+//   );
+// }
 
 //
 const HomeStackScreen = ({ navigation }) => (
@@ -184,6 +197,23 @@ const HomeStackScreen = ({ navigation }) => (
         ),
       }}
     />
+
+    <HomeStack.Screen
+    name="RequestDoctor"
+    component={DoctorsScreen}
+    options={{
+      title:"Request Doctor"
+    }}
+    />
+
+    <HomeStack.Screen
+    name = "EmergencyTab"
+    component={EmergencyTab}
+    options={{
+     
+    }}
+    />
+
     <HomeStack.Screen
       name="EditProfile"
       style={styles.icon}
