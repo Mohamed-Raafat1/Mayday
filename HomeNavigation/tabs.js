@@ -184,6 +184,15 @@ const HomeStackScreen = ({ navigation }) => (
         ),
       }}
     />
+    
+    <HomeStack.Screen
+    name="RequestDoctor"
+    component={DoctorsScreen}
+    options={{
+      title:"Request Doctor"
+    }}
+    />
+
     <HomeStack.Screen
       name="EditProfile"
       style={styles.icon}
