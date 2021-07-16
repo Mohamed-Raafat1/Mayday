@@ -12,13 +12,12 @@ function HomeScreen({ navigation }) {
       {
         text: "ME",
         onPress: () => {
-          console.log("medical ID sent to current report")
           navigation.navigate("RequestDoctor")},
         
       },
       {
         text: "Someone Else",
-        onPress: () => {navigation.navigate("DiagnosisScreen")}
+        onPress: () => {navigation.navigate("EmergencyTab")}
       }
     ],
     {

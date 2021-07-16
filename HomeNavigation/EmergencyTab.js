@@ -1,25 +1,29 @@
-// import React, { Component } from 'react';
-// import { Container, Header, Tab, Tabs, TabHeading, Icon, Text } from 'native-base';
-// import Re from './tabOne';
-// import Tab2 from './tabTwo';
-// import Tab3 from './tabThree';
-// export default class TabsAdvancedExample extends Component {
-//   render() {
-//     return (
-//       <Container>
-//         <Header hasTabs/>
-//         <Tabs>
-//           <Tab heading={ <TabHeading><Icon name="camera" /><Text>Camera</Text></TabHeading>}>
-//             <Tab1 />
-//           </Tab>
-//           <Tab heading={ <TabHeading><Text>No Icon</Text></TabHeading>}>
-//             <Tab2 />
-//           </Tab>
-//           <Tab heading={ <TabHeading><Icon name="apps" /></TabHeading>}>
-//             <Tab3 />
-//           </Tab>
-//         </Tabs>
-//       </Container>
-//     );
-//   }
-// }
+import React, { Component } from 'react';
+import { StyleSheet } from 'react-native';
+import { Container, Header, Tab, Tabs, TabHeading, Icon, Text, View } from 'native-base';
+import DoctorsScreen from '../Screens/DoctorsScreen';
+import ChatList from "../Screens/ChatList";
+import ViewNearestHospital from "../Screens/ViewNearestHospital";
+export default function EmergencyTab () {
+
+    return (
+      <Container style={{flex:1,height:"10%", marginTop:0}}>
+        <Tabs>
+          <Tab   tabStyle={{backgroundColor:"white"}} activeTabStyle={{backgroundColor: "#cf5b72" }} textStyle={{color:"#cf5b72"}} activeTextStyle={{color: "white", fontWeight: 'bold'}} heading = "Request Doctor">
+            <DoctorsScreen />
+          </Tab>
+          <Tab  tabStyle={{backgroundColor:"white"}} activeTabStyle={{backgroundColor: "#cf5b72" }} textStyle={{color:"#cf5b72"}} activeTextStyle={{color: "white", fontWeight: 'bold'}} heading= "Chat">
+            <ChatList />
+          </Tab>
+          <Tab tabStyle={{backgroundColor:"white"}} activeTabStyle={{backgroundColor: "#cf5b72" }} textStyle={{color:"#cf5b72"}} activeTextStyle={{color: "white", fontWeight: 'bold'}} heading="Nearest Hospital">
+            <ViewNearestHospital />
+          </Tab>
+        </Tabs>
+      </Container>
+    );
+    }
+
+    const styles = StyleSheet.create({
+
+      });
+      
