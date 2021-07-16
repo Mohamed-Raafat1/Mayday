@@ -47,18 +47,14 @@ function Tabs() {
   //2 Tabs Home , First Aid
   return (
     <Tab.Navigator
-  
-    
       initialRouteName="Home"
       activeColor="#cf5b72"
       barStyle={{ backgroundColor: "white" }}
     >
       <Tab.Screen
-      
         name="Home"
         component={HomeStackScreen}
         options={{
-          
           tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="home" color={color} size={26} />
@@ -105,13 +101,11 @@ function Tabs() {
 
 //
 const HomeStackScreen = ({ navigation }) => (
-  <HomeStack.Navigator
-  >
+  <HomeStack.Navigator>
     <HomeStack.Screen
       name="Home"
       component={HomeScreen}
       options={{
-       
         headerLeft: () => (
           <Content style={styles.iconStyle}>
             <Button transparent>
@@ -175,7 +169,10 @@ const HomeStackScreen = ({ navigation }) => (
         title: "Medical ID",
         headerRight: () => (
           <Content style={styles.iconStyle}>
-            <Button transparent onPress={() => navigation.navigate("EditProfile")}>
+            <Button
+              transparent
+              onPress={() => navigation.navigate("EditProfile")}
+            >
               {/* <MaterialCommunityIcons
                 name="account-edit-outline"
                 size={30}
@@ -186,7 +183,6 @@ const HomeStackScreen = ({ navigation }) => (
           </Content>
         ),
       }}
-      
     />
     <HomeStack.Screen
       name="EditProfile"
@@ -195,12 +191,15 @@ const HomeStackScreen = ({ navigation }) => (
       options={{
         headerRight: () => (
           <Content style={styles.iconStyle}>
-            <Button transparent onPress={() => navigation.navigate("Profile")}>
+            <Button
+              transparent
+              onPress={() => navigation.navigate("Medical ID")}
+            >
               <Text>Save</Text>
             </Button>
-          </Content>),
+          </Content>
+        ),
         title: "Edit Profile",
-
       }}
     />
     <HomeStack.Screen
@@ -219,15 +218,17 @@ const HomeStackScreen = ({ navigation }) => (
       options={{
         headerRight: () => (
           <Content style={styles.iconStyle}>
-            <Button transparent onPress={() => navigation.navigate("CurrentReport")}>
+            <Button
+              transparent
+              onPress={() => navigation.navigate("CurrentReport")}
+            >
               <Text>Skip</Text>
             </Button>
-          </Content>),
+          </Content>
+        ),
         title: "Diagnosis",
-        }}
+      }}
     />
-
-
 
     <HomeStack.Screen
       name="Notifications"
@@ -263,7 +264,6 @@ const ChatListStackScreen = () => (
     />
   </ChatListStack.Navigator>
 );
-
 
 const FirstAidStackScreen = ({ navigation }) => (
   <FirstAidStack.Navigator>
