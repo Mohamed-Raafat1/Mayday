@@ -9,7 +9,7 @@ import ViewNearestHospital from "../Screens/ViewNearestHospital";
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import { DrawerContent } from "./DrawerContent";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Content, Button } from "native-base";
+import { Content, Button,Text } from "native-base";
 import Settings from "../Screens/Settings Screens/Settings";
 import AccountSettings from "../Screens/Settings Screens/AccountSettings";
 import editProfileScreen from "../Screens/editProfileScreen";
@@ -41,7 +41,7 @@ const HomeDrawer = () => {
 
 //Settings --> Edit Medical ID/Account Settings/location
 const SettingsStack = createStackNavigator();
-const SettingsStackScreen = () => (
+const SettingsStackScreen = ({navigation}) => (
   <SettingsStack.Navigator>
     <SettingsStack.Screen
       name="Settings"
@@ -56,7 +56,16 @@ const SettingsStackScreen = () => (
     <SettingsStack.Screen
       name="editProfile"
       component={editProfileScreen}
-      options={{ title: "Edit Medical ID" }}
+      options={{
+        headerRight: () => (
+          <Content >
+            <Button transparent >
+              <Text>Save</Text>
+            </Button>
+          </Content>),
+        title: "Edit Medical ID",
+
+      }}
     />
     <SettingsStack.Screen
       name="LocationSettings"

@@ -217,12 +217,11 @@ const HomeStackScreen = ({ navigation }) => (
       options={{
         headerRight: () => (
           <Content style={styles.iconStyle}>
-            <Button transparent onPress={() => navigation.navigate("Profile")}>
+            <Button transparent onPress={() => navigation.navigate("Medical ID")}>
               <Text>Save</Text>
             </Button>
           </Content>),
         title: "Edit Profile",
-
       }}
     />
     <HomeStack.Screen
@@ -248,8 +247,6 @@ const HomeStackScreen = ({ navigation }) => (
         title: "Diagnosis",
         }}
     />
-
-
 
     <HomeStack.Screen
       name="Notifications"

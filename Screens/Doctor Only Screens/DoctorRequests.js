@@ -16,7 +16,7 @@ const DoctorRequests = ({navigation}) => {
               <Text style={{fontWeight: 'bold'}}>Sherif Mohamed</Text>
                 <Text>Distance: 2 km</Text>
                 <Text note numberOfLines={1}>Accident Type: Bleeding case</Text>
-               <View style={{flexDirection:"row"}}>
+               <View style={{flexDirection:"row" ,justifyContent:'flex-end'}}>
                <Button transparent  >
                <Icon style={{marginRight:-10}} active name="location" />
                   <Text>Location</Text>

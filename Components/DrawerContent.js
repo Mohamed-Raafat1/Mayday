@@ -101,7 +101,7 @@ export function DrawerContent(props) {
               )}
               label="User Rating"
               onPress={() => {
-                props.navigation.navigate("View Nearest Hospital");
+                props.navigation.navigate("User Rating");
               }}
             />
            <DrawerItem
