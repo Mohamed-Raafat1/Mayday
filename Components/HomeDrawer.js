@@ -1,10 +1,10 @@
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
-import SOS from "../Screens/SOS";
+import sosStackScreen from "../Screens/SOS";
 import CurrentReport from "../Screens/CurrentReport";
 import Tabs from "../HomeNavigation/tabs";
-import UserRating from "../Screens/UserRating";
+import userRatingStackScreen from "../Screens/UserRating";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import { DrawerContent } from "./DrawerContent";
@@ -14,21 +14,20 @@ import Settings from "../Screens/Settings Screens/Settings";
 import AccountSettings from "../Screens/Settings Screens/AccountSettings";
 import editProfileScreen from "../Screens/editProfileScreen";
 import LocationSettings from "../Screens/Settings Screens/LocationSettings";
-import { useNavigation } from "@react-navigation/native";
 const Drawer = createDrawerNavigator();
 
-const HomeDrawer = () => {
+const HomeDrawer = ({ props }) => {
   return (
     <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={Tabs} />
       <Drawer.Screen
-        options={{
-          headerShown: true,
-        }}
+        // options={{
+        //   headerShown: true,
+        // }}
         name="Emergency Contacts"
-        component={SOS}
+        component={sosStackScreen}
       />
-      <Drawer.Screen name="User Rating" component={UserRating} />
+      <Drawer.Screen name="User Rating" component={userRatingStackScreen} />
       <Drawer.Screen
         name="View Nearest Hospital"
         component={ViewNearestHospital}

@@ -7,6 +7,8 @@ import { Avatar, Badge, withBadge } from "react-native-elements";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import EmergencyTab from "./EmergencyTab";
+// import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 // Screens
 import HomeScreen from "../Screens/HomeScreen";
@@ -44,23 +46,20 @@ const DoctorRequestsStack = createStackNavigator();
 
 //Tab Navigation
 const Tab = createMaterialBottomTabNavigator();
+// const EmergencyTab = createMaterialTopTabNavigator();
 
 function Tabs() {
   //2 Tabs Home , First Aid
   return (
     <Tab.Navigator
-  
-    
       initialRouteName="Home"
       activeColor="#cf5b72"
       barStyle={{ backgroundColor: "white" }}
     >
       <Tab.Screen
-      
         name="Home"
         component={HomeStackScreen}
         options={{
-          
           tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="home" color={color} size={26} />
@@ -125,15 +124,23 @@ function Tabs() {
   );
 }
 
+// function EmergencyTab (){
+//   return (
+//     <Tab.Navigator>
+//       <Tab.Screen name="RequestDoctor" component={DoctorsScreen} />
+//       <Tab.Screen name="ChatList" component={ChatList} />
+//       <Tab.Screen name="View Nearest Hospital" component={ViewNearestHospital}/>
+//     </Tab.Navigator>
+//   );
+// }
+
 //
 const HomeStackScreen = ({ navigation }) => (
-  <HomeStack.Navigator
-  >
+  <HomeStack.Navigator>
     <HomeStack.Screen
       name="Home"
       component={HomeScreen}
       options={{
-       
         headerLeft: () => (
           <Content style={styles.iconStyle}>
             <Button transparent>
@@ -197,7 +204,10 @@ const HomeStackScreen = ({ navigation }) => (
         title: "Medical ID",
         headerRight: () => (
           <Content style={styles.iconStyle}>
-            <Button transparent onPress={() => navigation.navigate("EditProfile")}>
+            <Button
+              transparent
+              onPress={() => navigation.navigate("EditProfile")}
+            >
               {/* <MaterialCommunityIcons
                 name="account-edit-outline"
                 size={30}
@@ -208,8 +218,24 @@ const HomeStackScreen = ({ navigation }) => (
           </Content>
         ),
       }}
-      
     />
+
+    <HomeStack.Screen
+    name="RequestDoctor"
+    component={DoctorsScreen}
+    options={{
+      title:"Request Doctor"
+    }}
+    />
+
+    <HomeStack.Screen
+    name = "EmergencyTab"
+    component={EmergencyTab}
+    options={{
+     
+    }}
+    />
+
     <HomeStack.Screen
       name="EditProfile"
       style={styles.icon}
@@ -217,10 +243,14 @@ const HomeStackScreen = ({ navigation }) => (
       options={{
         headerRight: () => (
           <Content style={styles.iconStyle}>
-            <Button transparent onPress={() => navigation.navigate("Medical ID")}>
+            <Button
+              transparent
+              onPress={() => navigation.navigate("Medical ID")}
+            >
               <Text>Save</Text>
             </Button>
-          </Content>),
+          </Content>
+        ),
         title: "Edit Profile",
       }}
     />
@@ -240,12 +270,16 @@ const HomeStackScreen = ({ navigation }) => (
       options={{
         headerRight: () => (
           <Content style={styles.iconStyle}>
-            <Button transparent onPress={() => navigation.navigate("CurrentReport")}>
+            <Button
+              transparent
+              onPress={() => navigation.navigate("CurrentReport")}
+            >
               <Text>Skip</Text>
             </Button>
-          </Content>),
+          </Content>
+        ),
         title: "Diagnosis",
-        }}
+      }}
     />
 
     <HomeStack.Screen
