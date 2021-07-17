@@ -37,10 +37,12 @@ import Meningitis from "../Screens/Meningitis";
 import Poisoning from "../Screens/Poisoning";
 import DiagnosisScreen from "../Screens/DiagnosisScreen";
 import CurrentReport from "../Screens/CurrentReport";
+import DoctorRequests from "../Screens/Doctor Only Screens/DoctorRequests";
 
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
 const ChatListStack = createStackNavigator();
+const DoctorRequestsStack = createStackNavigator();
 
 //Tab Navigation
 const Tab = createMaterialBottomTabNavigator();
@@ -78,6 +80,26 @@ function Tabs() {
           ),
         }}
       />
+   <Tab.Screen
+      
+      name="DoctorRequests"
+      component={DoctorRequestsStackScreen}
+      options={{
+        tabBarLabel: "Requests",
+        tabBarIcon: ({ color }) => (
+          <Button transparent>
+              <Badge
+                badgeStyle={{}}
+                value="3"
+                status="primary"
+                containerStyle={{ position: "absolute", top: -5, right: -5 }}
+              />
+            <MaterialCommunityIcons name="medical-bag" size={24} color={color} style={{marginBottom:10}} />
+          </Button>
+       
+        ),
+      }}
+    />
       {/* <Tab.Screen
             name="Doctors"
             component={DoctorsStackScreen}
@@ -295,6 +317,24 @@ const ChatListStackScreen = () => (
   </ChatListStack.Navigator>
 );
 
+//Navigate in Doctor Requests --> Each Request Dynamically(Soon)
+
+const DoctorRequestsStackScreen = () => (
+  <DoctorRequestsStack.Navigator>
+    <DoctorRequestsStack.Screen
+      name="DoctorRequests"
+      component={DoctorRequests}
+      options={{ title: "Requests" }}
+    />
+    <DoctorRequestsStack.Screen
+      name="DoctorChat"
+      component={Chat}
+      options={{ title: "Chat" }}
+    />
+  </DoctorRequestsStack.Navigator>
+);
+
+
 const FirstAidStackScreen = ({ navigation }) => (
   <FirstAidStack.Navigator>
     <FirstAidStack.Screen
@@ -327,6 +367,10 @@ const FirstAidStackScreen = ({ navigation }) => (
       }}
     />
   </FirstAidStack.Navigator>
+
+
+
+
 );
 
 export default Tabs;
