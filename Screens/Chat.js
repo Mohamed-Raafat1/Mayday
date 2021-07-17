@@ -23,7 +23,7 @@ function Chat() {
     setMessages([
       {
         _id: 1,
-        text: "Hello developer",
+        text: "Hello, What seems to be the problem?",
         createdAt: new Date(),
         user: {
           _id: 2,
@@ -33,7 +33,7 @@ function Chat() {
       },
       {
         _id: 2,
-        text: "Hello amigo",
+        text: "Hello Doctor",
         createdAt: new Date(),
         user: {
           _id: 1,

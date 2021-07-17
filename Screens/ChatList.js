@@ -1,7 +1,9 @@
 import { Container, Header, Content, List, ListItem, Left, Body, Right, Thumbnail, Text } from 'native-base';
 import React from 'react'
 import { StyleSheet } from 'react-native';
-
+import { createStackNavigator } from "@react-navigation/stack";
+import Chat from "../Screens/Chat"
+const ChatListStack = createStackNavigator();
 
 const ChatList = ({navigation}) => {
     return (
@@ -53,8 +55,22 @@ const ChatList = ({navigation}) => {
       </Container>
     )
 }
+const ChatListStackScreen = () => (
+  <ChatListStack.Navigator>
+    <ChatListStack.Screen
+      name="ChatList"
+      component={ChatList}
+      options={{ title: "Chats" }}
+    />
+    <ChatListStack.Screen
+      name="Chat"
+      component={Chat}
+      options={{ title: "Chat" }}
+    />
+  </ChatListStack.Navigator>
+);
 
-export default ChatList;
+export default ChatListStackScreen;
 const styles = StyleSheet.create(
     {
       button:{

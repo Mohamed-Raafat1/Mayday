@@ -45,7 +45,7 @@ const SettingsStackScreen = ({navigation}) => (
     <SettingsStack.Screen
       name="Settings"
       component={Settings}
-      options={{ title: "Settings" }}
+      options={{  headerShown:true,title: "Settings" }}
     />
     <SettingsStack.Screen
       name="AccountSettings"

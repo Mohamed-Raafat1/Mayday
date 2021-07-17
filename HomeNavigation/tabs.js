@@ -27,7 +27,7 @@ import {
   View,
   Row,
 } from "native-base";
-import ChatList from "../Screens/ChatList";
+import ChatListStackScreen from "../Screens/ChatList";
 import Notifications from "../Screens/Notifications";
 import Chat from "../Screens/Chat";
 
@@ -41,7 +41,6 @@ import DoctorRequests from "../Screens/Doctor Only Screens/DoctorRequests";
 
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
-const ChatListStack = createStackNavigator();
 const DoctorRequestsStack = createStackNavigator();
 
 //Tab Navigation
@@ -152,7 +151,7 @@ const HomeStackScreen = ({ navigation }) => (
             </Button>
           </Content>
         ),
-        title: "Appname",
+        title: "Rescu",
         headerRight: () => (
           <View style={{ flexDirection: "row" }}>
             <Button transparent>
@@ -302,20 +301,7 @@ const HomeStackScreen = ({ navigation }) => (
 );
 
 // Navigate ChatList --> each Chat.js dynamically (soon)
-const ChatListStackScreen = () => (
-  <ChatListStack.Navigator>
-    <ChatListStack.Screen
-      name="ChatList"
-      component={ChatList}
-      options={{ title: "Chats" }}
-    />
-    <ChatListStack.Screen
-      name="Chat"
-      component={Chat}
-      options={{ title: "Chat" }}
-    />
-  </ChatListStack.Navigator>
-);
+
 
 //Navigate in Doctor Requests --> Each Request Dynamically(Soon)
 

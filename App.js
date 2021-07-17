@@ -14,7 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 const Stack = createStackNavigator();
 //exporting fonts needed for nativebase
 export default function App({ props }) {
-  console.log(props);
+
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
   const authContext = useMemo(() => ({
