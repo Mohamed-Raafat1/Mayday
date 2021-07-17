@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+import { Ionicons } from "@expo/vector-icons";
+
 import {
   Container,
   Header,
@@ -14,8 +17,9 @@ import {
   Title,
   Input,
 } from "native-base";
-import { StyleSheet } from "react-native";
 
+import { StyleSheet } from "react-native";
+const Stack = createStackNavigator();
 function SOS({ navigation }) {
   const buttonColor = "#0A81AB";
   //Toggle Switch to enable SOS
@@ -60,7 +64,12 @@ function SOS({ navigation }) {
           </Body>
           <Right>
             {/* Get from Contacts Button */}
-            <Button style={{ backgroundColor: buttonColor }}>
+            <Button
+              onPress={() => {
+                navigation.goBack();
+              }}
+              style={{ backgroundColor: buttonColor }}
+            >
               <Icon active name="person" />
             </Button>
           </Right>
@@ -131,7 +140,39 @@ function SOS({ navigation }) {
   );
 }
 
-export default SOS;
+function sosStackScreen({ navigation }) {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <Content style={{ paddingTop: 5 }}>
+              <Button transparent onPress={() => navigation.goBack()}>
+                <Text>Save</Text>
+              </Button>
+            </Content>
+          ),
+          headerLeft: () => (
+            <Content style={{ marginLeft: 10, paddingTop: 5 }}>
+              <Button transparent onPress={() => navigation.goBack()}>
+                <Ionicons
+                  name="ios-arrow-back-outline"
+                  size={24}
+                  color="black"
+                />
+              </Button>
+            </Content>
+          ),
+
+          title: "Emergency Contacts",
+        }}
+        name="Emergency Contacts"
+        component={SOS}
+      />
+    </Stack.Navigator>
+  );
+}
+export default sosStackScreen;
 
 const styles = StyleSheet.create({
   button: {

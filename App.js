@@ -10,10 +10,11 @@ import RootStackScreen from "./Screens/RootStackScreen";
 import { View } from "native-base";
 import { AuthContext } from "./Components/context";
 import HomeDrawer from "./Components/HomeDrawer";
-
+import { useNavigation } from "@react-navigation/native";
 const Stack = createStackNavigator();
 //exporting fonts needed for nativebase
-export default function App() {
+export default function App({ props }) {
+  console.log(props);
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
   const authContext = useMemo(() => ({

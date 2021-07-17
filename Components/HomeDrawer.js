@@ -1,34 +1,33 @@
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
-import SOS from "../Screens/SOS";
+import sosStackScreen from "../Screens/SOS";
 import CurrentReport from "../Screens/CurrentReport";
 import Tabs from "../HomeNavigation/tabs";
-import UserRating from "../Screens/UserRating";
+import userRatingStackScreen from "../Screens/UserRating";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import { DrawerContent } from "./DrawerContent";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Content, Button } from "native-base";
+import { Content, Button,Text } from "native-base";
 import Settings from "../Screens/Settings Screens/Settings";
 import AccountSettings from "../Screens/Settings Screens/AccountSettings";
 import editProfileScreen from "../Screens/editProfileScreen";
 import LocationSettings from "../Screens/Settings Screens/LocationSettings";
-import { useNavigation } from "@react-navigation/native";
 const Drawer = createDrawerNavigator();
 
-const HomeDrawer = () => {
+const HomeDrawer = ({ props }) => {
   return (
     <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={Tabs} />
       <Drawer.Screen
-        options={{
-          headerShown: true,
-        }}
+        // options={{
+        //   headerShown: true,
+        // }}
         name="Emergency Contacts"
-        component={SOS}
+        component={sosStackScreen}
       />
-      <Drawer.Screen name="User Rating" component={UserRating} />
+      <Drawer.Screen name="User Rating" component={userRatingStackScreen} />
       <Drawer.Screen
         name="View Nearest Hospital"
         component={ViewNearestHospital}
@@ -41,7 +40,7 @@ const HomeDrawer = () => {
 
 //Settings --> Edit Medical ID/Account Settings/location
 const SettingsStack = createStackNavigator();
-const SettingsStackScreen = () => (
+const SettingsStackScreen = ({navigation}) => (
   <SettingsStack.Navigator>
     <SettingsStack.Screen
       name="Settings"
@@ -56,7 +55,16 @@ const SettingsStackScreen = () => (
     <SettingsStack.Screen
       name="editProfile"
       component={editProfileScreen}
-      options={{ title: "Edit Medical ID" }}
+      options={{
+        headerRight: () => (
+          <Content >
+            <Button transparent >
+              <Text>Save</Text>
+            </Button>
+          </Content>),
+        title: "Edit Medical ID",
+
+      }}
     />
     <SettingsStack.Screen
       name="LocationSettings"
