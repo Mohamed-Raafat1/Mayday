@@ -79,26 +79,29 @@ function Tabs() {
           ),
         }}
       />
-   <Tab.Screen
-      
-      name="DoctorRequests"
-      component={DoctorRequestsStackScreen}
-      options={{
-        tabBarLabel: "Requests",
-        tabBarIcon: ({ color }) => (
-          <Button transparent>
+      <Tab.Screen
+        name="DoctorRequests"
+        component={DoctorRequestsStackScreen}
+        options={{
+          tabBarLabel: "Requests",
+          tabBarIcon: ({ color }) => (
+            <Button transparent>
               <Badge
                 badgeStyle={{}}
                 value="3"
                 status="primary"
                 containerStyle={{ position: "absolute", top: -5, right: -5 }}
               />
-            <MaterialCommunityIcons name="medical-bag" size={24} color={color} style={{marginBottom:10}} />
-          </Button>
-       
-        ),
-      }}
-    />
+              <MaterialCommunityIcons
+                name="medical-bag"
+                size={24}
+                color={color}
+                style={{ marginBottom: 10 }}
+              />
+            </Button>
+          ),
+        }}
+      />
       {/* <Tab.Screen
             name="Doctors"
             component={DoctorsStackScreen}
@@ -135,7 +138,7 @@ function Tabs() {
 
 //
 const HomeStackScreen = ({ navigation }) => (
-  <HomeStack.Navigator>
+  <HomeStack.Navigator detachInactiveScreens={true} headerMode={"float"}>
     <HomeStack.Screen
       name="Home"
       component={HomeScreen}
@@ -220,19 +223,17 @@ const HomeStackScreen = ({ navigation }) => (
     />
 
     <HomeStack.Screen
-    name="RequestDoctor"
-    component={DoctorsScreen}
-    options={{
-      title:"Request Doctor"
-    }}
+      name="RequestDoctor"
+      component={DoctorsScreen}
+      options={{
+        title: "Request Doctor",
+      }}
     />
 
     <HomeStack.Screen
-    name = "EmergencyTab"
-    component={EmergencyTab}
-    options={{
-     
-    }}
+      name="EmergencyTab"
+      component={EmergencyTab}
+      options={{}}
     />
 
     <HomeStack.Screen
@@ -302,7 +303,6 @@ const HomeStackScreen = ({ navigation }) => (
 
 // Navigate ChatList --> each Chat.js dynamically (soon)
 
-
 //Navigate in Doctor Requests --> Each Request Dynamically(Soon)
 
 const DoctorRequestsStackScreen = () => (
@@ -319,7 +319,6 @@ const DoctorRequestsStackScreen = () => (
     />
   </DoctorRequestsStack.Navigator>
 );
-
 
 const FirstAidStackScreen = ({ navigation }) => (
   <FirstAidStack.Navigator>
@@ -353,10 +352,6 @@ const FirstAidStackScreen = ({ navigation }) => (
       }}
     />
   </FirstAidStack.Navigator>
-
-
-
-
 );
 
 export default Tabs;

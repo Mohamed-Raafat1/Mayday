@@ -1,29 +1,56 @@
-import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
-import { Container, Header, Tab, Tabs, TabHeading, Icon, Text, View } from 'native-base';
-import DoctorsScreen from '../Screens/DoctorsScreen';
+import React, { Component } from "react";
+import { StyleSheet } from "react-native";
+import { Container, Header, TabHeading, Icon, Text, View } from "native-base";
+import DoctorsScreen from "../Screens/DoctorsScreen";
 import ChatListStackScreen from "../Screens/ChatList";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
-export default function EmergencyTab () {
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+const Tab = createMaterialTopTabNavigator();
+export default function EmergencyTab() {
+  return (
+    <Tab.Navigator
+      lazy={true}
+      swipeEnabled={true}
+      tabBarOptions={{
+        inactiveTintColor: "grey",
+        activeTintColor: "#cf5b72",
+        pressColor: "grey",
+        indicatorStyle: {
+          backgroundColor: "white",
+        },
+      }}
+      style={{ backgroundColor: "red" }}
+    >
+      <Tab.Screen
+        options={{ tabBarLabel: "Request Doctor" }}
+        name="RequestDoctor"
+        component={DoctorsScreen}
+      />
+      <Tab.Screen
+        options={{ tabBarLabel: "Chats" }}
+        name="ChatList"
+        component={ChatListStackScreen}
+      />
+      <Tab.Screen
+        options={{ tabBarLabel: "Nearby Hospitals" }}
+        name="View Nearest Hospital"
+        component={ViewNearestHospital}
+      />
+    </Tab.Navigator>
+    // <Container style={{flex:1,height:"10%", marginTop:0}}>
+    //   <Tabs>
+    //     <Tab   tabStyle={{backgroundColor:"white"}} activeTabStyle={{backgroundColor: "#cf5b72" }} textStyle={{color:"#cf5b72"}} activeTextStyle={{color: "white", fontWeight: 'bold'}} heading = "Request Doctor">
+    //       <DoctorsScreen />
+    //     </Tab>
+    //     <Tab  tabStyle={{backgroundColor:"white"}} activeTabStyle={{backgroundColor: "#cf5b72" }} textStyle={{color:"#cf5b72"}} activeTextStyle={{color: "white", fontWeight: 'bold'}} heading= "Chat">
+    //       <ChatListStackScreen />
+    //     </Tab>
+    //     <Tab tabStyle={{backgroundColor:"white"}} activeTabStyle={{backgroundColor: "#cf5b72" }} textStyle={{color:"#cf5b72"}} activeTextStyle={{color: "white", fontWeight: 'bold'}} heading="Nearest Hospital">
+    //       <ViewNearestHospital />
+    //     </Tab>
+    //   </Tabs>
+    // </Container>
+  );
+}
 
-    return (
-      <Container style={{flex:1,height:"10%", marginTop:0}}>
-        <Tabs>
-          <Tab   tabStyle={{backgroundColor:"white"}} activeTabStyle={{backgroundColor: "#cf5b72" }} textStyle={{color:"#cf5b72"}} activeTextStyle={{color: "white", fontWeight: 'bold'}} heading = "Request Doctor">
-            <DoctorsScreen />
-          </Tab>
-          <Tab  tabStyle={{backgroundColor:"white"}} activeTabStyle={{backgroundColor: "#cf5b72" }} textStyle={{color:"#cf5b72"}} activeTextStyle={{color: "white", fontWeight: 'bold'}} heading= "Chat">
-            <ChatListStackScreen />
-          </Tab>
-          <Tab tabStyle={{backgroundColor:"white"}} activeTabStyle={{backgroundColor: "#cf5b72" }} textStyle={{color:"#cf5b72"}} activeTextStyle={{color: "white", fontWeight: 'bold'}} heading="Nearest Hospital">
-            <ViewNearestHospital />
-          </Tab>
-        </Tabs>
-      </Container>
-    );
-    }
-
-    const styles = StyleSheet.create({
-
-      });
-      
+const styles = StyleSheet.create({});
