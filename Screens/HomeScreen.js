@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, Image, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, Text, Image, TouchableOpacity, Alert, StatusBar } from "react-native";
 import { Button, Container, Content, View } from "native-base";
 
 function HomeScreen({ navigation }) {
@@ -26,6 +26,7 @@ function HomeScreen({ navigation }) {
   );
   return (
     <Container style={styles.container}>
+      <StatusBar backgroundColor={'grey'}/>
         <View>
       <TouchableOpacity onPress={RequestType}>
         <Image

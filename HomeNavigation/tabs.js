@@ -2,7 +2,7 @@
 
 import React from "react";
 //React Native
-import { StyleSheet, Image } from "react-native";
+import { StyleSheet, Image, StatusBar } from "react-native";
 import { Avatar, Badge, withBadge } from "react-native-elements";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
@@ -20,6 +20,9 @@ import ViewNearestHospital from "../Screens/ViewNearestHospital";
 import {
   Button,
   Icon,
+  Header,
+  Item,
+  Input,
   Text,
   Container,
   Content,
@@ -326,6 +329,19 @@ const FirstAidStackScreen = ({ navigation }) => (
       name="FirstAid"
       component={FirstAidSection}
       options={{
+        header:()=>(
+          
+          <Header searchBar rounded style={{backgroundColor:'white'}}>
+          <Item>
+            <Icon name="ios-search" />
+            <Input placeholder="Search" />
+         
+          </Item>
+          <Button transparent>
+            <Text>Search</Text>
+          </Button>
+        </Header>
+        ),
         title: "First-Aid",
         headerLeft: null,
       }}

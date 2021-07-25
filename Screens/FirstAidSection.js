@@ -1,4 +1,5 @@
 import React from 'react';
+import {StatusBar} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Header, Container,Text, List, ListItem, Content, Card, CardItem, Body,Item,Icon,Input,Button,Left,Right,Thumbnail} from "native-base"
 import YoutubePlayer from 'react-native-youtube-iframe';
@@ -11,7 +12,9 @@ export default function FirstAidSection() {
   return (
 
     <Container>
+      
         <Content>
+
           <List>
             <ListItem avatar onPress={() => navigation.navigate("Hypothermia")}>
               <Left>
