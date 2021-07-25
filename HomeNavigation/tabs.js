@@ -267,6 +267,15 @@ const HomeStackScreen = ({ navigation }) => (
       }}
     />
     <HomeStack.Screen
+      name="Chat"
+      style={styles.icon}
+      component={Chat}
+      options={{
+        headerShown: false,
+        title: "Chat",
+      }}
+    />
+    <HomeStack.Screen
       name="DiagnosisScreen"
       style={styles.icon}
       component={DiagnosisScreen}
@@ -284,6 +293,8 @@ const HomeStackScreen = ({ navigation }) => (
         title: "Diagnosis",
       }}
     />
+
+    
 
     <HomeStack.Screen
       name="Notifications"
