@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {StyleSheet} from 'react-native';
 import { Container, Header, View, Content, Card, CardItem, CheckBox, Text, Body, Right, Left, Button, Footer } from "native-base"
-import YoutubePlayer from 'react-native-youtube-iframe';
 
 function DiagnosisScreen({navigation}) {
 
@@ -181,7 +180,7 @@ function DiagnosisScreen({navigation}) {
       </Content>
 
       <Footer >
-         <Button onPress={()=>navigation.navigate("Home")} 
+         <Button onPress={()=>navigation.navigate("CurrentReport")} 
          style={{width:"100%", height:"100%", display:'flex', justifyContent:"center", alignItems:"center" , backgroundColor:"rgb(250,91,90)"}}>
             <Text >
               Send

@@ -60,7 +60,9 @@ function SOS({ navigation }) {
               placeholder="First Contact"
               onChangeText={SetNumbers}
               value={Numbers}
-            />
+            >
+              +2010004545584
+              </Input>
           </Body>
           <Right>
             {/* Get from Contacts Button */}
@@ -79,7 +81,7 @@ function SOS({ navigation }) {
             <Text>2.</Text>
           </Left>
           <Body>
-            <Input placeholder="Second Contact" />
+            <Input placeholder="Second Contact" >+2011136445784</Input>
           </Body>
           <Right>
             <Button style={{ backgroundColor: buttonColor }}>
@@ -92,7 +94,7 @@ function SOS({ navigation }) {
             <Text>3.</Text>
           </Left>
           <Body>
-            <Input placeholder="Third Contact" />
+            <Input placeholder="Third Contact" >+2010626363584</Input>
           </Body>
           <Right>
             <Button style={{ backgroundColor: buttonColor }}>
@@ -105,7 +107,7 @@ function SOS({ navigation }) {
             <Text>4.</Text>
           </Left>
           <Body>
-            <Input placeholder="Fourth Contact" />
+            <Input placeholder="Fourth Contact" >+201205554787</Input>
           </Body>
           <Right>
             <Button style={{ backgroundColor: buttonColor }}>
@@ -118,7 +120,7 @@ function SOS({ navigation }) {
             <Text>5.</Text>
           </Left>
           <Body>
-            <Input placeholder="Fifth Contact" />
+            <Input placeholder="Fifth Contact" >+2010006363584</Input>
           </Body>
           <Right>
             <Button style={{ backgroundColor: buttonColor }}>
@@ -126,15 +128,7 @@ function SOS({ navigation }) {
             </Button>
           </Right>
         </ListItem>
-        <Button
-          onPress={() => navigation.goBack()}
-          style={styles.button}
-          primary
-          rounded
-          block
-        >
-          <Text>Save</Text>
-        </Button>
+     
       </Content>
     </Container>
   );

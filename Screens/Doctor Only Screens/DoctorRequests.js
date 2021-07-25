@@ -10,7 +10,7 @@ const DoctorRequests = ({navigation}) => {
             </ListItem>
             <ListItem thumbnail >
               <Left>
-              <Thumbnail source={{ uri: 'https://www.leasurgery.co.uk/media/content/images/doctor.jpg' }} />
+              <Thumbnail source={{ uri: 'https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png' }} />
               </Left>
               <Body style={{flexDirection:"column"}}>
               <Text style={{fontWeight: 'bold'}}>Sherif Mohamed</Text>
@@ -37,7 +37,7 @@ const DoctorRequests = ({navigation}) => {
 
             <ListItem thumbnail>
               <Left>
-              <Thumbnail source={{ uri: 'https://www.leasurgery.co.uk/media/content/images/doctor.jpg' }} />
+              <Thumbnail source={{ uri: 'https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png' }} />
               </Left>
               <Body style={{flexDirection:"column"}}>
                 <Text style={{fontWeight: 'bold'}}>Ahmed Mohamed</Text>
@@ -55,7 +55,7 @@ const DoctorRequests = ({navigation}) => {
             
             <ListItem thumbnail>
               <Left>
-              <Thumbnail source={{ uri: 'https://www.leasurgery.co.uk/media/content/images/doctor.jpg' }} />
+              <Thumbnail source={{ uri: 'https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png' }} />
               </Left>
               <Body style={{flexDirection:"column"}}>
                 <Text style={{fontWeight: 'bold'}}>Abdullah Ahmed</Text>

@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
-import { Container, Header, TabHeading, Icon, Text, View } from "native-base";
+import { Container, Header, TabHeading, Icon, Text, View, ScrollableTab } from "native-base";
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import ChatListStackScreen from "../Screens/ChatList";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
+import CurrentReport from "../Screens/CurrentReport";
+import DiagnosisScreen from "../Screens/DiagnosisScreen";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 const Tab = createMaterialTopTabNavigator();
 export default function EmergencyTab() {
@@ -11,6 +13,7 @@ export default function EmergencyTab() {
     <Tab.Navigator
       lazy={true}
       swipeEnabled={true}
+      renderTabBar={()=> <ScrollableTab />}
       tabBarOptions={{
         inactiveTintColor: "grey",
         activeTintColor: "#cf5b72",
@@ -36,6 +39,13 @@ export default function EmergencyTab() {
         name="View Nearest Hospital"
         component={ViewNearestHospital}
       />
+      <Tab.Screen
+        options={{ tabBarLabel: "Diagnosis" }}
+        name="Diagnosis"
+        component={DiagnosisScreen}
+      />
+      
+       
     </Tab.Navigator>
     // <Container style={{flex:1,height:"10%", marginTop:0}}>
     //   <Tabs>

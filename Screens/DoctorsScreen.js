@@ -19,7 +19,7 @@ const apiCall = () => {
   useEffect(()=>{
     setTimeout(() => {
       setIsLoading(false);
-    }, 3000); 
+    }, 1000); 
   }, []);
 
 
