@@ -16,6 +16,7 @@ import {
   Header,
 } from "native-base";
 import { SafeAreaView, StyleSheet, TouchableOpacity } from "react-native";
+import { Thumbnail } from "native-base";
 import GlobalStyles from "../GlobalStyles";
 import { Feather } from "@expo/vector-icons";
 import { AuthContext } from "../Components/context";
@@ -71,7 +72,7 @@ function LoginScreen({ navigation }) {
       <SafeAreaView style={GlobalStyles.droidSafeArea}>
         <Animatable.View style={styles.Loginform} animation="fadeInUpBig">
           <View>
-            <Text style={{ textAlign: "center" }}>Welcome Screen</Text>
+            <Thumbnail resizeMode="contain" style={{width: 200, height: 200 , marginLeft:'auto' , marginRight:'auto' }} source={require("../assets/LOGO.jpeg")} />
           </View>
           <View>
             <Form>

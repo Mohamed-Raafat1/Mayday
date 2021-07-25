@@ -58,13 +58,12 @@ function MedicalIdScreen() {
               <Text style={styles.medicalIdData}>Atenolol once a day</Text>
               
             </View>
-            
-           <View>
+
+           <View style={{marginLeft:'auto' , marginRight:'auto' }}>
            <Text style={styles.medicalIDItem}>QR Code</Text>
            <Thumbnail resizeMode="contain" style={{width: 200, height: 200 }} source={require("../assets/QRCode.jpg")} />
            </View>
             
-
            </Content>
     </Container>
     )
