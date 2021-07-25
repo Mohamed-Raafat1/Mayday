@@ -44,7 +44,7 @@ function EditProfileScreen({navigation}) {
             <View >
               <Item style={{ marginBottom: 20 }} floatingLabel>
                 <Label>Name</Label>
-                <Input style={styles.title}>Omar Ahmed</Input>
+                <Input style={styles.title}>Omar Hesham</Input>
               </Item>
             </View>
             <View>

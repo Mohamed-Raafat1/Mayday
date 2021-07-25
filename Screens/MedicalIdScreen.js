@@ -1,6 +1,6 @@
 import React from 'react';
 import {SafeAreaView, StyleSheet} from 'react-native';
-import { Container, Text, Content, Card, CardItem, Body, Left, View } from "native-base"
+import { Container, Text, Content, Card, CardItem, Body, Left, View,Thumbnail } from "native-base"
 
 import {
   Avatar,
@@ -13,7 +13,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 function MedicalIdScreen() {
     return(
+      
         <Container style={styles.container}>
+          <Content>
             <View style={styles.userInfoSection}>
               
                 <View style={styles.avatar}>
@@ -56,10 +58,14 @@ function MedicalIdScreen() {
               <Text style={styles.medicalIdData}>Atenolol once a day</Text>
               
             </View>
-           
+            
+           <View>
+           <Text style={styles.medicalIDItem}>QR Code</Text>
+           <Thumbnail resizeMode="contain" style={{width: 200, height: 200 }} source={require("../assets/QRCode.jpg")} />
+           </View>
             
 
-
+           </Content>
     </Container>
     )
 }
