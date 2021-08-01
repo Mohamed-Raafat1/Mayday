@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Container, Text, Content, Card, CardItem, Body, Left, View } from "native-base"
 import YoutubePlayer from 'react-native-youtube-iframe';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Data from "../Data/Poisoning.json"
 export default function Poisoning() {
 
   const navigation = useNavigation();
@@ -10,7 +11,9 @@ export default function Poisoning() {
   function PoisoningNav() {
     navigation.navigate("Home");
   }
-
+  var res = Data.filter(function(item) {
+    return item.id;
+  });
   return (
     <Container>
       <Content padder>
@@ -21,21 +24,37 @@ export default function Poisoning() {
           <CardItem style={{ flexDirection: 'column'}}bordered>
             <View style={{ marginBottom:15, alignSelf: 'flex-start',flexDirection: 'row', justifyContent: 'space-between' }}>
               <MaterialCommunityIcons name="numeric-1-circle" size={20} />
-              <Text>
-              Establish what they have taken. When? And how much?.
-              </Text>
+              {Data.map(data =>{
+                  return(
+                    
+                    <View key={data.id}>
+                    <Text>
+                    {res[0].text}
+                    </Text>
+                    </View>)
+                })}
             </View>
             <View style={{ marginBottom:15, alignSelf: 'flex-start', flexDirection: 'row', justifyContent: 'space-between' }}>
               <MaterialCommunityIcons name="numeric-3-circle" size={20} />
-              <Text>
-              Do not give the person anything to drink unless advised by the emergency center.
-              </Text>
+              {Data.map(data =>{
+                  return(
+                    <View key={data.id}>
+                    <Text>
+                    {res[1].text}
+                    </Text>
+                    </View>)
+                })}
             </View>
             <View style={{marginBottom:15, alignSelf: 'flex-start', flexDirection: 'row'}}>
               <MaterialCommunityIcons name="numeric-3-circle" size={20} />
-              <Text>
-              Call 123 as soon as possible
-              </Text>
+              {Data.map(data =>{
+                  return(
+                    <View key={data.id}>
+                    <Text>
+                    {res[2].text}
+                    </Text>
+                    </View>)
+                })}
             </View>
           </CardItem>
           <View>

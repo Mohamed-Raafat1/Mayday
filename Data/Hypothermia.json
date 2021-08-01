@@ -1,0 +1,18 @@
+[
+    {
+      "Category": "Hypothermia",
+      "id": 11,
+      "text": "The environment is usually cold but a person can develop hypothermia in warm environment as well."
+    },
+    {
+    "Category": "Hypothermia",
+      "id": 12,
+      "text": "Call 123 as soon as possible, or get someone else to do it."
+    },
+    {
+        "Category": "Hypothermia",
+      "id": 13,
+      "text": "warm the person slowly by wrapping them in a blanket and giving them warm drinks and high-energy foods."
+    }
+    
+]

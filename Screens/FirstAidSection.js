@@ -24,6 +24,7 @@ export default function FirstAidSection() {
               <Text>Hypothermia</Text>
               </Body>
             </ListItem>
+
             <ListItem avatar onPress={() => navigation.navigate("Meningitis")}>
               <Left>
               <Thumbnail resizeMode="contain" style={{width: 20, height: 20}} source={require("../assets/Meningitis.png")} />
@@ -32,6 +33,7 @@ export default function FirstAidSection() {
               <Text>Meningitis</Text>
               </Body>
             </ListItem>
+            
             <ListItem avatar onPress={() => navigation.navigate("Poisoning")}>
               <Left>
               <Thumbnail resizeMode="contain" style={{width: 20, height: 20}} source={require("../assets/Poisoning.png")} />

@@ -1,0 +1,18 @@
+[
+    {
+      "Category": "Poisoning",
+      "id": 21,
+      "text": "Establish what they have taken. When? And how much?."
+    },
+    {
+    "Category": "Poisoning",
+      "id": 22,
+      "text": "Do not give the person anything to drink unless advised by the emergency center."
+    },
+    {
+        "Category": "Poisoning",
+      "id": 23,
+      "text": "Call 123 as soon as possible"
+    }
+    
+]

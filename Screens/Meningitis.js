@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Container, Text, Content, Card, CardItem, Body, Left, View } from "native-base"
 import YoutubePlayer from 'react-native-youtube-iframe';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Data from "../Data/Meningitis.json"
 export default function Meningitis() {
 
   const navigation = useNavigation();
@@ -10,7 +11,9 @@ export default function Meningitis() {
   function MeningitisNav() {
     navigation.navigate("Home");
   }
-
+  var res = Data.filter(function(item) {
+    return item.id;
+  });
   return (
     <Container>
       <Content padder>
@@ -21,15 +24,26 @@ export default function Meningitis() {
           <CardItem style={{ flexDirection: 'column'}}bordered>
             <View style={{ marginBottom:15,alignSelf: 'flex-start', flexDirection: 'row', justifyContent: 'space-between' }}>
             <MaterialCommunityIcons name="numeric-1-circle" size={20} />
-              <Text>
-              The person will have a stiff neck. They may also have muscle and joint pain, high temperature, a headache, and sensitivity to light.
-              </Text>
+            {Data.map(data =>{
+                  return(
+                    
+                    <View key={data.id}>
+                    <Text>
+                    {res[0].text}
+                    </Text>
+                    </View>)
+                })}
             </View>
             <View style={{ marginBottom:10, alignSelf: 'flex-start', flexDirection: 'row', justifyContent: 'space-between' }}>
               <MaterialCommunityIcons name="numeric-2-circle" size={20} />
-              <Text>
-              call 123 and give the person constant reassurance while waiting for the ambulance.
-              </Text>
+              {Data.map(data =>{
+                  return(
+                    <View key={data.id}>
+                    <Text>
+                    {res[1].text}
+                    </Text>
+                    </View>)
+                })}
             </View>
           </CardItem>
           <View>
