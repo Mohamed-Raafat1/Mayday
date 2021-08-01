@@ -3,14 +3,17 @@ import { useNavigation } from '@react-navigation/native';
 import { Container, Text, Content, Card, CardItem, Body, Left, View } from "native-base"
 import YoutubePlayer from 'react-native-youtube-iframe';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Data from "../Data/Hypothermia.json"
+import Poison from "../Data/Poisoning.json"
 export default function Hypothermia() {
 
   const navigation = useNavigation();
-
-  function HypothermiaNav() {
+    function HypothermiaNav() {
     navigation.navigate("Home");
   }
-
+  var res = Data.filter(function(item) {
+    return item.id;
+  });
   return (
     <Container>
       <Content padder>
@@ -21,21 +24,38 @@ export default function Hypothermia() {
           <CardItem style={{ flexDirection: 'column'}}bordered>
             <View style={{ marginBottom:15, alignSelf: 'flex-start', flexDirection: 'row', justifyContent: 'space-between' }}>
               <MaterialCommunityIcons name="numeric-1-circle" size={20} />
-              <Text>
-                The environment is usually cold but a person can develop hypothermia in warm environment as well.
-              </Text>
+              
+                {Data.map(data =>{
+                  return(
+                    
+                    <View key={data.id}>
+                    <Text>
+                    {res[0].text}
+                    </Text>
+                    </View>)
+                })}
             </View>
             <View style={{ marginBottom:15, alignSelf: 'flex-start', flexDirection: 'row', justifyContent: 'space-between' }}>
               <MaterialCommunityIcons name="numeric-2-circle" size={20} />
-              <Text>
-              Call 123 as soon as possible, or get someone else to do it.
-              </Text>
+              {Data.map(data =>{
+                  return(
+                    <View key={data.id}>
+                    <Text>
+                    {res[1].text}
+                    </Text>
+                    </View>)
+                })}
             </View>
             <View style={{ marginBottom:15, alignSelf: 'flex-start', flexDirection: 'row', justifyContent: 'space-between' }}>
               <MaterialCommunityIcons name="numeric-3-circle" size={20} />
-              <Text>
-              warm the person slowly by wrapping them in a blanket and giving them warm drinks and high-energy foods.
-              </Text>
+              {Data.map(data =>{
+                  return(
+                    <View key={data.id}>
+                    <Text>
+                    {res[2].text}
+                    </Text>
+                    </View>)
+                })}
             </View>
           </CardItem>
           <View>
