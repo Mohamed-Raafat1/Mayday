@@ -139,7 +139,6 @@ const styles = StyleSheet.create({
     borderRadius: 50
   },
   Item: {
-    borderColor:'red',
     backgroundColor: '#f6f6f6',
     borderTopRightRadius:20,
     borderTopLeftRadius: 20,

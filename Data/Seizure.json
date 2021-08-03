@@ -1,0 +1,23 @@
+[
+    {
+      "Category": "Seizure",
+      "id": 41,
+      "text": "If they have food or fluid in their mouth, roll them onto their side immediately."
+    },
+    {
+    "Category": "Seizure",
+      "id": 42,
+      "text": "Keep them safe and protect them from injury."
+    },
+    {
+        "Category": "Seizure",
+      "id": 43,
+      "text": "Place something soft under their head and loosen any tight clothing."
+    },
+    {
+        "Category": "Seizure",
+      "id": 44,
+      "text": "Call 123 if the seizure lasts for 5 or more minutes or longer than what is normal for the person"
+    }
+    
+]

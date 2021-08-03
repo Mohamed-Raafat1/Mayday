@@ -4,7 +4,7 @@ import React from "react";
 //React Native
 import { StyleSheet, Image, StatusBar } from "react-native";
 import { Avatar, Badge, withBadge } from "react-native-elements";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator,CardStyleInterpolators   } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import EmergencyTab from "./EmergencyTab";
@@ -35,9 +35,12 @@ import Notifications from "../Screens/Notifications";
 import Chat from "../Screens/Chat";
 
 //Stacks Navigation
-import Hypothermia from "../Screens/Hypothermia";
-import Meningitis from "../Screens/Meningitis";
-import Poisoning from "../Screens/Poisoning";
+//First-Aid Screens
+import Hypothermia from "../First-Aid Screens/Hypothermia";
+import Meningitis from "../First-Aid Screens/Meningitis";
+import Poisoning from "../First-Aid Screens/Poisoning";
+import Seizure from "../First-Aid Screens/Seizure";
+
 import DiagnosisScreen from "../Screens/DiagnosisScreen";
 import CurrentReport from "../Screens/CurrentReport";
 import DoctorRequests from "../Screens/Doctor Only Screens/DoctorRequests";
@@ -335,7 +338,10 @@ const DoctorRequestsStackScreen = () => (
 );
 
 const FirstAidStackScreen = ({ navigation }) => (
-  <FirstAidStack.Navigator>
+  <FirstAidStack.Navigator mode="modal"
+  screenOptions={{
+    cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
+  }}>
     <FirstAidStack.Screen
       name="FirstAid"
       component={FirstAidSection}
@@ -376,6 +382,13 @@ const FirstAidStackScreen = ({ navigation }) => (
       component={Poisoning}
       options={{
         title: "Poisoning",
+      }}
+    />
+    <FirstAidStack.Screen
+      name="Seizure"
+      component={Seizure}
+      options={{
+        title: "Seizure",
       }}
     />
   </FirstAidStack.Navigator>
