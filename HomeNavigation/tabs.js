@@ -40,10 +40,16 @@ import Hypothermia from "../First-Aid Screens/Hypothermia";
 import Meningitis from "../First-Aid Screens/Meningitis";
 import Poisoning from "../First-Aid Screens/Poisoning";
 import Seizure from "../First-Aid Screens/Seizure";
+import Choking from "../First-Aid Screens/Choking";
+import HeartAttack from "../First-Aid Screens/HeartAttack";
+import Bleeding from "../First-Aid Screens/Bleeding";
+import Burns from "../First-Aid Screens/Burns";
+import Fractures from "../First-Aid Screens/Fractures";
 
 import DiagnosisScreen from "../Screens/DiagnosisScreen";
 import CurrentReport from "../Screens/CurrentReport";
 import DoctorRequests from "../Screens/Doctor Only Screens/DoctorRequests";
+
 
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
@@ -389,6 +395,41 @@ const FirstAidStackScreen = ({ navigation }) => (
       component={Seizure}
       options={{
         title: "Seizure",
+      }}
+    />
+    <FirstAidStack.Screen
+      name="Choking"
+      component={Choking}
+      options={{
+        title: "Choking",
+      }}
+    />
+    <FirstAidStack.Screen
+      name="HeartAttack"
+      component={HeartAttack}
+      options={{
+        title: "Heart Attack",
+      }}
+    />
+    <FirstAidStack.Screen
+      name="Bleeding"
+      component={Bleeding}
+      options={{
+        title: "Bleeding",
+      }}
+    />
+    <FirstAidStack.Screen
+      name="Burns"
+      component={Burns}
+      options={{
+        title: "Burns",
+      }}
+    />
+    <FirstAidStack.Screen
+      name="Fractures"
+      component={Fractures}
+      options={{
+        title: "Fractures",
       }}
     />
   </FirstAidStack.Navigator>

@@ -50,7 +50,7 @@ export default function Meningitis() {
             <YoutubePlayer
               height={300}
               play={false}
-              videoId={'4e7evinsfm0'}
+              videoId={'su_MyX6BG6A'}
             />
           </View>
         </Card>

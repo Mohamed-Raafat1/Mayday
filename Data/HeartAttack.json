@@ -1,0 +1,23 @@
+[
+    {
+      "Category": "Heart Attack",
+      "id": 61,
+      "text": "Call 123 if you think you or someone else might be having a heart attack."
+    },
+    {
+    "Category": "Heart Attack",
+      "id": 62,
+      "text": "Chew and swallow an aspirin while waiting for emergency help."
+    },
+    {
+        "Category": "Heart Attack",
+      "id": 63,
+      "text": "Begin CPR if the person is unconscious."
+    },
+    {
+        "Category": "Heart Attack",
+      "id": 64,
+      "text": "If an automated external defibrillator (AED) is immediately available and the person is unconscious, follow the device instructions for using it."
+    }
+    
+]

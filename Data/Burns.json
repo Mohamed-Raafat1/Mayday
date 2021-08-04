@@ -1,0 +1,23 @@
+[
+    {
+      "Category": "Burns",
+      "id": 81,
+      "text": "Cool the burn with cool or running water for 20 minutes as soon as possible after the injury. Never use ice. "
+    },
+    {
+    "Category": "Burns",
+      "id": 82,
+      "text": "Cover the burn with a sterile bandage."
+    },
+    {
+        "Category": "Burns",
+      "id": 83,
+      "text": "Treat the pain from a burn with paracetamol or ibuprofen"
+    },
+    {
+        "Category": "Burns",
+      "id": 84,
+      "text": "If the burns are too large or deep call 123."
+    }
+    
+]
