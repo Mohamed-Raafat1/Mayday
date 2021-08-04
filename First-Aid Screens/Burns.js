@@ -4,14 +4,14 @@ import { Container, Text, Content, Card, CardItem, Body, Left, View } from "nati
 import YoutubePlayer from 'react-native-youtube-iframe';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { StyleSheet } from "react-native";
-import Data from "../Data/Hypothermia.json"
-export default function Hypothermia() {
+import Data from "../Data/Burns.json";
+export default function Burns() {
 
   const navigation = useNavigation();
-    function HypothermiaNav() {
+  function HypothermiaNav() {
     navigation.navigate("Home");
   }
-  var res = Data.filter(function(item) {
+  var res = Data.filter(function (item) {
     return item.id;
   });
   return (
@@ -55,12 +55,23 @@ export default function Hypothermia() {
                   </View>)
               })}
             </View>
+            <View style={styles.content}>
+              <MaterialCommunityIcons name="numeric-4-circle" size={25} />
+              {Data.map(data => {
+                return (
+                  <View key={data.id}>
+                    <Text>
+                      {res[3].text}
+                    </Text>
+                  </View>)
+              })}
+            </View>
           </CardItem>
-          <View>
+          <View >
             <YoutubePlayer
               height={300}
               play={false}
-              videoId={'dEKaCOx7igI'}
+              videoId={'DzpRjE5ekVk'}
             />
           </View>
         </Card>
@@ -68,7 +79,6 @@ export default function Hypothermia() {
     </Container>
   );
 }
-
 const styles = StyleSheet.create({
   content: {
     marginRight: 4,
@@ -87,4 +97,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   }
 });
-

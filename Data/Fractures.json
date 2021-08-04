@@ -1,0 +1,23 @@
+[
+    {
+      "Category": "Fractures",
+      "id": 91,
+      "text": "Stop any bleeding. Apply pressure to the wound with a sterile bandage, a clean cloth or a clean piece of clothing. "
+    },
+    {
+    "Category": "Fractures",
+      "id": 92,
+      "text": "Don't try to realign the bone or push a bone that's sticking out back in."
+    },
+    {
+        "Category": "Fractures",
+      "id": 93,
+      "text": "Apply ice packs to limit swelling and help relieve pain."
+    },
+    {
+        "Category": "Fractures",
+      "id": 94,
+      "text": "Call 123 if the bone has pierced the skin."
+    }
+    
+]

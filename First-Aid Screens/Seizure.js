@@ -71,7 +71,7 @@ export default function Seizure() {
             <YoutubePlayer
               height={300}
               play={false}
-              videoId={'4e7evinsfm0'}
+              videoId={'Ovsw7tdneqE'}
             />
           </View>
         </Card>
