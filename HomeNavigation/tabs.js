@@ -36,15 +36,15 @@ import Chat from "../Screens/Chat";
 
 //Stacks Navigation
 //First-Aid Screens
-import Hypothermia from "../First-Aid Screens/Hypothermia";
-import Meningitis from "../First-Aid Screens/Meningitis";
-import Poisoning from "../First-Aid Screens/Poisoning";
-import Seizure from "../First-Aid Screens/Seizure";
-import Choking from "../First-Aid Screens/Choking";
-import HeartAttack from "../First-Aid Screens/HeartAttack";
-import Bleeding from "../First-Aid Screens/Bleeding";
-import Burns from "../First-Aid Screens/Burns";
-import Fractures from "../First-Aid Screens/Fractures";
+import Hypothermia from "../Screens/First-Aid Screens/Hypothermia";
+import Meningitis from "../Screens/First-Aid Screens/Meningitis";
+import Poisoning from "../Screens/First-Aid Screens/Poisoning";
+import Seizure from "../Screens/First-Aid Screens/Seizure";
+import Choking from "../Screens/First-Aid Screens/Choking";
+import HeartAttack from "../Screens/First-Aid Screens/HeartAttack";
+import Bleeding from "../Screens/First-Aid Screens/Bleeding";
+import Burns from "../Screens/First-Aid Screens/Burns";
+import Fractures from "../Screens/First-Aid Screens/Fractures";
 
 import DiagnosisScreen from "../Screens/DiagnosisScreen";
 import CurrentReport from "../Screens/CurrentReport";

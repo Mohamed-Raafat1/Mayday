@@ -4,14 +4,15 @@ import { Container, Text, Content, Card, CardItem, Body, Left, View } from "nati
 import YoutubePlayer from 'react-native-youtube-iframe';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { StyleSheet } from "react-native";
-import Data from "../Data/Fractures.json";
-export default function Fractures() {
+import Data from "../../Data/Poisoning.json"
+export default function Poisoning() {
 
   const navigation = useNavigation();
-  function HypothermiaNav() {
+
+  function PoisoningNav() {
     navigation.navigate("Home");
   }
-  var res = Data.filter(function (item) {
+  var res = Data.filter(function(item) {
     return item.id;
   });
   return (
@@ -55,23 +56,12 @@ export default function Fractures() {
                   </View>)
               })}
             </View>
-            <View style={styles.content}>
-              <MaterialCommunityIcons name="numeric-4-circle" size={25} />
-              {Data.map(data => {
-                return (
-                  <View key={data.id}>
-                    <Text>
-                      {res[3].text}
-                    </Text>
-                  </View>)
-              })}
-            </View>
           </CardItem>
-          <View >
+          <View>
             <YoutubePlayer
               height={300}
               play={false}
-              videoId={'2v8vlXgGXwE'}
+              videoId={'b2ieb8BZJuY'}
             />
           </View>
         </Card>
@@ -79,6 +69,7 @@ export default function Fractures() {
     </Container>
   );
 }
+
 const styles = StyleSheet.create({
   content: {
     marginRight: 4,

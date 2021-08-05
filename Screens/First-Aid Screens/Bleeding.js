@@ -4,8 +4,8 @@ import { Container, Text, Content, Card, CardItem, Body, Left, View } from "nati
 import YoutubePlayer from 'react-native-youtube-iframe';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { StyleSheet } from "react-native";
-import Data from "../Data/HeartAttack.json";
-export default function HeartAttack() {
+import Data from "../../Data/Bleeding.json";
+export default function Bleeding() {
 
   const navigation = useNavigation();
   function HypothermiaNav() {
@@ -67,11 +67,11 @@ export default function HeartAttack() {
               })}
             </View>
           </CardItem>
-          <View>
+          <View >
             <YoutubePlayer
               height={300}
               play={false}
-              videoId={'gDwt7dD3awc'}
+              videoId={'NxO5LvgqZe0'}
             />
           </View>
         </Card>
