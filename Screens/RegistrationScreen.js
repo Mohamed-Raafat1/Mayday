@@ -1,6 +1,5 @@
 import "react-native-gesture-handler";
 import React, { useState } from "react";
-
 import {
   Text,
   Button,
@@ -32,6 +31,7 @@ function RegistrationScreen({ navigation }) {
   const [PhoneNumber, setPhoneNumber] = useState("+20");
   const [FirstName, setFirstName] = useState("");
   const [LastName, setLastName] = useState("");
+
 
   //regex for checking email syntax validity
   const { signUp } = React.useContext(AuthContext);
@@ -99,7 +99,7 @@ function RegistrationScreen({ navigation }) {
             />
           </Item>
 
-          <Item iconRight underline style={styles.Item}>
+          <Item style={{flexDirection:"row"}} iconRight underline style={styles.Item}>
             <Input
               onChangeText={(text) => setPhoneNumber(text)}
               keyboardType="numeric"
