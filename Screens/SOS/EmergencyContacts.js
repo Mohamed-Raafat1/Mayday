@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
-
 import {
   Container,
   Header,
@@ -16,12 +15,13 @@ import {
   Switch,
   Title,
   Input,
+  Thumbnail,
 } from "native-base";
 
 import { StyleSheet } from "react-native";
+
 const Stack = createStackNavigator();
 function SOS({ navigation }) {
-  const buttonColor = "#0A81AB";
   //Toggle Switch to enable SOS
   // const [isEnabled, setIsEnabled] = useState(false);
   // const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
@@ -49,86 +49,122 @@ function SOS({ navigation }) {
             <Switch onValueChange={toggleSwitch} value={isEnabled} />
           </Right>
         </ListItem> */}
-
+        <Text style={styles.Title}>
+         Current 5 Emergency Contacts
+        </Text>
         <ListItem icon style={{ marginBottom: 10, marginTop: 10 }}>
           <Left>
-            <Text>1.</Text>
+            <Thumbnail
+              source={{
+                uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+              }}
+            />
           </Left>
           {/* Emergency Number */}
           <Body>
-            <Input
+            {/* <Input
               placeholder="First Contact"
               onChangeText={SetNumbers}
               value={Numbers}
             >
               +2010004545584
-              </Input>
+            </Input> */}
+            <Text>Ahmed</Text>
+            <Text note numberOfLines={1}>+2010004545584</Text>
           </Body>
           <Right>
             {/* Get from Contacts Button */}
-            <Button
-              onPress={() => {
-                navigation.goBack();
+            <Button onPress={printme} style={styles.button} primary rounded>
+              <Icon active name="person" />
+              <Text style={{ marginLeft: -30 }}>Change</Text>
+            </Button>
+          </Right>
+        </ListItem>
+
+        
+        <ListItem icon style={{ marginBottom: 10, marginTop: 10 }}>
+          <Left>
+            <Thumbnail
+              source={{
+                uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
               }}
-              style={{ backgroundColor: buttonColor }}
-            >
-              <Icon active name="person" />
-            </Button>
-          </Right>
-        </ListItem>
-        <ListItem icon style={{ marginBottom: 10 }}>
-          <Left>
-            <Text>2.</Text>
+            />
           </Left>
           <Body>
-            <Input placeholder="Second Contact" >+2011136445784</Input>
+            <Text>Mohamed</Text>
+            <Text note numberOfLines={1}>+2010004545584</Text>
           </Body>
           <Right>
-            <Button style={{ backgroundColor: buttonColor }}>
+            {/* Get from Contacts Button */}
+            <Button onPress={printme} style={styles.button} primary rounded>
               <Icon active name="person" />
+              <Text style={{ marginLeft: -30 }}>Change</Text>
             </Button>
           </Right>
         </ListItem>
-        <ListItem icon style={{ marginBottom: 10 }}>
+
+        <ListItem icon style={{ marginBottom: 10, marginTop: 10 }}>
           <Left>
-            <Text>3.</Text>
+            <Thumbnail
+              source={{
+                uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+              }}
+            />
           </Left>
           <Body>
-            <Input placeholder="Third Contact" >+2010626363584</Input>
+            <Text>Amr</Text>
+            <Text note numberOfLines={1}>+2010004545584</Text>
           </Body>
           <Right>
-            <Button style={{ backgroundColor: buttonColor }}>
+            {/* Get from Contacts Button */}
+            <Button onPress={printme} style={styles.button} primary rounded>
               <Icon active name="person" />
+              <Text style={{ marginLeft: -30 }}>Change</Text>
             </Button>
           </Right>
         </ListItem>
-        <ListItem icon style={{ marginBottom: 10 }}>
+
+        <ListItem icon style={{ marginBottom: 10, marginTop: 10 }}>
           <Left>
-            <Text>4.</Text>
+            <Thumbnail
+              source={{
+                uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+              }}
+            />
           </Left>
           <Body>
-            <Input placeholder="Fourth Contact" >+201205554787</Input>
+            <Text>Raafat</Text>
+            <Text note numberOfLines={1}>+2010004545584</Text>
           </Body>
           <Right>
-            <Button style={{ backgroundColor: buttonColor }}>
+            {/* Get from Contacts Button */}
+            <Button onPress={printme} style={styles.button} primary rounded>
               <Icon active name="person" />
+              <Text style={{ marginLeft: -30 }}>Change</Text>
             </Button>
           </Right>
         </ListItem>
-        <ListItem icon style={{ marginBottom: 10 }}>
+
+        <ListItem icon style={{ marginBottom: 10, marginTop: 10 }}>
           <Left>
-            <Text>5.</Text>
+            <Thumbnail
+              source={{
+                uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+              }}
+            />
           </Left>
           <Body>
-            <Input placeholder="Fifth Contact" >+2010006363584</Input>
+            <Text>Empty</Text>
+            <Text note numberOfLines={2}>-</Text>
           </Body>
           <Right>
-            <Button style={{ backgroundColor: buttonColor }}>
+            {/* Get from Contacts Button */}
+            <Button onPress={printme} style={styles.button} primary rounded>
               <Icon active name="person" />
+              <Text style={{ marginLeft: -30 }}>Add</Text>
             </Button>
           </Right>
         </ListItem>
-     
       </Content>
     </Container>
   );
@@ -170,10 +206,20 @@ export default sosStackScreen;
 
 const styles = StyleSheet.create({
   button: {
-    marginTop: 50,
-    marginBottom: 10,
     marginHorizontal: 10,
-    alignContent: "center",
-    backgroundColor: "rgb(250,91,90)",
+    marginBottom: 10,
+    backgroundColor: "#00C1D4",
+    shadowColor: "rgba(0, 0, 255, 255)",
+    shadowOpacity: 1,
+    shadowRadius: 20,
+    shadowOffset: { width: 100, height: 100 },
+    elevation: 10,
+  },
+  Title: {
+    fontSize: 20,
+    color: "#8fccd9",
+    fontWeight: "bold",
+    marginLeft:10,
+    marginVertical:20,
   },
 });

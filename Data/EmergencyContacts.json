@@ -1,0 +1,33 @@
+[
+    {
+      "id": 1,
+      "name": "Mohamed",
+      "number": "01006002796",
+      "RESCU": true 
+    },
+    {
+        "id": 2,
+        "name": "Ahmed",
+        "number": "01006232796",
+        "RESCU": false
+    },
+    {
+        "id": 3,
+        "name": "Sherif",
+        "number": "01000002796",
+        "RESCU": true 
+    },
+    {
+        "id": 4,
+        "name": "Raafat",
+        "number": "01006002496",
+        "RESCU": true 
+    },
+    {
+        "id": 5,
+        "name": "Amr",
+        "number": "01006002796",
+        "RESCU": true 
+    }
+    
+]

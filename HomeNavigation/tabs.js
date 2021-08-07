@@ -17,19 +17,7 @@ import MedicalIdScreen from "../Screens/MedicalIdScreen";
 import EditProfileScreen from "../Screens/editProfileScreen";
 import FirstAidSection from "../Screens/FirstAidSection";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
-import {
-  Button,
-  Icon,
-  Header,
-  Item,
-  Input,
-  Text,
-  Container,
-  Content,
-  Right,
-  View,
-  Row,
-} from "native-base";
+import {Button,Icon,Header,Item,Input,Text, Content,View} from "native-base";
 import ChatListStackScreen from "../Screens/ChatList";
 import Notifications from "../Screens/Notifications";
 import Chat from "../Screens/Chat";
@@ -166,7 +154,7 @@ const HomeStackScreen = ({ navigation }) => (
             </Button>
           </Content>
         ),
-        title: "Rescu",
+        title: "RESCU",
         headerRight: () => (
           <View style={{ flexDirection: "row" }}>
             <Button transparent>

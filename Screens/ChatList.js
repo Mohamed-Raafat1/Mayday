@@ -26,7 +26,7 @@ function usePreviousRouteName() {
 }
 
 const ChatList = ({ navigation, previous }) => {
-  console.log(usePreviousRouteName());
+
   return (
     <Container>
       <Content>
