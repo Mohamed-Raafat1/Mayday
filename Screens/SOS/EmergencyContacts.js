@@ -70,7 +70,7 @@ function SOS({ navigation }) {
               +2010004545584
             </Input> */}
             <Text>Ahmed</Text>
-            <Text note numberOfLines={2}>+2010004545584</Text>
+            <Text note numberOfLines={1}>+2010004545584</Text>
           </Body>
           <Right>
             {/* Get from Contacts Button */}
@@ -92,7 +92,7 @@ function SOS({ navigation }) {
           </Left>
           <Body>
             <Text>Mohamed</Text>
-            <Text note numberOfLines={2}>+2010004545584</Text>
+            <Text note numberOfLines={1}>+2010004545584</Text>
           </Body>
           <Right>
             {/* Get from Contacts Button */}
@@ -113,7 +113,7 @@ function SOS({ navigation }) {
           </Left>
           <Body>
             <Text>Amr</Text>
-            <Text note numberOfLines={2}>+2010004545584</Text>
+            <Text note numberOfLines={1}>+2010004545584</Text>
           </Body>
           <Right>
             {/* Get from Contacts Button */}
@@ -134,7 +134,7 @@ function SOS({ navigation }) {
           </Left>
           <Body>
             <Text>Raafat</Text>
-            <Text note numberOfLines={2}>+2010004545584</Text>
+            <Text note numberOfLines={1}>+2010004545584</Text>
           </Body>
           <Right>
             {/* Get from Contacts Button */}

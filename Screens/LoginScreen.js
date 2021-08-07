@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as Animatable from "react-native-animatable";
 import {
   Container,
@@ -22,6 +22,16 @@ import { Feather } from "@expo/vector-icons";
 import { AuthContext } from "../Components/context";
 function LoginScreen({ navigation }) {
   //regex for checking email validity
+  useEffect(
+    () =>
+      navigation.addListener("beforeRemove", (e) => {
+        // Prevent default behavior of leaving the screen
+        e.preventDefault();
+
+        // Prompt the user before leaving the screen
+      }),
+    [navigation]
+  );
   const [isValid, setIsValid] = useState(null);
   const emailRegex = /\S+@\S+\.\S+/;
   //regex for checking email syntax validity
@@ -72,7 +82,16 @@ function LoginScreen({ navigation }) {
       <SafeAreaView style={GlobalStyles.droidSafeArea}>
         <Animatable.View style={styles.Loginform} animation="fadeInUpBig">
           <View>
-            <Thumbnail resizeMode="contain" style={{width: 200, height: 200 , marginLeft:'auto' , marginRight:'auto' }} source={require("../assets/LOGO.jpeg")} />
+            <Thumbnail
+              resizeMode="contain"
+              style={{
+                width: 200,
+                height: 200,
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
+              source={require("../assets/LOGO.jpeg")}
+            />
           </View>
           <View>
             <Form>
