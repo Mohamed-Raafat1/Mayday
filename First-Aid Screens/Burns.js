@@ -8,9 +8,7 @@ import Data from "../Data/Burns.json";
 export default function Burns() {
 
   const navigation = useNavigation();
-  function HypothermiaNav() {
-    navigation.navigate("Home");
-  }
+
   var res = Data.filter(function (item) {
     return item.id;
   });

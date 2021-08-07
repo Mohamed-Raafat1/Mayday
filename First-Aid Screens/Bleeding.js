@@ -8,9 +8,7 @@ import Data from "../Data/Bleeding.json";
 export default function Bleeding() {
 
   const navigation = useNavigation();
-  function HypothermiaNav() {
-    navigation.navigate("Home");
-  }
+
   var res = Data.filter(function (item) {
     return item.id;
   });

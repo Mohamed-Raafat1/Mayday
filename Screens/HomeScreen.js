@@ -40,13 +40,12 @@ function HomeScreen({ navigation }) {
           </TouchableOpacity>
         </View>
         <View style={styles.buttons}>
-          <Button style={styles.buttons} iconLeft rounded danger  onPress={() => { navigation.navigate("View Nearest Hospital") }}>
+          <Button style={styles.button} iconLeft rounded danger  onPress={() => { navigation.navigate("View Nearest Hospital") }}>
             <MaterialCommunityIcons name="hospital-box" size={24} color="white" style={{ padding: 10}}   />
-            <Text style={{color:"white", paddingRight: 10}}>Hospital</Text>
+            <Text style={{color:"white", paddingRight: 10}}>Nearest Hospital</Text>
           </Button>
-          <Button style={styles.buttons} iconLeft rounded danger onPress={() => { navigation.navigate("Chat")}}>
+          <Button style={styles.button} iconLeft rounded danger onPress={() => { navigation.navigate("Chat")}}>
             <Icon name="call-outline"/>
-            
             <Text style={{color:"white", paddingRight: 10, paddingLeft: 10}}>Contact Doctor</Text>
           </Button>
         </View>
@@ -77,8 +76,8 @@ const styles = StyleSheet.create({
     elevation: 20,
     shadowRadius: 20,
     shadowOffset: { width: 100, height: 100 },
-    backgroundColor: "rgb(250,91,90)", 
-    padding: 50,
+    backgroundColor: "#00C1D4", 
+    padding: 25,
     
   },
   views:{
@@ -87,8 +86,9 @@ const styles = StyleSheet.create({
 
   },
   buttons:{
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     marginTop: 50,
+    alignSelf:'center' ,
 }
 });

@@ -1,7 +1,7 @@
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
-import sosStackScreen from "../Screens/SOS";
+import sosStackScreen from "../Screens/SOS/EmergencyContacts";
 import CurrentReport from "../Screens/CurrentReport";
 import Tabs from "../HomeNavigation/tabs";
 import userRatingStackScreen from "../Screens/UserRating";
