@@ -1,25 +1,15 @@
 import "react-native-gesture-handler";
-
+import { useAuth } from "../Components/AuthProvider";
 import React, { useState, useEffect } from "react";
 import * as Animatable from "react-native-animatable";
-import {
-  Container,
-  Text,
-  View,
-  Button,
-  Icon,
-  Form,
-  Item,
-  Input,
-  Label,
-  Content,
-  Header,
-} from "native-base";
+import {Container,Text,View,Button,Icon,Form,Item,Input} from "native-base";
 import { SafeAreaView, StyleSheet, TouchableOpacity } from "react-native";
 import { Thumbnail } from "native-base";
 import GlobalStyles from "../GlobalStyles";
 import { Feather } from "@expo/vector-icons";
-import { AuthContext } from "../Components/context";
+
+const {signIn} = useAuth()
+
 function LoginScreen({ navigation }) {
   //regex for checking email validity
   useEffect(
@@ -43,6 +33,13 @@ function LoginScreen({ navigation }) {
     check_textInputChange: false,
     secureTextEntry: true,
   });
+
+
+  function handleSubmit(){
+    signIn(data.Email,data.Password)
+  }
+
+
   const EmailTextChange = (text) => {
     if (text.length !== 0) {
       setData({
@@ -63,8 +60,7 @@ function LoginScreen({ navigation }) {
       setIsValid(false);
     }
   };
-  //accessing context to use signIn functionality
-  const { signIn } = React.useContext(AuthContext);
+  
   //called when text changes in the password input
   //sets password variable to the current password input value
   const handlePasswordChange = (text) => {
@@ -157,7 +153,7 @@ function LoginScreen({ navigation }) {
               primary
               iconRight
               rounded
-              onPress={signIn}
+              onPress={handleSubmit}
               block
             >
               <Text>LOGIN</Text>

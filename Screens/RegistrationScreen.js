@@ -16,7 +16,7 @@ import {
 } from "native-base";
 import { View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import GlobalStyles from "../GlobalStyles";
-import { AuthContext } from "../Components/context";
+import { useAuth } from "../Components/AuthProvider";
 
 function RegistrationScreen({ navigation }) {
   //regex for checking email validity
@@ -34,7 +34,8 @@ function RegistrationScreen({ navigation }) {
   const [LastName, setLastName] = useState("");
 
   //regex for checking email syntax validity
-  const { signUp } = React.useContext(AuthContext);
+  const { signUp } = useAuth()
+
   const validateEmail = (text) => {
     setEmail(text);
     if (emailRegex.test(text)) {
@@ -49,7 +50,9 @@ function RegistrationScreen({ navigation }) {
     if (Password === text) setEqual(true);
     else setEqual(false);
   };
-
+  function handleSubmit(){
+    signUp(data.Email,data.Password)
+  }
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <ScrollView style={styles.Loginform}>
