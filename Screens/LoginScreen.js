@@ -90,7 +90,7 @@ function LoginScreen({ navigation }) {
                 marginLeft: "auto",
                 marginRight: "auto",
               }}
-              source={require("../assets/LOGO.jpeg")}
+              source={require("../assets/logo.png")}
             />
           </View>
           <View>

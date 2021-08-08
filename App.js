@@ -2,6 +2,7 @@ import "react-native-gesture-handler";
 import React, { useState, useEffect, useMemo } from "react";
 import { ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
+import firebase from 'firebase/app';
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -10,7 +11,18 @@ import RootStackScreen from "./Screens/RootStackScreen";
 import { View } from "native-base";
 import { AuthContext } from "./Components/context";
 import HomeDrawer from "./Components/HomeDrawer";
-import { useNavigation } from "@react-navigation/native";
+const firebaseConfig={
+    apiKey: "AIzaSyCH4QqZ1C8cgycNz3X8uaaubH3R3gPoIGg",
+    authDomain: "rescu-dev.firebaseapp.com",
+    projectId: "rescu-dev",
+    storageBucket: "rescu-dev.appspot.com",
+    messagingSenderId: "993325528560",
+    appId: "1:993325528560:web:d907645f689b19fe161935",
+    measurementId: "G-JFLZQPN8BD"
+  };
+
+const app =firebase.initializeApp(firebaseConfig);
+export const auth=app.auth() ;
 const Stack = createStackNavigator();
 //exporting fonts needed for nativebase
 export default function App({ props }) {
