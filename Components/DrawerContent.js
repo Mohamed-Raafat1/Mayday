@@ -1,5 +1,4 @@
-
-//REACT NATIVE 
+//REACT NATIVE
 
 import React from "react";
 import { View, StyleSheet } from "react-native";
@@ -19,10 +18,13 @@ import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import { AuthContext } from "./context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-
+import firebase from "firebase";
 
 export function DrawerContent(props) {
-  const { signOut } = React.useContext(AuthContext);
+  const onSignout = () => {
+    firebase.auth().signOut();
+    console.log(firebase.auth().currentUser.uid);
+  };
   return (
     <View style={{ flex: 1 }}>
       <DrawerContentScrollView {...props}>
@@ -30,7 +32,9 @@ export function DrawerContent(props) {
           <View style={styles.userInfoSection}>
             <View style={{ flexDirection: "row", marginTop: 15 }}>
               <Avatar.Image
-                source={{uri: 'https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png',}}
+                source={{
+                  uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+                }}
                 size={50}
               />
               <View style={{ marginLeft: 15, flexDirection: "column" }}>
@@ -102,7 +106,7 @@ export function DrawerContent(props) {
                 props.navigation.navigate("User Rating");
               }}
             />
-           <DrawerItem
+            <DrawerItem
               icon={({ color, size }) => (
                 <MaterialCommunityIcons
                   name="cog-outline"
@@ -141,7 +145,7 @@ export function DrawerContent(props) {
             />
           )}
           label="Sign Out"
-          onPress={signOut}
+          onPress={onSignout}
         />
       </Drawer.Section>
     </View>

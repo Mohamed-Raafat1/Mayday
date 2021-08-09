@@ -17,7 +17,7 @@ import {
 import { View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import GlobalStyles from "../GlobalStyles";
 import { AuthContext } from "../Components/context";
-
+import firebase from "firebase";
 function RegistrationScreen({ navigation }) {
   //regex for checking email validity
   const [isValid, setIsValid] = useState(false);
@@ -34,7 +34,7 @@ function RegistrationScreen({ navigation }) {
   const [LastName, setLastName] = useState("");
 
   //regex for checking email syntax validity
-  const { signUp } = React.useContext(AuthContext);
+  const { register } = React.useContext(AuthContext);
   const validateEmail = (text) => {
     setEmail(text);
     if (emailRegex.test(text)) {
@@ -48,6 +48,29 @@ function RegistrationScreen({ navigation }) {
     setConfirmPass(text);
     if (Password === text) setEqual(true);
     else setEqual(false);
+  };
+  const onSignUp = () => {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(Email, Password)
+      .then((result) => {
+        firebase
+          .firestore()
+          .collection("users")
+          .doc(firebase.auth().currentUser.uid)
+          .set({
+            Email,
+            FirstName,
+            LastName,
+            NationalID,
+            PhoneNumber,
+            isChecked,
+          });
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -175,7 +198,7 @@ function RegistrationScreen({ navigation }) {
           primary
           iconRight
           rounded
-          onPress={signUp}
+          onPress={onSignUp}
           block
         >
           <Text>Register</Text>

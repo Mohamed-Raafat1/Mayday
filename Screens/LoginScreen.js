@@ -2,6 +2,7 @@ import "react-native-gesture-handler";
 
 import React, { useState, useEffect } from "react";
 import * as Animatable from "react-native-animatable";
+import firebase from "firebase";
 import {
   Container,
   Text,
@@ -19,7 +20,7 @@ import { SafeAreaView, StyleSheet, TouchableOpacity } from "react-native";
 import { Thumbnail } from "native-base";
 import GlobalStyles from "../GlobalStyles";
 import { Feather } from "@expo/vector-icons";
-import { AuthContext } from "../Components/context";
+
 function LoginScreen({ navigation }) {
   //regex for checking email validity
   useEffect(
@@ -64,7 +65,7 @@ function LoginScreen({ navigation }) {
     }
   };
   //accessing context to use signIn functionality
-  const { signIn } = React.useContext(AuthContext);
+
   //called when text changes in the password input
   //sets password variable to the current password input value
   const handlePasswordChange = (text) => {
@@ -76,7 +77,17 @@ function LoginScreen({ navigation }) {
   const updateSecureTextEntry = () => {
     setData({ ...data, secureTextEntry: !data.secureTextEntry });
   };
-
+  const onSignIn = () => {
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(data.Email, data.Password)
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <Container>
       <SafeAreaView style={GlobalStyles.droidSafeArea}>
@@ -157,7 +168,7 @@ function LoginScreen({ navigation }) {
               primary
               iconRight
               rounded
-              onPress={signIn}
+              onPress={onSignIn}
               block
             >
               <Text>LOGIN</Text>
