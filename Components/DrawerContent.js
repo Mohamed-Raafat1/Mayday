@@ -1,6 +1,6 @@
 //REACT NATIVE
 
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   useTheme,
@@ -13,18 +13,31 @@ import {
   TouchableRipple,
   Switch,
 } from "react-native-paper";
+import firebase from "firebase";
 
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import { AuthContext } from "./context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import firebase from "firebase";
+
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "../redux/actions/index";
 
 export function DrawerContent(props) {
+  const dispatch = useDispatch();
+  useLayoutEffect(() => {
+    dispatch(fetchUser());
+  }, []);
+  // const dispatch = useDispatch();
+  // useEffect(() => {
+  //   dispatch(fetchUser);
+  // }, []);
   const onSignout = () => {
     firebase.auth().signOut();
-    console.log(firebase.auth().currentUser.uid);
   };
+  const currentUser = useSelector((state) => state.userState.currentUser);
+  if (currentUser == undefined) return <View></View>;
   return (
     <View style={{ flex: 1 }}>
       <DrawerContentScrollView {...props}>
@@ -38,7 +51,9 @@ export function DrawerContent(props) {
                 size={50}
               />
               <View style={{ marginLeft: 15, flexDirection: "column" }}>
-                <Title style={styles.title}>Omar Hesham</Title>
+                <Title style={styles.title}>
+                  {currentUser.FirstName + " " + currentUser.LastName}
+                </Title>
               </View>
             </View>
           </View>
@@ -146,6 +161,19 @@ export function DrawerContent(props) {
           )}
           label="Sign Out"
           onPress={onSignout}
+        />
+        <DrawerItem
+          icon={({ color, size }) => (
+            <MaterialCommunityIcons
+              name="exit-to-app"
+              color={"black"}
+              size={25}
+            />
+          )}
+          label="bagarab"
+          onPress={() => {
+            console.log(currentUser);
+          }}
         />
       </Drawer.Section>
     </View>
