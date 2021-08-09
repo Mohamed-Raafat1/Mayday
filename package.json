@@ -50,6 +50,7 @@
     "react-native-webview": "^11.6.5",
     "react-native-youtube-iframe": "^2.1.0",
     "react-number-format": "^4.6.4",
+    "react-redux": "^7.2.4",
     "redux": "^4.1.1",
     "redux-thunk": "^2.3.0",
     "tslib": "^2.3.0"

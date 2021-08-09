@@ -34,7 +34,7 @@ function RegistrationScreen({ navigation }) {
   const [LastName, setLastName] = useState("");
 
   //regex for checking email syntax validity
-  const { register } = React.useContext(AuthContext);
+
   const validateEmail = (text) => {
     setEmail(text);
     if (emailRegex.test(text)) {
