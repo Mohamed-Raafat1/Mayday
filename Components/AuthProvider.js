@@ -1,5 +1,5 @@
-import react, { createContext, useEffect } from "react";
-import { useContext, useState } from "react";
+import react, { createContext } from "react";
+import { useContext } from "react";
 import { auth } from "../App";
 export const AuthContext = createContext();
 export function useAuth() {
@@ -7,28 +7,20 @@ export function useAuth() {
 }
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  
-useEffect(()=>{
-
-  const unsubscribe = auth.onAuthStateChanged(user=>{
-    setUser(user)
-  })
-  return unsubscribe
-},[])
 
   return (
     <AuthContext.Provider
       value={{
         user,
         setUser,
-        signIn: async (email, password) => {
+        login: async (email, password) => {
           try {
             await auth.signInWithEmailAndPassword(email, password);
           } catch (e) {
             console.log(e);
           }
         },
-        signUp: async (email, password) => {
+        register: async (email, password) => {
           try {
             await auth.createUserWithEmailAndPassword(email, password);
           } catch (e) {

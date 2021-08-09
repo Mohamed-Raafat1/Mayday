@@ -9,8 +9,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import RootStackScreen from "./Screens/RootStackScreen";
 import { View } from "native-base";
-import { AuthContext } from "./Components/AuthProvider";
-
+import { AuthContext } from "./Components/context";
 import HomeDrawer from "./Components/HomeDrawer";
 const firebaseConfig={
     apiKey: "AIzaSyCH4QqZ1C8cgycNz3X8uaaubH3R3gPoIGg",
@@ -29,6 +28,22 @@ const Stack = createStackNavigator();
 export default function App({ props }) {
 
   const [isLoading, setIsLoading] = useState(true);
+  const [userToken, setUserToken] = useState(null);
+  const authContext = useMemo(() => ({
+    signIn: () => {
+      setUserToken("token");
+      setIsLoading(false);
+    },
+
+    signUp: () => {
+      setUserToken("token");
+      setIsLoading(false);
+    },
+    signOut: () => {
+      setUserToken(null);
+      setIsLoading(false);
+    },
+  }));
   const [loaded] = useFonts({
     Roboto: require("native-base/Fonts/Roboto.ttf"),
     Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
@@ -56,7 +71,7 @@ export default function App({ props }) {
   //Tab 1 (Home Stack) consists of 5 Screens (one of them will be chatlist Stack )
   //ChatList Stack consists of screens (Chats)
   return (
-    <AuthContext.Provider value={AuthContext}>
+    <AuthContext.Provider value={authContext}>
       <NavigationContainer>
         {userToken == null ? (
           <RootStackScreen></RootStackScreen>
