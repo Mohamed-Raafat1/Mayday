@@ -4,14 +4,31 @@ import { Container, Text, Content, Card, CardItem, Body, Left, View } from "nati
 import YoutubePlayer from 'react-native-youtube-iframe';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { StyleSheet } from "react-native";
-import Data from "../Data/Bleeding.json";
-export default function Bleeding() {
+import Data from "../../Data/Meningitis.json"
+export default function Meningitis() {
 
   const navigation = useNavigation();
 
-  var res = Data.filter(function (item) {
+  function MeningitisNav() {
+    navigation.navigate("Home");
+  }
+  var res = Data.filter(function(item) {
     return item.id;
   });
+
+  const list = () => {
+    return Data.map((data) => {
+      return (
+        <View key={data.id} style={styles.content}>
+          <View flexDirection="row">
+            <MaterialCommunityIcons name="circle-slice-8" size={20} />
+            <Text style={styles.content}>{data.text}</Text>
+          </View>
+        </View>
+      );
+    });
+  };
+
   return (
     <Container>
       <Content padder>
@@ -20,7 +37,8 @@ export default function Bleeding() {
             <Text style={{fontSize:20, fontFamily:'sans-serif-medium'}}>Tips</Text>
           </CardItem>
           <CardItem style={{ flexDirection: 'column' }} bordered>
-            <View style={styles.content}>
+            <View>{list()}</View>
+            {/* <View style={styles.content}>
               <MaterialCommunityIcons name="numeric-1-circle" size={25} />
               {Data.map(data => {
                 return (
@@ -41,35 +59,13 @@ export default function Bleeding() {
                     </Text>
                   </View>)
               })}
-            </View>
-            <View style={styles.content}>
-              <MaterialCommunityIcons name="numeric-3-circle" size={25} />
-              {Data.map(data => {
-                return (
-                  <View key={data.id}>
-                    <Text>
-                      {res[2].text}
-                    </Text>
-                  </View>)
-              })}
-            </View>
-            <View style={styles.content}>
-              <MaterialCommunityIcons name="numeric-4-circle" size={25} />
-              {Data.map(data => {
-                return (
-                  <View key={data.id}>
-                    <Text>
-                      {res[3].text}
-                    </Text>
-                  </View>)
-              })}
-            </View>
+            </View> */}
           </CardItem>
-          <View >
+          <View>
             <YoutubePlayer
               height={300}
               play={false}
-              videoId={'NxO5LvgqZe0'}
+              videoId={'su_MyX6BG6A'}
             />
           </View>
         </Card>
@@ -77,9 +73,28 @@ export default function Bleeding() {
     </Container>
   );
 }
+
+const card = {
+  width: 350,
+  height: 150
+}
+const text = {
+  textAlign: 'center',
+  fontWeight: 'bold',
+  color: '#5d1a0c',
+  fontSize: 18,
+}
+const button = {
+  width: 50,
+  height: 50,
+  alignContent: 'center',
+  justifyContent: 'center'
+};
+
 const styles = StyleSheet.create({
   content: {
-    marginRight: 4,
+    marginRight: 10,
+    marginLeft: 10,
     marginBottom: 15,
     alignSelf: 'flex-start',
     flexDirection: 'row',
@@ -95,3 +110,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   }
 });
+

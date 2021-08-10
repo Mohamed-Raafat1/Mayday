@@ -4,14 +4,31 @@ import { Container, Text, Content, Card, CardItem, Body, Left, View } from "nati
 import YoutubePlayer from 'react-native-youtube-iframe';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { StyleSheet } from "react-native";
-import Data from "../Data/Burns.json";
-export default function Burns() {
+import Data from "../../Data/Poisoning.json"
+export default function Poisoning() {
 
   const navigation = useNavigation();
 
-  var res = Data.filter(function (item) {
+  function PoisoningNav() {
+    navigation.navigate("Home");
+  }
+  var res = Data.filter(function(item) {
     return item.id;
   });
+
+  const list = () => {
+    return Data.map((data) => {
+      return (
+        <View key={data.id} style={styles.content}>
+          <View flexDirection="row">
+            <MaterialCommunityIcons name="circle-slice-8" size={20} />
+            <Text style={styles.content}>{data.text}</Text>
+          </View>
+        </View>
+      );
+    });
+  };
+
   return (
     <Container>
       <Content padder>
@@ -20,11 +37,12 @@ export default function Burns() {
             <Text style={{fontSize:20, fontFamily:'sans-serif-medium'}}>Tips</Text>
           </CardItem>
           <CardItem style={{ flexDirection: 'column' }} bordered>
-            <View style={styles.content}>
+            <View>{list()}</View>
+            {/* <View style={styles.content}>
               <MaterialCommunityIcons name="numeric-1-circle" size={25} />
               {Data.map(data => {
                 return (
-                  <View key={data.id}>
+                  <View style={{flex=1}} key={data.id}>
                     <Text>
                       {res[0].text}
                     </Text>
@@ -52,24 +70,13 @@ export default function Burns() {
                     </Text>
                   </View>)
               })}
-            </View>
-            <View style={styles.content}>
-              <MaterialCommunityIcons name="numeric-4-circle" size={25} />
-              {Data.map(data => {
-                return (
-                  <View key={data.id}>
-                    <Text>
-                      {res[3].text}
-                    </Text>
-                  </View>)
-              })}
-            </View>
+            </View> */}
           </CardItem>
-          <View >
+          <View>
             <YoutubePlayer
               height={300}
               play={false}
-              videoId={'DzpRjE5ekVk'}
+              videoId={'b2ieb8BZJuY'}
             />
           </View>
         </Card>
@@ -77,9 +84,11 @@ export default function Burns() {
     </Container>
   );
 }
+
 const styles = StyleSheet.create({
   content: {
-    marginRight: 4,
+    marginRight: 10,
+    marginLeft: 10,
     marginBottom: 15,
     alignSelf: 'flex-start',
     flexDirection: 'row',

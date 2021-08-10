@@ -124,6 +124,20 @@ export function DrawerContent(props) {
             <DrawerItem
               icon={({ color, size }) => (
                 <MaterialCommunityIcons
+                  name="history"
+                  size={25}
+                  color="black"
+                />
+              )}
+              label="Previous Accidents"
+              onPress={() => {
+                props.navigation.navigate("Accidents List");
+              }}
+            />
+
+            <DrawerItem
+              icon={({ color, size }) => (
+                <MaterialCommunityIcons
                   name="cog-outline"
                   size={25}
                   color="black"
