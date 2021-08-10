@@ -64,7 +64,7 @@ function MedicalIdScreen() {
           </Text>
           <Text style={{ fontSize: 18, color: "#777777" }}>
             WEIGHT{"\n"}
-            <Text>70 kg</Text>
+            <Text>100 kg</Text>
           </Text>
           <Text style={{ fontSize: 18, color: "#777777" }}>
             BLOOD TYPE{"\n"}

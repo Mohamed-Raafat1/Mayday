@@ -36,7 +36,7 @@ function EditProfileScreen({navigation}) {
         <Content>
           <View style={styles.userInfoSection}>
             <Item style={{ alignSelf: "center", borderBottomWidth: 0, flexDirection: "row", padding: 10 }}>
-              <RadioGroup
+              <RadioGroup 
                 radioButtons={radioButtons}
                 onPress={onPressRadioButton}
               />
@@ -69,33 +69,51 @@ function EditProfileScreen({navigation}) {
 
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 10, }}>
-            <View style={{ flexDirection: 'column', justifyContent: 'space-between' }}>
+            <View style={{ flexDirection: 'column' }}>
               <Text style={{ fontSize: 18, color: "#777777" }}>
-                HEIGHT{"\n"}
-                <Item style={{ borderBottomWidth: 0}}>
-                  <Input style={{paddingHorizontal:5}} >170</Input>
+                HEIGHT{"\n\n"}
+              <Item style={{ borderBottomWidth: 0 }}>
+                  <Input placeholder="170" keyboardType="numeric" style={{paddingRight:10}} />
                   <Text>cm</Text>
-                </Item>
+                  </Item>
 
               </Text>
             </View>
 
             <View style={{ flexDirection: 'column', justifyContent: 'space-between' }}>
               <Text style={{ fontSize: 18, color: "#777777" }}>
-                WEIGHT{"\n"}
-                <Item style={{ borderBottomWidth: 0 }}>
-                  <Input >70</Input>
+                WEIGHT{"\n\n"}
+                <Item  style={{ borderBottomWidth: 0 }}>
+                  <Input placeholder="100" keyboardType="numeric"  />
                   <Text>kg</Text>
                 </Item>
               </Text>
             </View>
             
             <View style={{ flexDirection: 'column', justifyContent: 'space-between' }}>
-              <Text style={{ fontSize: 18, color: "#777777" }}>BLOOD TYPE{"\n"}
-                <Item style={{ borderBottomWidth: 0 }}>
-                  <Input >A+</Input>
-                </Item>
+              <Text style={{ fontSize: 18, color: "#777777", marginBottom:0 }}>BLOOD TYPE{"\n"}
+            
               </Text>
+           
+              <Picker style={{marginTop:0}} mode="dropdown" iosHeader="Blood Type"
+                   iosIcon={<Icon name="arrow-dropdown-circle" style={{ fontSize: 25 }} />}
+                   style={{  }}
+                   selectedValue={BloodType}
+                   onValueChange={SetBloodType}
+                   
+                  >
+                    <Picker.Item label="A+" value="A+"></Picker.Item>
+                    <Picker.Item label="A-" value="A-"></Picker.Item>
+                    <Picker.Item label="B+" value="B+"></Picker.Item>
+                    <Picker.Item label="B-" value="B-"></Picker.Item>
+                    <Picker.Item label="AB+" value="AB+"></Picker.Item>
+                    <Picker.Item label="AB-" value="AB-"></Picker.Item>
+                    <Picker.Item label="O+" value="O+"></Picker.Item>
+                    <Picker.Item label="O-" value="O-"></Picker.Item>
+
+
+                  </Picker>
+           
             </View>
           </View>
 
