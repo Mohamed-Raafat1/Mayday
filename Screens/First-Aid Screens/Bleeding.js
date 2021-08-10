@@ -12,6 +12,20 @@ export default function Bleeding() {
   var res = Data.filter(function (item) {
     return item.id;
   });
+
+  const list = () => {
+    return Data.map((data) => {
+      return (
+        <View key={data.id} style={styles.content}>
+          <View flexDirection="row">
+            <MaterialCommunityIcons name="circle-slice-8" size={20} />
+            <Text style={styles.content}>{data.text}</Text>
+          </View>
+        </View>
+      );
+    });
+  };
+
   return (
     <Container>
       <Content padder>
@@ -20,6 +34,8 @@ export default function Bleeding() {
             <Text style={{fontSize:20, fontFamily:'sans-serif-medium'}}>Tips</Text>
           </CardItem>
           <CardItem style={{ flexDirection: 'column' }} bordered>
+             <View>{list()}</View>
+            {/*
             <View style={styles.content}>
               <MaterialCommunityIcons name="numeric-1-circle" size={25} />
               {Data.map(data => {
@@ -63,7 +79,7 @@ export default function Bleeding() {
                     </Text>
                   </View>)
               })}
-            </View>
+            </View> */}
           </CardItem>
           <View >
             <YoutubePlayer
@@ -79,7 +95,8 @@ export default function Bleeding() {
 }
 const styles = StyleSheet.create({
   content: {
-    marginRight: 4,
+    marginRight: 10,
+    marginLeft: 10,
     marginBottom: 15,
     alignSelf: 'flex-start',
     flexDirection: 'row',
