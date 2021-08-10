@@ -4,15 +4,12 @@ import { Container, Text, Content, Card, CardItem, Body, Left, View } from "nati
 import YoutubePlayer from 'react-native-youtube-iframe';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { StyleSheet } from "react-native";
-import Data from "../Data/Poisoning.json"
-export default function Poisoning() {
+import Data from "../../Data/Bleeding.json";
+export default function Bleeding() {
 
   const navigation = useNavigation();
 
-  function PoisoningNav() {
-    navigation.navigate("Home");
-  }
-  var res = Data.filter(function(item) {
+  var res = Data.filter(function (item) {
     return item.id;
   });
   return (
@@ -56,12 +53,23 @@ export default function Poisoning() {
                   </View>)
               })}
             </View>
+            <View style={styles.content}>
+              <MaterialCommunityIcons name="numeric-4-circle" size={25} />
+              {Data.map(data => {
+                return (
+                  <View key={data.id}>
+                    <Text>
+                      {res[3].text}
+                    </Text>
+                  </View>)
+              })}
+            </View>
           </CardItem>
-          <View>
+          <View >
             <YoutubePlayer
               height={300}
               play={false}
-              videoId={'b2ieb8BZJuY'}
+              videoId={'NxO5LvgqZe0'}
             />
           </View>
         </Card>
@@ -69,7 +77,6 @@ export default function Poisoning() {
     </Container>
   );
 }
-
 const styles = StyleSheet.create({
   content: {
     marginRight: 4,

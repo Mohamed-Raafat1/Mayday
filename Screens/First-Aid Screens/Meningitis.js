@@ -4,11 +4,12 @@ import { Container, Text, Content, Card, CardItem, Body, Left, View } from "nati
 import YoutubePlayer from 'react-native-youtube-iframe';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { StyleSheet } from "react-native";
-import Data from "../Data/Hypothermia.json"
-export default function Hypothermia() {
+import Data from "../../Data/Meningitis.json"
+export default function Meningitis() {
 
   const navigation = useNavigation();
-    function HypothermiaNav() {
+
+  function MeningitisNav() {
     navigation.navigate("Home");
   }
   var res = Data.filter(function(item) {
@@ -44,23 +45,12 @@ export default function Hypothermia() {
                   </View>)
               })}
             </View>
-            <View style={styles.content}>
-              <MaterialCommunityIcons name="numeric-3-circle" size={25} />
-              {Data.map(data => {
-                return (
-                  <View key={data.id}>
-                    <Text>
-                      {res[2].text}
-                    </Text>
-                  </View>)
-              })}
-            </View>
           </CardItem>
           <View>
             <YoutubePlayer
               height={300}
               play={false}
-              videoId={'dEKaCOx7igI'}
+              videoId={'su_MyX6BG6A'}
             />
           </View>
         </Card>
@@ -68,6 +58,23 @@ export default function Hypothermia() {
     </Container>
   );
 }
+
+const card = {
+  width: 350,
+  height: 150
+}
+const text = {
+  textAlign: 'center',
+  fontWeight: 'bold',
+  color: '#5d1a0c',
+  fontSize: 18,
+}
+const button = {
+  width: 50,
+  height: 50,
+  alignContent: 'center',
+  justifyContent: 'center'
+};
 
 const styles = StyleSheet.create({
   content: {

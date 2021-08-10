@@ -4,11 +4,13 @@ import { Container, Text, Content, Card, CardItem, Body, Left, View } from "nati
 import YoutubePlayer from 'react-native-youtube-iframe';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { StyleSheet } from "react-native";
-import Data from "../Data/Bleeding.json";
-export default function Bleeding() {
+import Data from "../../Data/Seizure.json"
+export default function Seizure() {
 
   const navigation = useNavigation();
-
+  function HypothermiaNav() {
+    navigation.navigate("Home");
+  }
   var res = Data.filter(function (item) {
     return item.id;
   });
@@ -65,11 +67,11 @@ export default function Bleeding() {
               })}
             </View>
           </CardItem>
-          <View >
+          <View>
             <YoutubePlayer
               height={300}
               play={false}
-              videoId={'NxO5LvgqZe0'}
+              videoId={'Ovsw7tdneqE'}
             />
           </View>
         </Card>

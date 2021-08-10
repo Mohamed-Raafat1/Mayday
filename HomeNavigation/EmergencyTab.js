@@ -29,11 +29,13 @@ export default function EmergencyTab() {
         name="RequestDoctor"
         component={DoctorsScreen}
       />
-      <Tab.Screen
+      
+      {//removed chatlist screen for now
+      /* <Tab.Screen
         options={{ tabBarLabel: "Chats" }}
         name="ChatList"
         component={ChatListStackScreen}
-      />
+      /> */}
       <Tab.Screen
         options={{ tabBarLabel: "Nearby Hospitals" }}
         name="View Nearest Hospital"

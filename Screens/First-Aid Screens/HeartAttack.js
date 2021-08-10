@@ -4,8 +4,8 @@ import { Container, Text, Content, Card, CardItem, Body, Left, View } from "nati
 import YoutubePlayer from 'react-native-youtube-iframe';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { StyleSheet } from "react-native";
-import Data from "../Data/Choking.json"
-export default function Choking() {
+import Data from "../../Data/HeartAttack.json";
+export default function HeartAttack() {
 
   const navigation = useNavigation();
   function HypothermiaNav() {
@@ -66,34 +66,12 @@ export default function Choking() {
                   </View>)
               })}
             </View>
-            <View style={styles.content}>
-              <MaterialCommunityIcons name="numeric-5-circle" size={25} />
-              {Data.map(data => {
-                return (
-                  <View key={data.id}>
-                    <Text>
-                      {res[4].text}
-                    </Text>
-                  </View>)
-              })}
-            </View>
-            <View style={styles.content}>
-              <MaterialCommunityIcons name="numeric-6-circle" size={25} />
-              {Data.map(data => {
-                return (
-                  <View style={styles.content} key={data.id}>
-                    <Text>
-                      {res[5].text}
-                    </Text>
-                  </View>)
-              })}
-            </View>
           </CardItem>
           <View>
             <YoutubePlayer
               height={300}
               play={false}
-              videoId={'PA9hpOnvtCk'}
+              videoId={'gDwt7dD3awc'}
             />
           </View>
         </Card>

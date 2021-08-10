@@ -4,13 +4,11 @@ import { Container, Text, Content, Card, CardItem, Body, Left, View } from "nati
 import YoutubePlayer from 'react-native-youtube-iframe';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { StyleSheet } from "react-native";
-import Data from "../Data/Fractures.json";
-export default function Fractures() {
+import Data from "../../Data/Burns.json";
+export default function Burns() {
 
   const navigation = useNavigation();
-  function HypothermiaNav() {
-    navigation.navigate("Home");
-  }
+
   var res = Data.filter(function (item) {
     return item.id;
   });
@@ -71,7 +69,7 @@ export default function Fractures() {
             <YoutubePlayer
               height={300}
               play={false}
-              videoId={'2v8vlXgGXwE'}
+              videoId={'DzpRjE5ekVk'}
             />
           </View>
         </Card>
