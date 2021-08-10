@@ -14,6 +14,7 @@ import Settings from "../Screens/Settings Screens/Settings";
 import AccountSettings from "../Screens/Settings Screens/AccountSettings";
 import editProfileScreen from "../Screens/editProfileScreen";
 import LocationSettings from "../Screens/Settings Screens/LocationSettings";
+//import AccidentList from "../Screens/AccidentsListScreen";
 const Drawer = createDrawerNavigator();
 
 const HomeDrawer = ({ props }) => {
@@ -33,6 +34,8 @@ const HomeDrawer = ({ props }) => {
         component={ViewNearestHospital}
       />
       <Drawer.Screen name="Request Doctor" component={DoctorsScreen} />
+      {/* <Drawer.Screen name="Accidents List" component={AccidentList} /> */}
+
       <Drawer.Screen name="Settings" component={SettingsStackScreen} />
     </Drawer.Navigator>
   );

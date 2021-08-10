@@ -121,6 +121,20 @@ export function DrawerContent(props) {
                 props.navigation.navigate("User Rating");
               }}
             />
+            {/* <DrawerItem
+              icon={({ color, size }) => (
+                <MaterialCommunityIcons
+                  name="history"
+                  size={25}
+                  color="black"
+                />
+              )}
+              label="Previous Accidents"
+              onPress={() => {
+                props.navigation.navigate("Accidents List");
+              }}
+            /> */}
+
             <DrawerItem
               icon={({ color, size }) => (
                 <MaterialCommunityIcons
