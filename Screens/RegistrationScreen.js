@@ -16,13 +16,13 @@ import {
 } from "native-base";
 import { View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import GlobalStyles from "../GlobalStyles";
-import { AuthContext } from "../Components/context";
+
 import firebase from "firebase";
 function RegistrationScreen({ navigation }) {
   //regex for checking email validity
   const [isValid, setIsValid] = useState(false);
   const [isEqual, setEqual] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  const [medicalProfessional, setmedicalProfessional] = useState(false);
   const emailRegex = /\S+@\S+\.\S+/;
 
   const [Email, setEmail] = useState("");
@@ -64,7 +64,7 @@ function RegistrationScreen({ navigation }) {
             LastName,
             NationalID,
             PhoneNumber,
-            isChecked,
+            medicalProfessional,
           });
         console.log(result);
       })
@@ -164,8 +164,10 @@ function RegistrationScreen({ navigation }) {
           </Item>
           <ListItem>
             <CheckBox
-              checked={isChecked}
-              onPress={() => setIsChecked(isChecked ? false : true)}
+              checked={medicalProfessional}
+              onPress={() =>
+                setmedicalProfessional(medicalProfessional ? false : true)
+              }
               color="rgb(250,91,90)"
             />
 

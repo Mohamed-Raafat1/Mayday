@@ -2,25 +2,13 @@
 
 import React, { useLayoutEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import {
-  useTheme,
-  Avatar,
-  Title,
-  Caption,
-  Paragraph,
-  Drawer,
-  Text,
-  TouchableRipple,
-  Switch,
-} from "react-native-paper";
+import { Avatar, Title, Drawer } from "react-native-paper";
 import firebase from "firebase";
 
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
-import { AuthContext } from "./context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/actions/index";
 
@@ -29,10 +17,7 @@ export function DrawerContent(props) {
   useLayoutEffect(() => {
     dispatch(fetchUser());
   }, []);
-  // const dispatch = useDispatch();
-  // useEffect(() => {
-  //   dispatch(fetchUser);
-  // }, []);
+
   const onSignout = () => {
     firebase.auth().signOut();
   };
