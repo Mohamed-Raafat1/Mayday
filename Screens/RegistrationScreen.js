@@ -13,6 +13,7 @@ import {
   Input,
   ListItem,
   CheckBox,
+  Toast,
 } from "native-base";
 import { View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import GlobalStyles from "../GlobalStyles";
@@ -69,6 +70,10 @@ function RegistrationScreen({ navigation }) {
         console.log(result);
       })
       .catch((error) => {
+        Toast.show({
+          text: error.message,
+          duration: 2000,
+          })
         console.log(error);
       });
   };
