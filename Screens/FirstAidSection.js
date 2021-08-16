@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect  } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Container, Text, List, ListItem, Content, Body, Left, Right, Icon, Thumbnail } from "native-base";
-import { StyleSheet, Touchable, TouchableOpacity } from "react-native";
+import { Container, Text, List, ListItem, Content, Body, Left, Right, Icon, Thumbnail, Header, Item, Input, Button, View } from "native-base";
+import { StyleSheet, Touchable, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
+import firebase from "firebase";
+import filter from 'lodash.filter';
 import Hypothermia from './First-Aid Screens/Hypothermia';
 import Meningitis from './First-Aid Screens/Meningitis';
 import Poisoning from './First-Aid Screens/Poisoning';
@@ -11,18 +13,94 @@ import HeartAttack from './First-Aid Screens/HeartAttack';
 import Bleeding from './First-Aid Screens/Bleeding';
 import Burns from './First-Aid Screens/Burns';
 import Fractures from './First-Aid Screens/Fractures';
-import { shadow } from 'react-native-paper';
-export default function FirstAidSection() {
+import { shadow, TextInput } from 'react-native-paper';
+import tempData from '../Data/tempData';
 
+
+
+export default function FirstAidSection() {
+  const [loading, setLoading] = useState(true); // Set loading to true on component mount
+  const [categories, setCategories] = useState([]);
+  const [query, setQuery] = useState('');
+  const [fullData, setFullData] = useState([]);
+  const [search, setSearch]= useState('');
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const subscriber = firebase.firestore()
+      .collection('firstAidCategories')
+      .onSnapshot(querySnapshot => {
+        const categories = [];
+  
+        querySnapshot.forEach(documentSnapshot => {
+          categories.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
+        });
+  
+        setCategories(categories);
+        setFullData(categories);
+        setLoading(false);
+      });
+  
+    // Unsubscribe from events when no longer in use
+    return () => subscriber();
+  }, []);
+
+  if (loading) {
+    return <ActivityIndicator />;
+  }
+
+  const handleSearch = text => {
+    const formattedQuery = text;
+    const filteredData = filter(fullData, categories => {
+      return contains(categories, formattedQuery);
+    });
+    setCategories(filteredData);
+    setQuery(text);
+  };
+  
+  const contains = ({category}, query) => {
+  
+    if (category.includes(query)) {
+      return true;
+    }
+  
+    return false;
+  };
+
 
   return (
 
     <Container >
 
       <Content style={{ marginLeft: 5, width: '95%' }}>
+      <Header searchBar rounded style={{backgroundColor:'white'}}>
+          <Item>
+            <Icon name="ios-search" />
+            <Input placeholder="Search"
+            value={query}
+            onChangeText={(queryText) => handleSearch(queryText)} />
+         
+          </Item>
+          <Button transparent>
+            <Text>Search</Text>
+          </Button>
+        </Header>
+        <View style={{marginBottom: 'auto', marginTop: 'auto'}}>
+          <FlatList
+            data={categories}
+            renderItem={({ item }) => (
+              <View>
+                <Text>{item.category}</Text>
+              </View>
+            )}
+        />
+            </View>
 
-        <List>
+        
+        {/* <List>
           <ListItem noIndent style={styles.Buttons} onPress={() => navigation.navigate(Hypothermia)}>
             <Left >
               <Thumbnail resizeMode="contain" style={{ width: 30, height: 30 }} source={require("../assets/Hypothermia.png")} />
@@ -112,7 +190,7 @@ export default function FirstAidSection() {
               <Icon style={{ color: 'black' }} name="arrow-forward" />
             </Right>
           </ListItem>
-        </List>
+        </List> */}
       </Content>
     </Container>
   );
@@ -136,6 +214,10 @@ const styles = StyleSheet.create({
     shadowColor: 'rgba(46, 229, 157, 0.4)',
     elevation: 6,
 
+  },
+  search: {
+    height:60,
+    borderWidth: 1,
   }
 
 });

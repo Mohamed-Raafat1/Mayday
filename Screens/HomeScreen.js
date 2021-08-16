@@ -1,56 +1,52 @@
-import React from "react";
-import { StyleSheet, Text, Image, TouchableOpacity, Alert, StatusBar } from "react-native";
-import { Button, Container, Content, View, Icon } from "native-base";
+import React, { useState } from "react";
+import { Animated, StyleSheet, Pressable, TouchableWithoutFeedback, Text, Image, TouchableOpacity, Alert, StatusBar, TouchableWithoutFeedbackBase, Dimensions } from "react-native";
+import { Button, Container, Content, View } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
+import LottieView from 'lottie-react-native';
+
+import Icon from 'react-native-vector-icons/Ionicons';
+import firebase from "firebase";
+
+
+const { width, height } = Dimensions.get('window');
 
 function HomeScreen({ navigation }) {
+
+  const requestSOS = () => navigation.navigate("EmergencyTab")
+  const helpOthers = () => navigation.navigate("EmergencyTab", {screen:"Diagnosis"})
   
-  const RequestType = () =>
-  Alert.alert(
-    "Request Type",
-    "Send Help For",
-    [
-      {
-        text: "ME",
-        onPress: () => {
-          navigation.navigate("EmergencyTab")},
-        
-      },
-      {
-        text: "Someone Else",
-        onPress: () => {navigation.navigate("EmergencyTab", {screen:"Diagnosis"})}
-      }
-    ],
-    {
-      cancelable: true,
-    }
-  );
+
   return (
     <Container style={styles.container}>
-      <StatusBar backgroundColor={'grey'}/>
-      <View>
-        <View style={{ alignItems: 'center', marginBottom: 10, }}>
-          <TouchableOpacity onPress={RequestType}>
-            <Image
-              style={styles.sosButton}
-              source={require("../assets/red-button.png")}
-              on
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttons}>
-          <Button style={styles.button} iconLeft rounded danger  onPress={() => { navigation.navigate("View Nearest Hospital") }}>
-            <MaterialCommunityIcons name="hospital-box" size={24} color="white" style={{ padding: 10}}   />
-            <Text style={{color:"white", paddingRight: 10}}>Nearest Hospital</Text>
-          </Button>
-          <Button style={styles.button} iconLeft rounded danger onPress={() => { navigation.navigate("Chat")}}>
-            <Icon name="call-outline"/>
-            <Text style={{color:"white", paddingRight: 10, paddingLeft: 10}}>Contact Doctor</Text>
-          </Button>
-        </View>
-
+      <View style={styles.sosButton}>
+         <TouchableWithoutFeedback onPress={requestSOS}>
+          <LottieView
+            source={require("../assets/sos-button-triggered.json")}
+            autoPlay loop 
+          />
+        </TouchableWithoutFeedback>
       </View>
+
+      <View style={styles.bottomSheet}>
+        <View style={styles.buttons}>
+          <Button style={styles.button} bordered onPress={() => { navigation.navigate("View Nearest Hospital") }}>
+            <MaterialCommunityIcons name="hospital-box-outline" size={24} color="black" />
+            <Text style={{ color: "black", paddingLeft: 10, paddingRight: 10, textAlign: 'center', }}>Nearest Hospital</Text>
+          </Button>
+          <Button style={styles.button} bordered onPress={() => { navigation.navigate("Chat") }}>
+            <Icon name="call-outline" size={24}/>
+            <Text style={{ color: "black", paddingLeft: 10, paddingRight: 10, textAlign: 'center', }}>Contact Doctor</Text>
+          </Button>
+          <Button style={styles.button} bordered onPress={helpOthers}>
+            <Icon name="people-outline" size={24}/>
+            <Text style={{ color: "black", paddingLeft: 10, paddingRight: 10, textAlign: 'center', }}>Help Others</Text>
+          </Button>
+        </View>
+      </View>
+
+
+      {/* </View> */}
     </Container>
   );
 }
@@ -62,33 +58,60 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    
-    justifyContent: "center",
+    backgroundColor: "#eff2f9",
   },
   sosButton: {
-    width: 200,
-    height: 200,
+    width: 350,
+    height: 350,
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginTop: 'auto',
+    marginBottom: 'auto',
   },
   button: {
-    shadowColor: "rgba(0, 0, 255, 255)",
-    shadowOpacity: 1,
-    elevation: 20,
-    shadowRadius: 20,
-    shadowOffset: { width: 100, height: 100 },
-    backgroundColor: "#00C1D4", 
-    padding: 25,
-    
+    backgroundColor: "#fff",
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    elevation: 3,
   },
-  views:{
-   
-    
+
+  actionButton: {
+    margin: 100
+
 
   },
-  buttons:{
-    flexDirection: 'column',
-    justifyContent: 'space-between',
+  actionButtonIcon: {
+    fontSize: 20,
+    height: 22,
+    color: 'white',
+  },
+
+  triggerButton: {
+
+    alignItems: 'center',
+    alignSelf: 'center',
+    shadowRadius: 4,
+    shadowOpacity: 1,
+    borderRadius: 40,
+    borderBottomColor: 12,
+    width: 70,
+    height: 70,
+
+  },
+  bottomSheet: {
+    width: '100%',
+    height: '25%',
+    backgroundColor: '#fcfcfc',
+    marginTop: 'auto',
+    borderTopRightRadius: 40,
+    borderTopLeftRadius: 40,
+  },
+  buttons: {
     marginTop: 50,
-    alignSelf:'center' ,
-}
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  }
 });
