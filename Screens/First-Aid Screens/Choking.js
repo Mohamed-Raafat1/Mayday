@@ -1,12 +1,20 @@
-import React from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { Container, Text, Content, Card, CardItem, Body, Left, View } from "native-base"
-import YoutubePlayer from 'react-native-youtube-iframe';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import React from "react";
+import { useNavigation } from "@react-navigation/native";
+import {
+  Container,
+  Text,
+  Content,
+  Card,
+  CardItem,
+  Body,
+  Left,
+  View,
+} from "native-base";
+import YoutubePlayer from "react-native-youtube-iframe";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { StyleSheet } from "react-native";
-import Data from "../../Data/Choking.json"
+import Data from "../../Data/Choking.json";
 export default function Choking() {
-
   const navigation = useNavigation();
   function HypothermiaNav() {
     navigation.navigate("Home");
@@ -33,9 +41,11 @@ export default function Choking() {
       <Content padder>
         <Card style={{ borderRadius: 15 }}>
           <CardItem style={styles.Item} bordered>
-            <Text style={{fontSize:20, fontFamily:'sans-serif-medium'}}>Tips</Text>
+            <Text style={{ fontSize: 20, fontFamily: "sans-serif-medium" }}>
+              Tips
+            </Text>
           </CardItem>
-          <CardItem style={{ flexDirection: 'column' }} bordered>
+          <CardItem style={{ flexDirection: "column" }} bordered>
             <View>{list()}</View>
             {/*
             <View style={styles.content}>
@@ -106,11 +116,7 @@ export default function Choking() {
             </View> */}
           </CardItem>
           <View>
-            <YoutubePlayer
-              height={300}
-              play={false}
-              videoId={'PA9hpOnvtCk'}
-            />
+            <YoutubePlayer height={300} play={false} videoId={"PA9hpOnvtCk"} />
           </View>
         </Card>
       </Content>
@@ -122,17 +128,17 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginLeft: 10,
     marginBottom: 15,
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   Item: {
-    borderBottomColor: 'grey',
+    borderBottomColor: "grey",
     borderBottomWidth: 2,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
