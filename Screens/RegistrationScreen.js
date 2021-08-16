@@ -1,5 +1,8 @@
 import "react-native-gesture-handler";
 import React, { useState } from "react";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import RadioGroup from 'react-native-radio-buttons-group';
 
 import {
   Text,
@@ -13,6 +16,9 @@ import {
   Input,
   ListItem,
   CheckBox,
+  Label,
+  Radio,
+  Row,
 } from "native-base";
 import { View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import GlobalStyles from "../GlobalStyles";
@@ -73,6 +79,44 @@ function RegistrationScreen({ navigation }) {
       });
   };
 
+  const [Selected, SetSelected] = useState(true);
+  const printme = () => { console.log(Selected); }
+  const Radio = [{
+    id: 'Male', // acts as primary key, should be unique and non-empty string
+    label: 'Male',
+    value: 'Male'
+  }, {
+    id: 'Female',
+    label: 'Female',
+    value: 'Female'
+  }]
+  const [radioButtons, setRadioButtons] = useState(Radio);
+  function onPressRadioButton(radioButtonsArray) {
+    setRadioButtons(radioButtonsArray);
+  }
+
+  //birth date use state and functions
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+  const [text, setText] = useState(date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+
+    // Process the date values
+    let tempDate = new Date(currentDate);
+    let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
+    setText(fDate)
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <ScrollView style={styles.Loginform}>
@@ -113,6 +157,37 @@ function RegistrationScreen({ navigation }) {
           </Item>
 
           <Item iconRight underline style={styles.Item}>
+            <Text>Gender</Text>
+            <View>
+              <RadioGroup 
+              
+                radioButtons={radioButtons}
+                onPress={onPressRadioButton}
+                layout='row'
+              />
+              </View>
+              <MaterialCommunityIcons name="gender-male-female" size={24} style={{marginLeft: "auto", marginRight: 7}} color="black" />
+            </Item>
+
+          <Item iconRight underline style={styles.Item}>
+              <Label style={{ alignSelf: "center", color: "gray" }}>Birth Date</Label>
+              <Button style={{ alignSelf: 'center' }} transparent onPress={() => showMode('date')} >
+                <Text style={{color: "black"}}>{text}</Text>
+              </Button>
+              <Icon name="calendar-outline" style={{marginLeft: "auto"}}></Icon>
+            {show && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode={mode}
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+              />
+            )}
+            </Item>
+
+          <Item iconRight underline style={styles.Item}>
             <Input
               onChangeText={(text) => setNationalID(text)}
               keyboardType="numeric"
@@ -120,7 +195,10 @@ function RegistrationScreen({ navigation }) {
               placeholderTextColor="gray"
               value={NationalID}
             />
+            <MaterialCommunityIcons name="card-account-details-outline" size={24} style={{marginRight: 7}} color="black" />
           </Item>
+
+          
 
           <Item iconRight underline style={styles.Item}>
             <Input
@@ -220,7 +298,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   Item: {
-    marginBottom: 10,
+    marginBottom: 15,
     marginLeft: 10,
     paddingLeft: 10,
   },

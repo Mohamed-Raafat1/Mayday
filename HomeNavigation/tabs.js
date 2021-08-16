@@ -1,6 +1,6 @@
 //BUTTONS NATIVE BASE
 
-import React from "react";
+import React, { useState } from "react";
 //React Native
 import { StyleSheet, Image, StatusBar } from "react-native";
 import { Avatar, Badge, withBadge } from "react-native-elements";
@@ -46,6 +46,8 @@ const DoctorRequestsStack = createStackNavigator();
 //Tab Navigation
 const Tab = createMaterialBottomTabNavigator();
 // const EmergencyTab = createMaterialTopTabNavigator();
+
+
 
 function Tabs() {
   //2 Tabs Home , First Aid
@@ -339,23 +341,6 @@ const FirstAidStackScreen = ({ navigation }) => (
     <FirstAidStack.Screen
       name="FirstAid"
       component={FirstAidSection}
-      options={{
-        header:()=>(
-          
-          <Header searchBar rounded style={{backgroundColor:'white'}}>
-          <Item>
-            <Icon name="ios-search" />
-            <Input placeholder="Search" />
-         
-          </Item>
-          <Button transparent>
-            <Text>Search</Text>
-          </Button>
-        </Header>
-        ),
-        title: "First-Aid",
-        headerLeft: null,
-      }}
     />
     <FirstAidStack.Screen
       name="Hypothermia"
