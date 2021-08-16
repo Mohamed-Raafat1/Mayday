@@ -67,6 +67,7 @@ function RegistrationScreen({ navigation }) {
             PhoneNumber,
             medicalProfessional,
           });
+          
         console.log(result);
       })
       .catch((error) => {

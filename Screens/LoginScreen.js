@@ -15,6 +15,7 @@ import {
   Label,
   Content,
   Header,
+  Toast,
 } from "native-base";
 import { SafeAreaView, StyleSheet, TouchableOpacity } from "react-native";
 import { Thumbnail } from "native-base";
@@ -85,6 +86,10 @@ function LoginScreen({ navigation }) {
         console.log(result);
       })
       .catch((error) => {
+        Toast.show({
+          text: error.message,
+          duration: 2000,
+          })
         console.log(error);
       });
   };
