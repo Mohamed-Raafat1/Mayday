@@ -26,48 +26,66 @@ import { fetchMessages, fetchUser } from "../redux/actions";
 function Chat({ route, navigation }) {
   const userid = firebase.auth().currentUser.uid;
   const dispatch = useDispatch();
+  const chatid = route.params.chatid;
   useLayoutEffect(() => {
     dispatch(fetchUser());
-    dispatch(fetchMessages(route.params.chatid));
+    dispatch(fetchMessages(userid, chatid));
   }, []);
   useEffect(() => {}, []);
   const currentUser = useSelector((state) => state.userState.currentUser);
-  const fetchedmessages = useSelector((state) => state.userState.messages);
-  console.log(fetchedmessages);
+  let fetchedmessages = useSelector((state) => state.userState.messages);
+  // console.log(fetchedmessages);
 
   const chatRecepient = route.params.userid;
-  console.log(route.params);
-  const chatid = route.params.chatid;
+  //console.log(route.params);
+  
 
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
+  useEffect( ()=>
+  navigation.addListener('beforeRemove', (e) => {
+    
+    console.log("el FADYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
+    console.log(messages)
+  }), [navigation] )
+
+  useEffect( () => {
+    
+    
     if (fetchedmessages) {
-      console.log(userid);
-      fetchedmessages.map((message) => {
-        setMessages((oldarray) => [
-          ...oldarray,
-          {
-            _id: message.data._id,
-            text: message.data.text,
-            createdAt: message.data.createdAt,
-            user: message.data.user,
-          },
-        ]);
-      });
+      console.log("Fetched MESSAGES ______________________________________________________")
+
+      console.log(fetchedmessages);
+      // fetchedmessages.map((message) => {
+
+      //   setMessages((oldarray) => [
+      //     ...oldarray,
+      //     {
+      //       _id: message.data._id,
+      //       text: message.data.text,
+      //       createdAt: message.data.createdAt,
+      //       user: message.data.user,
+      //     },
+      //   ]);
+      // });
     }
+    return()=>{
+      console.log("UNMOUNTI*NGGGGGGGGGGGGGGGGG")
+      fetchedmessages = []
+      console.log(fetchedmessages)
+  }
 
     // setMessages([
-    //   {
-    //     _id: userid,
-    //     text: "Hello, What seems to be the problem?",
-    //     createdAt: new Date(),
-    //     user: {
-    //       _id: chatRecepient,
-    //       name: "React Native",
-    //       avatar: "https://placeimg.com/140/140/any",
-    //     },
-    //   },
+      // {
+      //   _id: userid,
+      //   text: "Hello, What seems to be the problem?",
+      //   createdAt: new Date(),
+      //   user: {
+      //     _id: chatRecepient,
+      //     name: "React Native",
+      //     avatar: "https://placeimg.com/140/140/any",
+      //   },
+      // },
     //   {
     //     _id: chatRecepient,
     //     text: "Hello Doctor",
@@ -81,12 +99,14 @@ function Chat({ route, navigation }) {
     // ]);
   }, [fetchedmessages]);
 
-  const onSend = useCallback((messages = []) => {
+  const onSend = useCallback((Messages = []) => {
+    console.log("CURRENT MESSAGES ______________________________________________________")
+    console.log(messages)
     setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages)
+      GiftedChat.append(previousMessages, Messages)
+      
     );
-    console.log(messages);
-    let message = messages[0];
+    let message = Messages[0];
     firebase
       .firestore()
       .collection("users")
@@ -100,6 +120,7 @@ function Chat({ route, navigation }) {
         chatid,
         user: message.user,
         chatRecepient,
+        uid: userid
       });
     firebase
       .firestore()
@@ -114,6 +135,7 @@ function Chat({ route, navigation }) {
         chatid,
         user: message.user,
         chatRecepient,
+        uid: chatRecepient
       });
   }, []);
   const renderBubble = (props) => {
@@ -133,17 +155,24 @@ function Chat({ route, navigation }) {
       ></Bubble>
     );
   };
-  return (
-    <GiftedChat
-      messages={messages}
-      onSend={(messages) => onSend(messages)}
-      user={{
-        _id: firebase.auth().currentUser.uid,
-        name: currentUser.FirstName + " " + currentUser.LastName,
-      }}
-      renderBubble={renderBubble}
-    />
-  );
+  if (!fetchedmessages || fetchMessages == [])
+    return (
+      <View>
+      </View>
+    )
+
+  else
+    return (
+      <GiftedChat
+        messages={fetchedmessages}
+        onSend={(messages) => onSend(messages)}
+        user={{
+          _id: firebase.auth().currentUser.uid,
+          name: currentUser.FirstName + " " + currentUser.LastName,
+        }}
+        renderBubble={renderBubble}
+      />
+    );
 }
 
 export default Chat;
