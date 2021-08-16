@@ -16,6 +16,7 @@ import {
   Input,
   ListItem,
   CheckBox,
+  Toast,
   Label,
   Radio,
   Row,
@@ -72,9 +73,14 @@ function RegistrationScreen({ navigation }) {
             PhoneNumber,
             medicalProfessional,
           });
+          
         console.log(result);
       })
       .catch((error) => {
+        Toast.show({
+          text: error.message,
+          duration: 2000,
+          })
         console.log(error);
       });
   };

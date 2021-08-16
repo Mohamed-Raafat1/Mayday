@@ -24,26 +24,56 @@ export function fetchUser() {
       });
   };
 }
-export function fetchMessages(id) {
+export function fetchMessages(id, chatid) {
+ 
   return (dispatch) => {
-    firebase
+    var query= firebase
       .firestore()
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .collection("messages")
-      .where(" chatid", "==", id)
-      .orderBy("createdAt", "asc")
-      .get()
+      .collectionGroup("messages")
+      .where("uid", "==", id)
+      .orderBy("createdAt")
+
+      query.where("chatid", '==', chatid).get()
       .then((snapshot) => {
         let messages = snapshot.docs.map((doc) => {
           const data = doc.data();
           const id = doc.id;
-          return { id, data };
+          return  {
+            _id: data._id,
+            text: data.text,
+            createdAt: data.createdAt,
+            user: {
+              _id: data.user._id,
+              name: data.user.name,
+              
+            },
+          } ;
+//shet
         });
         dispatch({ type: USER_MESSAGES_CHANGE, messages });
       });
   };
 }
+// export function fetchMessages(id) {
+//   return (dispatch) => {
+//     firebase
+//       .firestore()
+//       .collection("users")
+//       .doc(firebase.auth().currentUser.uid)
+//       .collection("messages")
+//       .where(' chatid', '==', id)
+//       // .orderBy("createdAt", "asc")
+//       .get()
+//       .then((snapshot) => {
+//         let messages = snapshot.docs.map((doc) => {
+//           const data = doc.data();
+//           const id = doc.id;
+//           return { id, data };
+//         });
+//         dispatch({ type: USER_MESSAGES_CHANGE, messages });
+//       });
+//   };
+// }
 export function fetchConversations() {
   return (dispatch) => {
     firebase

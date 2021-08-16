@@ -64,6 +64,7 @@ const GettingStarted = ({ navigation }) => {
           title: "Onboarding",
           subtitle: "Done with React Native Onboarding Swiper",
         },
+        
       ]}
     />
   );

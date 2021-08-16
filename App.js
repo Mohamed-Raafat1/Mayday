@@ -16,6 +16,9 @@ require('core-js/fn/map');
 require('core-js/fn/set');
 require('core-js/fn/array/find');
 
+//for Toast to work
+import { Root } from "native-base";
+
 LogBox.ignoreLogs(['Setting a timer']);
 
 
@@ -86,16 +89,18 @@ export default function App({ props }) {
   //ChatList Stack consists of screens (Chats)
   return (
     <Provider store={store}>
+      <Root>
       <NavigationContainer>
       {LoggedIn
-        ?  <HomeDrawer></HomeDrawer>
-        :  <RootStackScreen></RootStackScreen>
+        ?  <HomeDrawer/>
+        :  <RootStackScreen/>
       }
          
        
          
        
       </NavigationContainer>
+      </Root>
     </Provider>
   );
 }
