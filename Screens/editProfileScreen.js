@@ -5,6 +5,10 @@ import { Avatar, Caption, TouchableRipple } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/actions";
 import { useLayoutEffect } from "react";
+import firebase from "firebase";
+require("firebase/firestore")
+require("firebase/firebase-storage")
+
 
 function EditProfileScreen({ navigation }) {
   //regex for checking email validity
@@ -44,7 +48,8 @@ function EditProfileScreen({ navigation }) {
   const [FirstName, setFirstName] = useState(currentUser.FirstName);
   const [LastName, setLastName] = useState(currentUser.LastName);
 
-
+  const [Height, setHeight] = useState("0");
+  const [Weight, setWeight] = useState("0");
 
   //blood type use state
 
@@ -53,6 +58,31 @@ function EditProfileScreen({ navigation }) {
     SetBloodType(inputBloodType);
   }
   //---------------------------------------
+
+
+  //uploading data to firestore (add rest of data)
+  const onSave = () => {
+    firebase.firestore().collection("medicalids")
+      .doc(firebase.auth().currentUser.uid)
+        .set({
+          Height,
+          Weight,
+          BloodType
+
+          })
+          .then((result) => {
+            console.log(result);
+          })
+          .catch((error) => {
+            Toast.show({
+              text: error.message,
+              duration: 2000,
+              })
+            console.log(error);
+          });
+      };
+
+
 
   return (
     <Container style={styles.container}>
