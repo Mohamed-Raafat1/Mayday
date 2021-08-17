@@ -1,11 +1,13 @@
 import firebase from "firebase";
 import { useState } from "react";
+import { SnapshotViewIOS } from "react-native";
 require("firebase/firestore");
 import {
   USER_CHATLIST_CHANGE,
   USER_CHAT_CHANGE,
   USER_MESSAGES_CHANGE,
   USER_STATE_CHANGE,
+  USER_MESSAGES_UPDATE,
 } from "../constants";
 
 export function fetchUser() {
@@ -24,34 +26,97 @@ export function fetchUser() {
       });
   };
 }
+
+export function updateMessages(message, sender, reciever, chatid) {
+  console.log("i am updatingf---------------------------------------------");
+  console.log(message, sender, reciever, chatid);
+  console.log("i am updatingf---------------------------------------------");
+  return async (dispatch) => {
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(sender)
+      .collection("messages")
+      .doc(message._id)
+      .set({
+        _id: message._id,
+        createdAt: String(message.createdAt),
+        text: message.text,
+        chatid: chatid,
+        user: message.user,
+        chatRecepient: reciever,
+        uid: sender,
+      });
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(reciever)
+      .collection("messages")
+      .doc(message._id)
+      .set({
+        _id: message._id,
+        createdAt: String(message.createdAt),
+        text: message.text,
+        chatid: chatid,
+        user: message.user,
+        chatRecepient: reciever,
+        uid: reciever,
+      });
+    let payloadmessage = {
+      _id: message._id,
+      text: message.text,
+      createdAt: String(message.createdAt),
+      user: message.user,
+    };
+    console.log("does this work???????????????????????????????");
+    console.log(payloadmessage);
+    console.log("does this work???????????????????????????????");
+    dispatch({ type: USER_MESSAGES_UPDATE, payload: null });
+  };
+}
 export function fetchMessages(id, chatid) {
- 
-  return (dispatch) => {
-    var query= firebase
+  return async (dispatch) => {
+    var query = await firebase
       .firestore()
       .collectionGroup("messages")
       .where("uid", "==", id)
-      .orderBy("createdAt")
+      .orderBy("createdAt", "desc");
 
-      query.where("chatid", '==', chatid).get()
-      .then((snapshot) => {
-        let messages = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          const id = doc.id;
-          return  {
-            _id: data._id,
-            text: data.text,
-            createdAt: data.createdAt,
-            user: {
-              _id: data.user._id,
-              name: data.user.name,
-              
-            },
-          } ;
-//shet
-        });
-        dispatch({ type: USER_MESSAGES_CHANGE, messages });
+    await query.where("chatid", "==", chatid).onSnapshot((snapshot) => {
+      snapshot.docs.map((dummy) => {
+        console.log(
+          "dummyyyyyy--------------------------------\n",
+          dummy.data()
+        );
       });
+      let messages = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        const id = doc.id;
+        return {
+          _id: data._id,
+          text: data.text,
+          createdAt: data.createdAt,
+          user: {
+            _id: data.user._id,
+            name: data.user.name,
+          },
+        };
+        //shet
+      });
+      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+
+      // console.log(messages);
+      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+
+      dispatch({ type: USER_MESSAGES_CHANGE, messages });
+    });
   };
 }
 // export function fetchMessages(id) {
@@ -82,12 +147,11 @@ export function fetchConversations() {
       .doc(firebase.auth().currentUser.uid)
       .collection("conversations")
       .orderBy("timeStamp", "asc")
-      .get()
-      .then((snapshot) => {
+      .onSnapshot((snapshot) => {
         let conversations = snapshot.docs.map((doc) => {
           const data = doc.data();
           const id = doc.id;
-          return { id, data };
+          return { userid: firebase.auth().currentUser.uid, id, data };
         });
         dispatch({ type: USER_CHATLIST_CHANGE, conversations });
       });

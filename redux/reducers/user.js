@@ -1,4 +1,4 @@
-import { USER_STATE_CHANGE,  } from "../constants";
+import { USER_MESSAGES_UPDATE, USER_STATE_CHANGE } from "../constants";
 
 import { USER_CHATLIST_CHANGE } from "../constants";
 import { USER_MESSAGES_CHANGE } from "../constants";
@@ -24,6 +24,11 @@ export const user = (state = initialState, action) => {
         ...state,
         messages: action.messages,
       };
+    case USER_MESSAGES_UPDATE: {
+      return {
+        ...state,
+      };
+    }
     default:
       return { state };
   }

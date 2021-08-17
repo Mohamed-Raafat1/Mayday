@@ -23,7 +23,12 @@ import firebase from "firebase";
 
 import { useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchChatList, fetchConversations, fetchUser } from "../redux/actions";
+import {
+  fetchChatList,
+  fetchConversations,
+  fetchMessages,
+  fetchUser,
+} from "../redux/actions";
 function usePreviousRouteName() {
   return useNavigationState((state) =>
     state.routes[state.index - 1]?.name
@@ -36,21 +41,16 @@ const ChatList = ({ navigation, previous }) => {
   const dispatch = useDispatch();
   useLayoutEffect(() => {
     dispatch(fetchConversations());
+    dispatch(fetchUser());
   }, []);
   const [chats, setchats] = useState([]);
-  // const [messages, setmessages] = useState(null);
-  // const [conversations, setconversations] = useState([]);
-  // const [conversations2, setconversations2] = useState([]);
 
   const conversations = useSelector((state) => state.userState.conversations);
 
-  // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-  // console.log(chatList);
-  // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-  // // console.log(chatList);
+  const currentUser = useSelector((state) => state.userState.currentUser);
 
   const [counter, setcounter] = useState(0);
-
+  console.log(conversations);
   // async function fetchData() {
   //   try {
   //     await firebase
@@ -145,52 +145,54 @@ const ChatList = ({ navigation, previous }) => {
     return [...new Map(data.map((item) => [key(item), item])).values()];
   }
   useEffect(() => {
-    if (conversations) {
-      conversations.map((chat) => {
-        console.log(chat);
-        if (chat.data.userOne == firebase.auth().currentUser.uid) {
-          // console.log(chat.data.userTwo);
+    // if (conversations) {
+    //   conversations.map((chat) => {
+    //     console.log(chat);
+    //     console.log(firebase.auth().currentUser.uid);
+    //     console.log(chat.data.userTwo == firebase.auth().currentUser.uid);
+    //     if (chat.data.userOne == String(firebase.auth().currentUser.uid)) {
+    //       // console.log(chat.data.userTwo);
 
-          firebase
-            .firestore()
-            .collection("users")
-            .doc(chat.data.userTwo)
-            .get()
-            .then((snapshot) => {
-              setchats((oldarray) => [
-                ...oldarray,
-                {
-                  chatid: chat.id,
-                  userid: snapshot.id,
-                  firstName: snapshot.data().FirstName,
-                  lastName: snapshot.data().LastName,
-                },
-              ]);
-            });
-        } else {
-          firebase
-            .firestore()
-            .collection("users")
-            .doc(firebase.auth().currentUser.uid)
-            .get()
-            .then((snapshot) => {
-              setchats((oldarray) => [
-                ...oldarray,
-                {
-                  chatid: chat.id,
-                  userid: snapshot.id,
-                  firstName: snapshot.data().FirstName,
-                  lastName: snapshot.data().LastName,
-                },
-              ]);
-            });
-        }
-      });
-    }
-    setchats(removeDuplicates(chats, (item) => item.userid));
+    //       firebase
+    //         .firestore()
+    //         .collection("users")
+    //         .doc(chat.data.userTwo)
+    //         .get()
+    //         .then((snapshot) => {
+    //           setchats((oldarray) => [
+    //             ...oldarray,
+    //             {
+    //               chatid: chat.id,
+    //               userid: snapshot.id,
+    //               firstName: snapshot.data().FirstName,
+    //               lastName: snapshot.data().LastName,
+    //             },
+    //           ]);
+    //         });
+    //     } else {
+    //       firebase
+    //         .firestore()
+    //         .collection("users")
+    //         .doc(chat.data.userOne)
+    //         .get()
+    //         .then((snapshot) => {
+    //           setchats((oldarray) => [
+    //             ...oldarray,
+    //             {
+    //               chatid: chat.id,
+    //               userid: snapshot.id,
+    //               firstName: snapshot.data().FirstName,
+    //               lastName: snapshot.data().LastName,
+    //             },
+    //           ]);
+    //         });
+    //     }
+    //   });
+    // }
+    // setchats(removeDuplicates(chats, (item) => item.userid));
 
     return () => {};
-  }, [conversations]);
+  }, []);
   // useEffect(() => {
 
   //   // .then((querySnapshot) => {
@@ -210,70 +212,92 @@ const ChatList = ({ navigation, previous }) => {
   //   // })
   // }, []);
 
-  function createChat() {
-    // firebase
+  async function createChat() {
+    // let uid = "TAEKUkBficSNBJ7nIfJlJB5VPLM2";
+    // let user = [];
+    // await firebase
+    //   .firestore()
+    //   .collection("users")
+    //   .doc(uid)
+    //   .get()
+    //   .then((snapshot) => {
+    //     if (snapshot.exists) {
+    //       user = snapshot.data();
+    //     } else {
+    //       console.log("does not exist");
+    //     }
+    //   });
+    // await firebase
     //   .firestore()
     //   .collection("users")
     //   .doc(firebase.auth().currentUser.uid)
     //   .collection("conversations")
-    //   .doc("3")
+    //   .doc(firebase.auth().currentUser.uid + uid)
     //   .set({
+    //     talkingto: user.FirstName + " " + user.LastName,
+    //     userid: uid,
     //     timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
-    //     userOne: firebase.auth().currentUser.uid,
-    //     userTwo: "vbRz51m1CrM3NJ1bIuRMiWZqqFn2",
+    //     userOne: {
+    //       firsName: currentUser.FirstName,
+    //       lastName: currentUser.LastName,
+    //       email: currentUser.Email,
+    //     },
+    //     userTwo: {
+    //       firsName: user.FirstName,
+    //       lastName: user.LastName,
+    //       email: user.Email,
+    //     },
     //   });
-    // firebase
+    // await firebase
     //   .firestore()
     //   .collection("users")
-    //   .doc("vbRz51m1CrM3NJ1bIuRMiWZqqFn2")
+    //   .doc(uid)
     //   .collection("conversations")
-    //   .doc("3")
+    //   .doc(firebase.auth().currentUser.uid + uid)
     //   .set({
+    //     talkingto: currentUser.FirstName + " " + currentUser.LastName,
+    //     userid: firebase.auth().currentUser.uid,
     //     timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
-    //     userOne: firebase.auth().currentUser.uid,
-    //     userTwo: "vbRz51m1CrM3NJ1bIuRMiWZqqFn2",
-    //   });
-    // setcounter(counter + 1);
-    // firebase
-    //   .firestore()
-    //   .collection("messages")
-    //   .add({
-    //     text: "message " + counter,
-    //     sender: firebase.auth().currentUser.uid,
-    //     conversationID: "k3EiqOuYSmolSDHva6tU",
-    //     reciever: "4HUuB4Ey19WSyu5Oy3G7liTow8q2",
-    //     timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+    //     userOne: {
+    //       firsName: currentUser.FirstName,
+    //       lastName: currentUser.LastName,
+    //       email: currentUser.Email,
+    //     },
+    //     userTwo: {
+    //       firsName: user.FirstName,
+    //       lastName: user.LastName,
+    //       email: user.Email,
+    //     },
     //   });
   }
   const usersList = () => {
-    return array.map((chat) => {
-      console.log(chat.chatid);
+    return conversations.map((chat) => {
       return (
-        <View key={chat.userid}>
-          <ListItem
-            onPress={() => {
-              navigation.navigate("Chat", {
-                userid: chat.userid,
-                chatid: chat.chatid,
-              });
-            }}
-          >
-            <Left>
-              <Thumbnail
-                source={{
-                  uri: "https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png",
-                }}
-              />
-            </Left>
-            <Body>
-              <Text>{chat.firstName + " " + chat.lastName}</Text>
-              <Text note>Someone is having heart attack</Text>
-            </Body>
-            <Right>
-              <Text note>3:50 pm</Text>
-            </Right>
-          </ListItem>
-        </View>
+        <ListItem
+          key={chat.id}
+          onPress={() => {
+            dispatch(fetchMessages(firebase.auth().currentUser.uid, chat.id));
+            navigation.navigate("Chat", {
+              userid: chat.data.userid,
+              chatid: chat.id,
+            });
+          }}
+        >
+          <Left>
+            <Thumbnail
+              source={{
+                uri: "https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png",
+              }}
+            />
+          </Left>
+          <Body>
+            <Text>{chat.data.talkingto}</Text>
+            <Text note>Someone is having heart attack</Text>
+          </Body>
+          <Right>
+            <Text note>3:50 pm</Text>
+          </Right>
+        </ListItem>
       );
     });
   };
@@ -284,15 +308,14 @@ const ChatList = ({ navigation, previous }) => {
   //
   var seenNames = {};
 
-  var array = chats.filter(function (currentObject) {
-    if (currentObject.userid in seenNames) {
-      return false;
-    } else {
-      seenNames[currentObject.userid] = true;
-      return true;
-    }
-  });
-  if (chats == [] || chats.length == 0 || !conversations) return <View></View>;
+  if (!conversations)
+    return (
+      <View>
+        <Button onPress={createChat}>
+          <Text>this is the counter </Text>
+        </Button>
+      </View>
+    );
   else {
     return (
       <Container>

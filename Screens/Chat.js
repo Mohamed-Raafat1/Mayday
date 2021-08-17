@@ -21,122 +21,56 @@ import firebase from "firebase";
 import { SafeAreaView } from "react-native";
 import GlobalStyles from "../GlobalStyles";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMessages, fetchUser } from "../redux/actions";
+import { fetchMessages, fetchUser, updateMessages } from "../redux/actions";
 
 function Chat({ route, navigation }) {
   const userid = firebase.auth().currentUser.uid;
   const dispatch = useDispatch();
   const chatid = route.params.chatid;
+
+  const fetchedmessages = useSelector((state) => state.userState.messages);
+  const [initialmessages, setinitialmessages] = useState([]);
+  useEffect(() => {
+    return () => {};
+  }, [fetchedmessages]);
   useLayoutEffect(() => {
-    dispatch(fetchUser());
     dispatch(fetchMessages(userid, chatid));
-  }, []);
-  useEffect(() => {}, []);
+    dispatch(fetchUser());
+
+    setinitialmessages(fetchedmessages);
+    console.log(
+      "mounting-------------------------------------------------\n",
+      fetchedmessages
+    );
+    return () => {
+      console.log(
+        "unmouting-----------------------------------------------------\n",
+        fetchedmessages
+      );
+    };
+  }, [route]);
+
   const currentUser = useSelector((state) => state.userState.currentUser);
-  let fetchedmessages = useSelector((state) => state.userState.messages);
-  // console.log(fetchedmessages);
 
   const chatRecepient = route.params.userid;
-  //console.log(route.params);
-  
+  console.log(route.params);
 
-  const [messages, setMessages] = useState([]);
+  useEffect(
+    () => navigation.addListener("beforeRemove", (e) => {}),
+    [navigation]
+  );
 
-  useEffect( ()=>
-  navigation.addListener('beforeRemove', (e) => {
-    
-    console.log("el FADYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
-    console.log(messages)
-  }), [navigation] )
-
-  useEffect( () => {
-    
-    
-    if (fetchedmessages) {
-      console.log("Fetched MESSAGES ______________________________________________________")
-
-      console.log(fetchedmessages);
-      // fetchedmessages.map((message) => {
-
-      //   setMessages((oldarray) => [
-      //     ...oldarray,
-      //     {
-      //       _id: message.data._id,
-      //       text: message.data.text,
-      //       createdAt: message.data.createdAt,
-      //       user: message.data.user,
-      //     },
-      //   ]);
-      // });
-    }
-    return()=>{
-      console.log("UNMOUNTI*NGGGGGGGGGGGGGGGGG")
-      fetchedmessages = []
-      console.log(fetchedmessages)
-  }
-
-    // setMessages([
-      // {
-      //   _id: userid,
-      //   text: "Hello, What seems to be the problem?",
-      //   createdAt: new Date(),
-      //   user: {
-      //     _id: chatRecepient,
-      //     name: "React Native",
-      //     avatar: "https://placeimg.com/140/140/any",
-      //   },
-      // },
-    //   {
-    //     _id: chatRecepient,
-    //     text: "Hello Doctor",
-    //     createdAt: new Date(),
-    //     user: {
-    //       _id: userid,
-    //       name: "React Native",
-    //       avatar: "https://placeimg.com/140/140/any",
-    //     },
-    //   },
-    // ]);
-  }, [fetchedmessages]);
+  // useEffect(() => {}, [initialmessages.length]);
 
   const onSend = useCallback((Messages = []) => {
-    console.log("CURRENT MESSAGES ______________________________________________________")
-    console.log(messages)
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, Messages)
-      
-    );
     let message = Messages[0];
-    firebase
-      .firestore()
-      .collection("users")
-      .doc(userid)
-      .collection("messages")
-      .doc(messages._id)
-      .set({
-        _id: message._id,
-        createdAt: message.createdAt,
-        text: message.text,
-        chatid,
-        user: message.user,
-        chatRecepient,
-        uid: userid
-      });
-    firebase
-      .firestore()
-      .collection("users")
-      .doc(chatRecepient)
-      .collection("messages")
-      .doc(messages._id)
-      .set({
-        _id: message._id,
-        createdAt: message.createdAt,
-        text: message.text,
-        chatid,
-        user: message.user,
-        chatRecepient,
-        uid: chatRecepient
-      });
+    dispatch(updateMessages(message, userid, chatRecepient, chatid));
+    // setinitialmessages((previousMessages) =>
+    //   GiftedChat.append(previousMessages, Messages)
+    // );
+
+    // console.log("new fetched messages ---------------------------------\n");
+    // console.log(fetchedmessages);
   }, []);
   const renderBubble = (props) => {
     return (
@@ -155,12 +89,7 @@ function Chat({ route, navigation }) {
       ></Bubble>
     );
   };
-  if (!fetchedmessages || fetchMessages == [])
-    return (
-      <View>
-      </View>
-    )
-
+  if (!fetchedmessages) return <View></View>;
   else
     return (
       <GiftedChat
