@@ -100,12 +100,13 @@ function RegistrationScreen({ navigation }) {
       .auth()
       .createUserWithEmailAndPassword(Email, Password)
       .then((result) => {
+        let uid = firebase.auth().currentUser.uid
         firebase
           .firestore()
           .collection("users")
-          .doc(firebase.auth().currentUser.uid)
+          .doc(uid)
           .set({
-            
+            uid,
             Email,
             FirstName,
             LastName,

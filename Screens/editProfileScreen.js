@@ -62,8 +62,8 @@ function EditProfileScreen({ navigation, route }) {
 
   
   //get the user data sent from MedicalIDScreen instead of fetching user
-  const currentUser = useSelector((state) => state.userState.currentUser);
-  //route.params.currentUser
+  const currentUser =   route.params.currentUser
+  //useSelector((state) => state.userState.currentUser);
 
   if (currentUser == undefined) return <View></View>;
 
@@ -107,16 +107,12 @@ function EditProfileScreen({ navigation, route }) {
     }
 
     firebase.firestore().collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .set({
-        // uid: firebase.auth().currentUser.uid,
-        Email,
-        FirstName,
-        LastName,
-        MedicalID,
-      })
-      .then((result) => {
-        console.log(result);
+      .doc(currentUser.uid)
+      .update({
+        Email: Email,
+        FirstName: FirstName,
+        LastName: LastName,
+        MedicalID: MedicalID,
       })
       .catch((error) => {
         Toast.show({
@@ -125,7 +121,7 @@ function EditProfileScreen({ navigation, route }) {
         })
         console.log(error);
       });
-    navigation.goBack()
+    navigation.replace("Medical ID")
 
   };
 

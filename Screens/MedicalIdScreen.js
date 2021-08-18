@@ -24,12 +24,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/actions";
 import { useLayoutEffect } from "react";
 
-function MedicalIdScreen({ navigation}) {
+function MedicalIdScreen({ navigation, route}) {
   const dispatch = useDispatch();
+
   useLayoutEffect(() => {
     dispatch(fetchUser());
-    console.log("MedicalID---------------\n")
-  }, [navigation]);
+    // console.log("MedicalID---------------\n")
+  }, [route]);
+
+  // useEffect(()=>{
+  //   console.log("ENTERING MEDICAL ID")//,navigation,"\n------")
+  // })
+
   const currentUser = useSelector((state) => state.userState.currentUser);
   
   if (currentUser == undefined) return <View></View>;
@@ -44,7 +50,7 @@ function MedicalIdScreen({ navigation}) {
         <Left>
           <Button  transparent  onPress={() => {
             // navigation.navigate("Home")
-             navigation.goBack()
+             navigation.popToTop()
              }}>
             <Icon name="arrow-back" />
           </Button>
@@ -57,7 +63,7 @@ function MedicalIdScreen({ navigation}) {
           <Button
             transparent
             onPress={() => {
-              console.log("medicalid user\n",currentUser.uid)
+              // console.log("medicalid user\n",currentUser.uid)
               navigation.navigate("EditProfile", { currentUser })
             }
             }>
