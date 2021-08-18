@@ -10,6 +10,11 @@ import {
   Left,
   View,
   Thumbnail,
+  Right,
+  Header,
+  Icon,
+  Button,
+
 } from "native-base";
 
 import { Avatar, Title, Caption, TouchableRipple } from "react-native-paper";
@@ -19,15 +24,47 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/actions";
 import { useLayoutEffect } from "react";
 
-function MedicalIdScreen() {
+function MedicalIdScreen({ navigation}) {
   const dispatch = useDispatch();
   useLayoutEffect(() => {
     dispatch(fetchUser());
-  }, []);
+    console.log("MedicalID---------------\n")
+  }, [navigation]);
   const currentUser = useSelector((state) => state.userState.currentUser);
+  
   if (currentUser == undefined) return <View></View>;
+
+//for birthdate
+// console.log(currentUser.Birthdate)
+
   return (
+
     <Container style={styles.container}>
+      <Header androidStatusBarColor="black"  style={{backgroundColor:"#8fccd9", justifyContent: "center", alignItems:'center' }}>
+        <Left>
+          <Button  transparent  onPress={() => {
+            // navigation.navigate("Home")
+             navigation.goBack()
+             }}>
+            <Icon name="arrow-back" />
+          </Button>
+        </Left>
+        <Body >
+        
+          <Title style={{ color: "white", textAlign: "center" }}>Medical ID</Title>
+        </Body>
+        <Right>
+          <Button
+            transparent
+            onPress={() => {
+              console.log("medicalid user\n",currentUser.uid)
+              navigation.navigate("EditProfile", { currentUser })
+            }
+            }>
+            <Text>Edit</Text>
+          </Button>
+        </Right>
+      </Header>
       <Content>
         <View style={styles.userInfoSection}>
           <View style={styles.avatar}>
@@ -46,7 +83,7 @@ function MedicalIdScreen() {
           </View>
           <View>
             <Text style={{ color: "#777777", textAlign: "center" }}>
-              5 May, 2000 (21 years)
+              {/* {currentUser.Birthdate} */}
             </Text>
           </View>
         </View>
@@ -60,15 +97,15 @@ function MedicalIdScreen() {
         >
           <Text style={{ fontSize: 18, color: "#777777" }}>
             HEIGHT{"\n"}
-            <Text>170 cm</Text>
+            <Text>{currentUser.MedicalID.Height} cm</Text>
           </Text>
           <Text style={{ fontSize: 18, color: "#777777" }}>
             WEIGHT{"\n"}
-            <Text>100 kg</Text>
+            <Text>{currentUser.MedicalID.Weight} Kg</Text>
           </Text>
           <Text style={{ fontSize: 18, color: "#777777" }}>
             BLOOD TYPE{"\n"}
-            <Text>A+</Text>
+            <Text>{currentUser.MedicalID.BloodType}</Text>
           </Text>
         </View>
 
@@ -82,11 +119,11 @@ function MedicalIdScreen() {
 
         <View>
           <Text style={styles.medicalIDItem}>MEDICAL CONDITIONS</Text>
-          <Text style={styles.medicalIdData}>Asthma</Text>
+          <Text style={styles.medicalIdData}>{currentUser.MedicalID.MedicalConditions}</Text>
           <Text style={styles.medicalIDItem}>ALLERGIES</Text>
-          <Text style={styles.medicalIdData}>Peanut allergy</Text>
+          <Text style={styles.medicalIdData}>{currentUser.MedicalID.Allergies}</Text>
           <Text style={styles.medicalIDItem}>MEDICATIONS</Text>
-          <Text style={styles.medicalIdData}>Atenolol once a day</Text>
+          <Text style={styles.medicalIdData}>{currentUser.MedicalID.Medications}</Text>
         </View>
 
         <View style={{ marginLeft: "auto", marginRight: "auto" }}>

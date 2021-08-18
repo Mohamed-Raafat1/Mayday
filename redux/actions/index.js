@@ -27,6 +27,7 @@ export function fetchUser() {
   };
 }
 
+
 export function updateMessages(message, sender, reciever, chatid) {
   console.log("i am updatingf---------------------------------------------");
   console.log(message, sender, reciever, chatid);

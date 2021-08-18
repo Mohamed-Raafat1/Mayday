@@ -1,5 +1,27 @@
-import React, { useState, Component } from 'react';
-import { Picker, Item, Label, Content, Container, Textarea, DatePicker, Radio, Header, Button, ListItem, Text, View, Icon, Left, Body, Right, Switch, Title, Input, Form } from 'native-base';
+import React, { useState, Component, useEffect } from 'react';
+import {
+  Picker,
+  Item,
+  Label,
+  Content,
+  Container,
+  Textarea,
+  DatePicker,
+  Radio,
+  Header,
+  Button,
+  ListItem,
+  Text,
+  View,
+  Icon,
+  Left,
+  Body,
+  Right,
+  Switch,
+  Title,
+  Input,
+  Form
+} from 'native-base';
 import { StyleSheet, ScrollView, TextInput } from 'react-native';
 import { Avatar, Caption, TouchableRipple } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,7 +32,9 @@ require("firebase/firestore")
 require("firebase/firebase-storage")
 
 
-function EditProfileScreen({ navigation }) {
+function EditProfileScreen({ navigation, route }) {
+
+
   //regex for checking email validity
   const [isValid, setIsValid] = useState(false);
   const [isEqual, setEqual] = useState(false);
@@ -31,11 +55,16 @@ function EditProfileScreen({ navigation }) {
     if (Password === text) setEqual(true);
     else setEqual(false);
   };
-  const dispatch = useDispatch();
-  useLayoutEffect(() => {
-    dispatch(fetchUser());
-  }, []);
+  // const dispatch = useDispatch();
+  // useLayoutEffect(() => {
+  //   dispatch(fetchUser());
+  // }, [navigation]);
+
+  
+  //get the user data sent from MedicalIDScreen instead of fetching user
   const currentUser = useSelector((state) => state.userState.currentUser);
+  //route.params.currentUser
+
   if (currentUser == undefined) return <View></View>;
 
 
@@ -48,44 +77,81 @@ function EditProfileScreen({ navigation }) {
   const [FirstName, setFirstName] = useState(currentUser.FirstName);
   const [LastName, setLastName] = useState(currentUser.LastName);
 
-  const [Height, setHeight] = useState("0");
-  const [Weight, setWeight] = useState("0");
+  //----------------------------WIP edit soon------------------
+  const [Height, setHeight] = useState(currentUser.MedicalID.Height);
+  const [Weight, setWeight] = useState(currentUser.MedicalID.Weight);
 
   //blood type use state
-
-  const [BloodType, SetBloodType] = useState("A+");
+  const [BloodType, SetBloodType] = useState(currentUser.MedicalID.BloodType);
   function ChangeBloodType(inputBloodType) {
     SetBloodType(inputBloodType);
   }
+
+  const [MedicalConditions, setMedicalConditions] = useState(currentUser.MedicalID.MedicalConditions)
+  const [Allergies,setAllergies] = useState(currentUser.MedicalID.Allergies)
+  const [Medications,setMedications] = useState(currentUser.MedicalID.Medications)
   //---------------------------------------
 
 
   //uploading data to firestore (add rest of data)
   const onSave = () => {
-    firebase.firestore().collection("medicalids")
+
+    //filling MedicalID
+    let MedicalID= {
+      Height,
+      Weight,
+      BloodType,
+      MedicalConditions,
+      Allergies,
+      Medications,
+    }
+
+    firebase.firestore().collection("users")
       .doc(firebase.auth().currentUser.uid)
-        .set({
-          Height,
-          Weight,
-          BloodType
+      .set({
+        // uid: firebase.auth().currentUser.uid,
+        Email,
+        FirstName,
+        LastName,
+        MedicalID,
+      })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        Toast.show({
+          text: error.message,
+          duration: 2000,
+        })
+        console.log(error);
+      });
+    navigation.goBack()
 
-          })
-          .then((result) => {
-            console.log(result);
-          })
-          .catch((error) => {
-            Toast.show({
-              text: error.message,
-              duration: 2000,
-              })
-            console.log(error);
-          });
-      };
+  };
 
-
+  
 
   return (
     <Container style={styles.container}>
+      <Header style={{flexDirection:"row", justifyContent:'space-between'}}>
+        <Left>
+          <Button transparent onPress={()=>{navigation.goBack()}}>
+            <Icon name="arrow-back"/>
+          </Button>
+        </Left>
+        <Body>
+        <Title>Edit Profile</Title>
+        </Body>
+        
+        <Right>
+          <Button transparent onPress={ ()=>{
+            // console.log("editprofile user\n",currentUser,"\n----------")
+            onSave()
+            }}>
+            <Text>Save</Text>
+          </Button>
+        </Right>
+      </Header>
       <Content>
         <View style={styles.userInfoSection}>
 
@@ -151,14 +217,20 @@ function EditProfileScreen({ navigation }) {
             <Text style={{ fontSize: 18, color: "#777777", marginBottom: 0 }}>Height{"\n"}
               <View style={{ flexDirection: "row" }}>
 
-                <TextInput style={{ borderBottomWidth: 1, minWidth: 35, }} defaultValue=" 100" keyboardType="numeric" />
+                <TextInput style={{ borderBottomWidth: 1, minWidth: 35, }} 
+                defaultValue={Height} 
+                onChangeText={setHeight}
+                keyboardType="numeric" />
                 <Text style={{ marginTop: 3 }}>cm</Text>
               </View>
             </Text>
             <Text style={{ fontSize: 18, color: "#777777", marginBottom: 0 }}>Weight{"\n"}
               <View style={{ flexDirection: "row" }}>
 
-                <TextInput style={{ borderBottomWidth: 1, minWidth: 35 }} defaultValue=" 100" keyboardType="numeric" />
+                <TextInput style={{ borderBottomWidth: 1, minWidth: 35 }} 
+                defaultValue={Weight} 
+                onChangeText={setWeight}
+                keyboardType="numeric" />
                 <Text style={{ marginTop: 3 }}>kg</Text>
 
               </View>
@@ -182,6 +254,7 @@ function EditProfileScreen({ navigation }) {
                 <Picker.Item label="AB-" value="AB-"></Picker.Item>
                 <Picker.Item label="O+" value="O+"></Picker.Item>
                 <Picker.Item label="O-" value="O-"></Picker.Item>
+                <Picker.Item label="?" value="?"></Picker.Item>
 
 
               </Picker>
@@ -201,11 +274,12 @@ function EditProfileScreen({ navigation }) {
 
         <View>
           <Text style={styles.medicalIDItem}>MEDICAL CONDITIONS</Text>
-          <Textarea style={styles.medicalIdData}>Asthma</Textarea>
+          <Textarea style={styles.medicalIdData}
+          onChangeText={setMedicalConditions}>{MedicalConditions}</Textarea>
           <Text style={styles.medicalIDItem}>ALLERGIES</Text>
-          <Textarea style={styles.medicalIdData}>Peanut allergy</Textarea>
+          <Textarea style={styles.medicalIdData} onChangeText={setAllergies}>{Allergies}</Textarea>
           <Text style={styles.medicalIDItem}>MEDICATIONS</Text>
-          <Textarea style={styles.medicalIdData}>Atenolol once a day</Textarea>
+          <Textarea style={styles.medicalIdData} onChangeText={setMedications}>{Medications}</Textarea>
         </View>
 
       </Content>
@@ -291,6 +365,11 @@ const styles = StyleSheet.create(
       paddingHorizontal: 30,
       paddingBottom: 35,
       backgroundColor: "#e8fbff",
+    },
+    iconStyle: {
+      alignContent: "center",
+      marginLeft: 10,
+      marginTop: 5,
     },
 
   });

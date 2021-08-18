@@ -14,7 +14,7 @@ import EmergencyTab from "./EmergencyTab";
 import HomeScreen from "../Screens/HomeScreen";
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import MedicalIdScreen from "../Screens/MedicalIdScreen";
-import EditProfileScreen from "../Screens/editProfileScreen";
+import EditProfileScreen from "../Screens/EditProfileScreen";
 import FirstAidSection from "../Screens/FirstAidSection";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
 import {Button,Icon,Header,Item,Input,Text, Content,View} from "native-base";
@@ -37,6 +37,7 @@ import Fractures from "../Screens/First-Aid Screens/Fractures";
 import DiagnosisScreen from "../Screens/DiagnosisScreen";
 import CurrentReport from "../Screens/CurrentReport";
 import DoctorRequests from "../Screens/Doctor Only Screens/DoctorRequests";
+import { faBorderNone } from "@fortawesome/free-solid-svg-icons";
 
 
 const HomeStack = createStackNavigator();
@@ -205,22 +206,46 @@ const HomeStackScreen = ({ navigation }) => (
       name="Medical ID"
       component={MedicalIdScreen}
       options={{
-        title: "Medical ID",
-        headerRight: () => (
-          <Content style={styles.iconStyle}>
-            <Button
-              transparent
-              onPress={() => navigation.navigate("EditProfile")}
-            >
-              {/* <MaterialCommunityIcons
-                name="account-edit-outline"
-                size={30}
-                onPress={() => navigation.navigate("EditProfile")}
-              /> */}
-              <Text>Edit</Text>
-            </Button>
-          </Content>
-        ),
+        headerShown: false,
+        // title: "Medical ID",
+        // headerRight: () => (
+        //   <Content style={styles.iconStyle}>
+        //     <Button
+        //       transparent
+        //       onPress={() => {
+        //         MedicalIdScreen.
+        //         navigation.navigate("EditProfile")}
+        //     }
+        //     >
+        //       {/* <MaterialCommunityIcons
+        //         name="account-edit-outline"
+        //         size={30}
+        //         onPress={() => navigation.navigate("EditProfile")}
+        //       /> */}
+        //       <Text>Edit</Text>
+        //     </Button>
+        //   </Content>
+        // ),
+      }}
+    />
+
+    <HomeStack.Screen
+      name="EditProfile"
+      style={styles.icon}
+      component={EditProfileScreen}
+      options={{
+        headerShown: false,
+        // headerRight: () => (
+        //   <Content style={styles.iconStyle}>
+        //     <Button
+        //       transparent
+        //       onPress={() => navigation.navigate("Medical ID")}
+        //     >
+        //       <Text>Save</Text>
+        //     </Button>
+        //   </Content>
+        // ),
+        // title: "Edit Profile",
       }}
     />
 
@@ -238,24 +263,7 @@ const HomeStackScreen = ({ navigation }) => (
       options={{}}
     />
 
-    <HomeStack.Screen
-      name="EditProfile"
-      style={styles.icon}
-      component={EditProfileScreen}
-      options={{
-        headerRight: () => (
-          <Content style={styles.iconStyle}>
-            <Button
-              transparent
-              onPress={() => navigation.navigate("Medical ID")}
-            >
-              <Text>Save</Text>
-            </Button>
-          </Content>
-        ),
-        title: "Edit Profile",
-      }}
-    />
+
     <HomeStack.Screen
       name="ChatList"
       style={styles.icon}
@@ -293,8 +301,7 @@ const HomeStackScreen = ({ navigation }) => (
       }}
     />
 
-    
-
+  
     <HomeStack.Screen
       name="Notifications"
       style={styles.icon}

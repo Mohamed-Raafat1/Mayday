@@ -11,6 +11,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/actions/index";
+import { Button } from "native-base";
 
 export function DrawerContent(props) {
   const dispatch = useDispatch();

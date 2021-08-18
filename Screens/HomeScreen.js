@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Animated,
   StyleSheet,
@@ -22,14 +22,40 @@ import firebase from "firebase";
 import { useDispatch } from "react-redux";
 import { fetchConversations } from "../redux/actions";
 
+//for editprofilescreen
+import { useNavigationState } from "@react-navigation/native";
+
+
 const { width, height } = Dimensions.get("window");
 
-function HomeScreen({ navigation }) {
+ //for ediprofile
+//  function usePreviousRouteName() {
+//   return useNavigationState((state) =>
+//     state.routes[state.index - 1]?.name
+//       ? state.routes[state.index - 1].name
+//       : "None"
+//   );
+// }
+
+
+
+
+const HomeScreen = ({ navigation, route })=> {
+  // let prevRoute = usePreviousRouteName() == "registration" ? true: false 
+
   const requestSOS = () => navigation.navigate("EmergencyTab");
   const helpOthers = () =>
     navigation.navigate("EmergencyTab", { screen: "Diagnosis" });
 
   const dispatch = useDispatch();
+
+  // useEffect(()=>{
+  //   console.log("------------------------------\n",prevRoute)
+  //   if(prevRoute == true)
+  //    navigation.navigate("View Nearest Hospital")
+  // },[route])
+  
+ 
 
   return (
     <Container style={styles.container}>

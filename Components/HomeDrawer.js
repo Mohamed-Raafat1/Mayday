@@ -9,17 +9,55 @@ import ViewNearestHospital from "../Screens/ViewNearestHospital";
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import { DrawerContent } from "./DrawerContent";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Content, Button,Text } from "native-base";
+import { Content, Button,Text, View } from "native-base";
 import Settings from "../Screens/Settings Screens/Settings";
 import AccountSettings from "../Screens/Settings Screens/AccountSettings";
-import editProfileScreen from "../Screens/editProfileScreen";
+import editProfileScreen from "../Screens/EditProfileScreen";
 import LocationSettings from "../Screens/Settings Screens/LocationSettings";
 import AccidentsList from "../Screens/AccidentsListScreen";
+
+//for initial signup
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState, useEffect } from "react";
+
+
 const Drawer = createDrawerNavigator();
 
+
+
 const HomeDrawer = ({ props }) => {
+
+
+  // -------------------------this is all for first signup trial-----------------
+  // const [isFirstSignup, setisFirstSignup] = useState(null);
+  // useEffect(() => {
+
+  //   AsyncStorage.getItem("alreadyLoggedin").then(async (value) => {
+
+  //     await console.log(value)
+  //     // console.log(isFirstSignup)
+  //     if (value == null || value==false) {
+  //       AsyncStorage.setItem("alreadyLoggedin", "true"); // No need to wait for `setItem` to finish, although you might want to handle errors
+  //       setisFirstSignup(true);
+  //     } else {
+  //       setisFirstSignup(false);
+        
+  //     }
+  //   }); // Add some error handling, also you can simply do setIsFirstLaunch(null)
+  // }, []);
+  // let routeName
+
+  // if (isFirstSignup === null) {
+  //   return (<View></View>); // This is the 'tricky' part: The query to AsyncStorage is not finished, but we have to present something to the user. Null will just render nothing, so you can also put a placeholder of some sort, but effectively the interval between the first mount and AsyncStorage retrieving your data won't be noticeable to the user. But if you want to display anything then you can use a LOADER here
+  // } else if (isFirstSignup == true) {
+  //   routename = "User Rating";
+  // } else {
+  //   routeName = "Home";
+  // }
+  // ------------------------------------------------------------------------
+
   return (
-    <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
+    <Drawer.Navigator  drawerContent={(props) => <DrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={Tabs} />
       <Drawer.Screen
         // options={{
