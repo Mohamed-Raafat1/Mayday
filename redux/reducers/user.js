@@ -1,11 +1,16 @@
-import { USER_MESSAGES_UPDATE, USER_STATE_CHANGE } from "../constants";
+import {
+  USER_MESSAGES_UPDATE,
+  USER_STATE_CHANGE,
+  USER_MESSAGES_CHANGE,
+  USER_CHATLIST_CHANGE,
+} from "../constants";
 
-import { USER_CHATLIST_CHANGE } from "../constants";
-import { USER_MESSAGES_CHANGE } from "../constants";
+
 const initialState = {
   currentUser: null,
   conversations: [],
   messages: [],
+  medicalID: [],
 };
 export const user = (state = initialState, action) => {
   switch (action.type) {
@@ -24,11 +29,11 @@ export const user = (state = initialState, action) => {
         ...state,
         messages: action.messages,
       };
-    case USER_MESSAGES_UPDATE: {
+    case USER_MESSAGES_UPDATE: 
       return {
         ...state,
       };
-    }
+   
     default:
       return { state };
   }
