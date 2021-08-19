@@ -105,7 +105,8 @@ function EditProfileScreen({ navigation, route }) {
       Allergies,
       Medications,
     }
-
+    
+    
     firebase.firestore().collection("users")
       .doc(currentUser.uid)
       .update({
@@ -113,6 +114,7 @@ function EditProfileScreen({ navigation, route }) {
         FirstName: FirstName,
         LastName: LastName,
         MedicalID: MedicalID,
+        
       })
       .catch((error) => {
         Toast.show({
