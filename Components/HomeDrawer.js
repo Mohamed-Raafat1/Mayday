@@ -12,7 +12,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Content, Button,Text, View } from "native-base";
 import Settings from "../Screens/Settings Screens/Settings";
 import AccountSettings from "../Screens/Settings Screens/AccountSettings";
-import editProfileScreen from "../Screens/EditProfileScreen";
+import EditProfileScreen from "../Screens/EditProfileScreen";
 import LocationSettings from "../Screens/Settings Screens/LocationSettings";
 import AccidentsList from "../Screens/AccidentsListScreen";
 
@@ -93,9 +93,9 @@ const SettingsStackScreen = ({navigation}) => (
       component={AccountSettings}
       options={{ title: "Account Settings" }}
     />
-    <SettingsStack.Screen
+    {/* <SettingsStack.Screen
       name="editProfile"
-      component={editProfileScreen}
+      component={EditProfileScreen}
       options={{
         headerRight: () => (
           <Content >
@@ -106,7 +106,7 @@ const SettingsStackScreen = ({navigation}) => (
         title: "Edit Medical ID",
 
       }}
-    />
+    /> */}
     <SettingsStack.Screen
       name="LocationSettings"
       component={LocationSettings}
