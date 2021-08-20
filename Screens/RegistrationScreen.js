@@ -101,6 +101,7 @@ function RegistrationScreen({ navigation }) {
       .createUserWithEmailAndPassword(Email, Password)
       .then((result) => {
         let uid = firebase.auth().currentUser.uid
+        let loc = new firebase.firestore.GeoPoint(0,0)
         firebase
           .firestore()
           .collection("users")
@@ -116,6 +117,7 @@ function RegistrationScreen({ navigation }) {
             PhoneNumber,
             medicalProfessional,
             MedicalID,
+            loc
           });
 
         console.log(result);

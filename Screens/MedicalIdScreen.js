@@ -1,5 +1,5 @@
 import React from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { SafeAreaView, StyleSheet, TouchableOpacity, StatusBar } from "react-native";
 import {
   Container,
   Text,
@@ -45,19 +45,25 @@ function MedicalIdScreen({ navigation, route}) {
 
   return (
 
+  
     <Container style={styles.container}>
-      <Header androidStatusBarColor="black"  style={{backgroundColor:"#8fccd9", justifyContent: "center", alignItems:'center' }}>
+      <StatusBar backgroundColor="white"
+     barStyle="dark-content"/>
+      
+      
+      <Header  androidStatusBarColor="gray"	 style={{ borderBottomWidth:2,borderBottomColor:'#f6f6f6', backgroundColor:"white", justifyContent: "center", alignItems:'center' }}>
+        
         <Left>
-          <Button  transparent  onPress={() => {
+          <TouchableOpacity   onPress={() => {
             // navigation.navigate("Home")
              navigation.popToTop()
              }}>
-            <Icon name="arrow-back" />
-          </Button>
+            <Icon style={{color:'black'}} name="arrow-back" />
+          </TouchableOpacity>
         </Left>
         <Body >
         
-          <Title style={{ color: "white", textAlign: "center" }}>Medical ID</Title>
+          <Title style={{ color: "black", textAlign: "center" }}>Medical ID</Title>
         </Body>
         <Right>
           <Button
@@ -67,7 +73,7 @@ function MedicalIdScreen({ navigation, route}) {
               navigation.navigate("EditProfile", { currentUser })
             }
             }>
-            <Text>Edit</Text>
+            <Text style={{color:'black'}}>Edit</Text>
           </Button>
         </Right>
       </Header>

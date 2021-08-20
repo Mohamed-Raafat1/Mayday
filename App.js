@@ -6,7 +6,7 @@ import firebase from 'firebase'
 import { Provider } from "react-redux";
 import { createStore,applyMiddleware } from "redux";
 import thunk from "redux-thunk";
-import { LogBox } from 'react-native';
+import { LogBox, StatusBar } from 'react-native';
 // symbol polyfills
 global.Symbol = require('core-js/es6/symbol');
 require('core-js/fn/symbol/iterator');
@@ -76,6 +76,7 @@ export default function App({ props }) {
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        
         <ActivityIndicator color="red" size="large"></ActivityIndicator>
       </View>
     );
@@ -91,6 +92,10 @@ export default function App({ props }) {
     <Provider store={store}>
       <Root>
       <NavigationContainer>
+      <StatusBar backgroundColor="white"
+     barStyle="dark-content"/>
+      
+      
       {LoggedIn
         ?  <HomeDrawer/>
         :  <RootStackScreen/>
@@ -98,7 +103,7 @@ export default function App({ props }) {
          
        
          
-       
+         
       </NavigationContainer>
       </Root>
     </Provider>
