@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "../../redux/actions";
+import { useLayoutEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import firebase from "firebase";
+require("firebase/firestore")
+require("firebase/firebase-storage")
 import {
   Container,
   Header,
@@ -21,15 +27,48 @@ import {
 import { StyleSheet } from "react-native";
 
 const Stack = createStackNavigator();
-function SOS({ navigation }) {
+function SOS({ navigation, route }) {
   //Toggle Switch to enable SOS
   // const [isEnabled, setIsEnabled] = useState(false);
   // const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   //To save contact numbers (first contact only right now as a Test)
+
+  const dispatch = useDispatch();
+
+  useLayoutEffect(() => {
+    dispatch(fetchUser());
+  }, [route]);
+
+  const currentUser = useSelector((state) => state.userState.currentUser);
+
   const [Numbers, SetNumbers] = useState("");
   const printme = () => {
     console.log("Contact1 = " + Numbers);
+  };
+  const onAdd = () => {
+    let EmergencyContacts = {
+      contact1 : "012",
+      contact2 : "0125",
+      contact3: "01256",
+      contact4: "0123",
+      contact5: "0125754",
+    };
+
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid)
+      .update({
+        EmergencyContacts,
+      })
+      .catch((error) => {
+        Toast.show({
+          text: error.message,
+          duration: 2000,
+        });
+        console.log(error);
+      });
   };
 
   return (
@@ -49,9 +88,7 @@ function SOS({ navigation }) {
             <Switch onValueChange={toggleSwitch} value={isEnabled} />
           </Right>
         </ListItem> */}
-        <Text style={styles.Title}>
-         Current 5 Emergency Contacts
-        </Text>
+        <Text style={styles.Title}>Current 5 Emergency Contacts</Text>
         <ListItem icon style={{ marginBottom: 10, marginTop: 10 }}>
           <Left>
             <Thumbnail
@@ -70,7 +107,9 @@ function SOS({ navigation }) {
               +2010004545584
             </Input> */}
             <Text>Ahmed</Text>
-            <Text note numberOfLines={1}>+2010004545584</Text>
+            <Text note numberOfLines={1}>
+              +2010004545584
+            </Text>
           </Body>
           <Right>
             {/* Get from Contacts Button */}
@@ -81,7 +120,6 @@ function SOS({ navigation }) {
           </Right>
         </ListItem>
 
-        
         <ListItem icon style={{ marginBottom: 10, marginTop: 10 }}>
           <Left>
             <Thumbnail
@@ -92,7 +130,9 @@ function SOS({ navigation }) {
           </Left>
           <Body>
             <Text>Mohamed</Text>
-            <Text note numberOfLines={1}>+2010004545584</Text>
+            <Text note numberOfLines={1}>
+              +2010004545584
+            </Text>
           </Body>
           <Right>
             {/* Get from Contacts Button */}
@@ -113,7 +153,9 @@ function SOS({ navigation }) {
           </Left>
           <Body>
             <Text>Amr</Text>
-            <Text note numberOfLines={1}>+2010004545584</Text>
+            <Text note numberOfLines={1}>
+              +2010004545584
+            </Text>
           </Body>
           <Right>
             {/* Get from Contacts Button */}
@@ -134,7 +176,9 @@ function SOS({ navigation }) {
           </Left>
           <Body>
             <Text>Raafat</Text>
-            <Text note numberOfLines={1}>+2010004545584</Text>
+            <Text note numberOfLines={1}>
+              +2010004545584
+            </Text>
           </Body>
           <Right>
             {/* Get from Contacts Button */}
@@ -155,11 +199,13 @@ function SOS({ navigation }) {
           </Left>
           <Body>
             <Text>Empty</Text>
-            <Text note numberOfLines={2}>-</Text>
+            <Text note numberOfLines={2}>
+              -
+            </Text>
           </Body>
           <Right>
             {/* Get from Contacts Button */}
-            <Button onPress={printme} style={styles.button} primary rounded>
+            <Button onPress={onAdd} style={styles.button} primary rounded>
               <Icon active name="person" />
               <Text style={{ marginLeft: -30 }}>Add</Text>
             </Button>
@@ -219,7 +265,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#8fccd9",
     fontWeight: "bold",
-    marginLeft:10,
-    marginVertical:20,
+    marginLeft: 10,
+    marginVertical: 20,
   },
 });
