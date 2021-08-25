@@ -21,7 +21,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
 function CurrentReport() {
-  const [Selected, SetSelected] = useState("Nothing Selected");
+  const [Selected, c] = useState("Nothing Selected");
   const printme = () => {
     console.log(Selected);
   };

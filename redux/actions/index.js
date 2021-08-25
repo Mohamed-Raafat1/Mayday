@@ -8,6 +8,7 @@ import {
   USER_MESSAGES_CHANGE,
   USER_STATE_CHANGE,
   USER_MESSAGES_UPDATE,
+  EMERGENCY_CONTACTS_CHANGE,
 } from "../constants";
 
 export function fetchUser() {
@@ -25,6 +26,25 @@ export function fetchUser() {
       });
   };
 }
+
+// Badawi woooork 
+
+// export function fetchEmergencyContacts(){
+//   return (dispatch) => {
+//     firebase
+//       .firestore()
+//       .collection("users")
+//       .doc(firebase.auth().currentUser.uid)
+//       .collection("EmergencyContacts")
+//       .onSnapshot((snapshot) => {
+//         if (snapshot.exists) {
+//           dispatch({ type: EMERGENCY_CONTACTS_CHANGE, emergencyContacts: snapshot.data() });
+//         } else {
+//           console.log("does not exist");
+//         }
+//       });
+//   }
+// }
 
 
 export function updateMessages(message, sender, reciever, chatid) {
