@@ -18,20 +18,7 @@ function AccountSettings() {
             <ListItem itemHeader  style={{marginBottom:-10}} >
               <Text>Change Name</Text>
             </ListItem>
-            <ListItem style={{flexDirection:'column'}}>
-            <Item  floatingLabel style={{padding:10}}>
-              <Label>First Name</Label>
-              <Input           
-              value={FirstName}
-              onChangeText={setFirstName} />
-            </Item>
-            <Item  floatingLabel style={{padding:10}}>
-              <Label>Last Name</Label>
-              <Input           
-              value={LastName}
-              onChangeText={setLastName} />
-            </Item>
-            </ListItem>
+            
 
             <ListItem itemHeader  style={{marginBottom:-10}}>
               <Text>Change Password</Text>

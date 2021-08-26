@@ -97,7 +97,7 @@ const SettingsStackScreen = ({navigation}) => (
       options={{ title: "Account Settings" }}
     />
     {/* <SettingsStack.Screen
-      name="editProfile"
+      name="EditProfile"
       component={EditProfileScreen}
       options={{
         headerRight: () => (
