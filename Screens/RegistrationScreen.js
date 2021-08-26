@@ -1,8 +1,8 @@
 import "react-native-gesture-handler";
 import React, { useState } from "react";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import RadioGroup from 'react-native-radio-buttons-group';
+import RadioGroup from "react-native-radio-buttons-group";
 import {
   Text,
   Button,
@@ -22,16 +22,19 @@ import {
   Textarea,
   Picker,
   Subtitle,
-
 } from "native-base";
 
-import { View, SafeAreaView, StyleSheet, ScrollView, TextInput } from "react-native";
+import {
+  View,
+  SafeAreaView,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+} from "react-native";
 import GlobalStyles from "../GlobalStyles";
 
 import firebase from "firebase";
 function RegistrationScreen({ navigation }) {
-
-
   //regex for checking email validity
   const [isValid, setIsValid] = useState(false);
   const [isEqual, setEqual] = useState(false);
@@ -46,7 +49,6 @@ function RegistrationScreen({ navigation }) {
   const [FirstName, setFirstName] = useState("");
   const [LastName, setLastName] = useState("");
 
-
   //------------------medicalID objects---------------------------------------------
   const [height, setHeight] = useState("0");
   const [weight, setWeight] = useState("0");
@@ -54,11 +56,10 @@ function RegistrationScreen({ navigation }) {
   function ChangeBloodType(inputBloodType) {
     SetBloodType(inputBloodType);
   }
-  const [medicalConditions, setMedicalConditions] = useState("")
-  const [allergies, setAllergies] = useState("")
-  const [medications, setMedications] = useState("")
+  const [medicalConditions, setMedicalConditions] = useState("");
+  const [allergies, setAllergies] = useState("");
+  const [medications, setMedications] = useState("");
   // ----------------------------------------------------------------------------
-
 
   //regex for checking email syntax validity
   const validateEmail = (text) => {
@@ -77,7 +78,6 @@ function RegistrationScreen({ navigation }) {
   };
 
   const onSignUp = () => {
-
     //Gathering MedicalID
     let MedicalID = {
       Height: height,
@@ -85,40 +85,44 @@ function RegistrationScreen({ navigation }) {
       BloodType: bloodType,
       MedicalConditions: medicalConditions,
       Allergies: allergies,
-      Medications: medications
-    }
+      Medications: medications,
+    };
+
+    //Emergency Contacts
+    let EmergencyContacts = {
+      contact1: "-",
+      contact2: "-",
+      contact3: "-",
+      contact4: "-",
+      contact5: "-",
+    };
 
     //retrieving gender
-    let gender = ""
-    radioButtons.map(radio=>{
-      if(radio.selected == true)
-      gender = radio.value
-    })
+    let gender = "";
+    radioButtons.map((radio) => {
+      if (radio.selected == true) gender = radio.value;
+    });
 
-    
     firebase
       .auth()
       .createUserWithEmailAndPassword(Email, Password)
       .then((result) => {
-        let uid = firebase.auth().currentUser.uid
-        let loc = new firebase.firestore.GeoPoint(0,0)
-        firebase
-          .firestore()
-          .collection("users")
-          .doc(uid)
-          .set({
-            uid,
-            Email,
-            FirstName,
-            LastName,
-            Gender:gender,
-            Birthdate:date,
-            NationalID,
-            PhoneNumber,
-            medicalProfessional,
-            MedicalID,
-            loc
-          });
+        let uid = firebase.auth().currentUser.uid;
+        let loc = new firebase.firestore.GeoPoint(0, 0);
+        firebase.firestore().collection("users").doc(uid).set({
+          uid,
+          Email,
+          FirstName,
+          LastName,
+          Gender: gender,
+          Birthdate: date,
+          NationalID,
+          PhoneNumber,
+          medicalProfessional,
+          MedicalID,
+          EmergencyContacts,
+          loc,
+        });
 
         console.log(result);
       })
@@ -126,26 +130,29 @@ function RegistrationScreen({ navigation }) {
         Toast.show({
           text: error.message,
           duration: 2000,
-        })
+        });
         console.log(error);
       });
   };
 
   const [Selected, SetSelected] = useState(true);
-  const printme = () => { console.log(Selected); }
-  const Radio = [{
-    id: 'Male', // acts as primary key, should be unique and non-empty string
-    label: 'Male',
-    value: 'Male',
-    selected: false,
-   
-  }, {
-    id: 'Female',
-    label: 'Female',
-    value: 'Female',
-    selected: false,
-    
-  }]
+  const printme = () => {
+    console.log(Selected);
+  };
+  const Radio = [
+    {
+      id: "Male", // acts as primary key, should be unique and non-empty string
+      label: "Male",
+      value: "Male",
+      selected: false,
+    },
+    {
+      id: "Female",
+      label: "Female",
+      value: "Female",
+      selected: false,
+    },
+  ];
   const [radioButtons, setRadioButtons] = useState(Radio);
   function onPressRadioButton(radioButtonsArray) {
     setRadioButtons(radioButtonsArray);
@@ -153,19 +160,26 @@ function RegistrationScreen({ navigation }) {
 
   //birth date use state and functions
   const [date, setDate] = useState(new Date());
-  const [mode, setMode] = useState('date');
+  const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
-  const [text, setText] = useState(date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
+  const [text, setText] = useState(
+    date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
+  );
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
+    setShow(Platform.OS === "ios");
     setDate(currentDate);
 
     // Process the date values
     let tempDate = new Date(currentDate);
-    let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
-    setText(fDate)
+    let fDate =
+      tempDate.getDate() +
+      "/" +
+      (tempDate.getMonth() + 1) +
+      "/" +
+      tempDate.getFullYear();
+    setText(fDate);
   };
 
   const showMode = (currentMode) => {
@@ -174,7 +188,6 @@ function RegistrationScreen({ navigation }) {
   };
 
   return (
-    
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <ScrollView style={styles.Loginform}>
         <Form>
@@ -194,7 +207,7 @@ function RegistrationScreen({ navigation }) {
 
             <Icon name="mail-outline"></Icon>
           </Item>
-          
+
           <Item underline iconRight style={styles.Item}>
             <Input
               onChangeText={(text) => setFirstName(text)}
@@ -213,28 +226,37 @@ function RegistrationScreen({ navigation }) {
             />
           </Item>
 
-          <Item iconRight  style={styles.Item}>
-            <Text style={{color:"gray"}}>Gender</Text>
+          <Item iconRight style={styles.Item}>
+            <Text style={{ color: "gray" }}>Gender</Text>
             <View>
               <RadioGroup
-
                 radioButtons={radioButtons}
-                onPress={()=>{onPressRadioButton
-                
-                console.log(date)}
-              }
-                layout='row'
-                
-                
+                onPress={() => {
+                  onPressRadioButton;
+
+                  console.log(date);
+                }}
+                layout="row"
               />
             </View>
-            <MaterialCommunityIcons name="gender-male-female" size={24} style={{ marginLeft: "auto", marginRight: 7 }} color="black" />
+            <MaterialCommunityIcons
+              name="gender-male-female"
+              size={24}
+              style={{ marginLeft: "auto", marginRight: 7 }}
+              color="black"
+            />
           </Item>
 
-          <Item iconRight  style={styles.Item}>
-            <Label style={{ alignSelf: "center", color: "gray" }}>Birth Date</Label>
-            <Button style={{ alignSelf: 'center' }} transparent onPress={() => showMode('date')} >
-              <Text style={{ color: "black" , fontSize:20}}>{text}</Text>
+          <Item iconRight style={styles.Item}>
+            <Label style={{ alignSelf: "center", color: "gray" }}>
+              Birth Date
+            </Label>
+            <Button
+              style={{ alignSelf: "center" }}
+              transparent
+              onPress={() => showMode("date")}
+            >
+              <Text style={{ color: "black", fontSize: 20 }}>{text}</Text>
             </Button>
             <Icon name="calendar-outline" style={{ marginLeft: "auto" }}></Icon>
             {show && (
@@ -257,10 +279,13 @@ function RegistrationScreen({ navigation }) {
               placeholderTextColor="gray"
               value={NationalID}
             />
-            <MaterialCommunityIcons name="card-account-details-outline" size={24} style={{ marginRight: 7 }} color="black" />
+            <MaterialCommunityIcons
+              name="card-account-details-outline"
+              size={24}
+              style={{ marginRight: 7 }}
+              color="black"
+            />
           </Item>
-
-
 
           <Item iconRight underline style={styles.Item}>
             <Input
@@ -303,7 +328,7 @@ function RegistrationScreen({ navigation }) {
             <Icon name="lock-closed-outline"></Icon>
           </Item>
 
-          <ListItem style={{borderBottomWidth:0}}>
+          <ListItem style={{ borderBottomWidth: 0 }}>
             <CheckBox
               checked={medicalProfessional}
               onPress={() =>
@@ -321,49 +346,57 @@ function RegistrationScreen({ navigation }) {
             </Text>
           </ListItem>
         </Form>
-        
-
-        
 
         {/**--------------------medical id part --------------------------------------- */}
-        <View style={styles.divider} >
-
+        <View style={styles.divider}>
           <Text style={styles.title}>Medical ID</Text>
-          <Subtitle style={{color:"grey", textAlign:"center"}}>(can be filled later)</Subtitle>
-          
+          <Subtitle style={{ color: "grey", textAlign: "center" }}>
+            (can be filled later)
+          </Subtitle>
 
           <View>
-            <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-evenly", marginTop: 15 }}>
-              <Text style={{ fontSize: 18, color: "#777777", marginBottom: 0 }}>Height{"\n"}
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+                marginTop: 15,
+              }}
+            >
+              <Text style={{ fontSize: 18, color: "#777777", marginBottom: 0 }}>
+                Height{"\n"}
                 <View style={{ flexDirection: "row" }}>
-
-                  <TextInput style={{ borderBottomWidth: 1, minWidth: 35, }}
-                    keyboardType="numeric"  
-                    onChangeText={setHeight}/>
+                  <TextInput
+                    style={{ borderBottomWidth: 1, minWidth: 35 }}
+                    keyboardType="numeric"
+                    onChangeText={setHeight}
+                  />
                   <Text style={{ marginTop: 3 }}>cm</Text>
                 </View>
               </Text>
-              <Text style={{ fontSize: 18, color: "#777777", marginBottom: 0 }}>Weight{"\n"}
+              <Text style={{ fontSize: 18, color: "#777777", marginBottom: 0 }}>
+                Weight{"\n"}
                 <View style={{ flexDirection: "row" }}>
-
-                  <TextInput style={{ borderBottomWidth: 1, minWidth: 35 }} 
-                  onChangeText={setWeight}
-                  keyboardType="numeric" />
+                  <TextInput
+                    style={{ borderBottomWidth: 1, minWidth: 35 }}
+                    onChangeText={setWeight}
+                    keyboardType="numeric"
+                  />
                   <Text style={{ marginTop: 3 }}>kg</Text>
-
                 </View>
               </Text>
 
-
-
               <View>
-                <Text style={{ fontSize: 18, color: "#777777", marginBottom: 0 }}>Blood Type</Text>
-                <Picker mode="dropdown"
+                <Text
+                  style={{ fontSize: 18, color: "#777777", marginBottom: 0 }}
+                >
+                  Blood Type
+                </Text>
+                <Picker
+                  mode="dropdown"
                   iosIcon={<Icon name="arrow-dropdown-circle" />}
-
                   selectedValue={bloodType}
                   onValueChange={SetBloodType}
-                  
                 >
                   <Picker.Item label="A+" value="A+"></Picker.Item>
                   <Picker.Item label="A-" value="A-"></Picker.Item>
@@ -374,16 +407,9 @@ function RegistrationScreen({ navigation }) {
                   <Picker.Item label="O+" value="O+"></Picker.Item>
                   <Picker.Item label="O-" value="O-"></Picker.Item>
                   <Picker.Item label="?" value="?"></Picker.Item>
-
-
                 </Picker>
               </View>
-
-
-
             </View>
-
-
           </View>
 
           {/* divider */}
@@ -393,11 +419,20 @@ function RegistrationScreen({ navigation }) {
 
           <View>
             <Text style={styles.medicalIDItem}>MEDICAL CONDITIONS</Text>
-            <Textarea style={styles.medicalIdData} onChangeText={setMedicalConditions}></Textarea>
+            <Textarea
+              style={styles.medicalIdData}
+              onChangeText={setMedicalConditions}
+            ></Textarea>
             <Text style={styles.medicalIDItem}>ALLERGIES</Text>
-            <Textarea style={styles.medicalIdData} onChangeText={setAllergies}></Textarea>
+            <Textarea
+              style={styles.medicalIdData}
+              onChangeText={setAllergies}
+            ></Textarea>
             <Text style={styles.medicalIDItem}>MEDICATIONS</Text>
-            <Textarea style={styles.medicalIdData} onChangeText={setMedications}></Textarea>
+            <Textarea
+              style={styles.medicalIdData}
+              onChangeText={setMedications}
+            ></Textarea>
           </View>
         </View>
         {/*-----------------------------*end of medicalIDpart----------------------------- */}
@@ -406,11 +441,11 @@ function RegistrationScreen({ navigation }) {
           style={{
             textAlign: "right",
             marginBottom: 10,
-            marginTop:10,
+            marginTop: 10,
           }}
           onPress={() => navigation.navigate("Login")}
-        >l
-          Already have an account?
+        >
+          l Already have an account?
         </Text>
 
         <Button
@@ -447,43 +482,41 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   avatar: {
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 50,
   },
 
   avatarCaptionButton: {
-    marginLeft: 'auto',
-    marginRight: 'auto',
-
+    marginLeft: "auto",
+    marginRight: "auto",
   },
 
   button: {
     marginTop: 50,
     marginBottom: 10,
     alignContent: "center",
-    backgroundColor: "rgb(250,91,90)"
+    backgroundColor: "rgb(250,91,90)",
   },
 
   caption: {
     fontSize: 14,
     lineHeight: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 
   container: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
 
   divider: {
-    borderColor: '#8fccd9',
+    borderColor: "#8fccd9",
     borderWidth: 1.5,
     borderRadius: 5,
     marginTop: 20,
-    paddingBottom:10,
-    marginBottom:10,
+    paddingBottom: 10,
+    marginBottom: 10,
   },
-
 
   medicalID: {
     marginTop: 15,
@@ -492,7 +525,7 @@ const styles = StyleSheet.create({
 
   medicalIDTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 
   medicalIDItem: {
@@ -500,22 +533,22 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontSize: 20,
     color: "#8fccd9",
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 
   medicalIdData: {
     marginLeft: 10,
-    marginRight:10,
-    borderBottomWidth: 1
+    marginRight: 10,
+    borderBottomWidth: 1,
   },
 
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 3,
     marginBottom: 5,
-    textAlign: 'center',
-    color: 'black'
+    textAlign: "center",
+    color: "black",
   },
 
   userInfoSection: {
@@ -525,5 +558,4 @@ const styles = StyleSheet.create({
     paddingBottom: 35,
     backgroundColor: "#e8fbff",
   },
-
 });

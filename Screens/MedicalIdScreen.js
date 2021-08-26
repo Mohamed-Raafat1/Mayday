@@ -37,6 +37,7 @@ function MedicalIdScreen({ navigation, route}) {
   // })
 
   const currentUser = useSelector((state) => state.userState.currentUser);
+
   
   if (currentUser == undefined) return <View></View>;
 

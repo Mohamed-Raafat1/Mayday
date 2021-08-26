@@ -12,6 +12,7 @@ import EmergencyTab from "./EmergencyTab";
 
 // Screens
 import HomeScreen from "../Screens/HomeScreen";
+import SearchScreen from "../Screens/SearchScreen";
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import MedicalIdScreen from "../Screens/MedicalIdScreen";
 import EditProfileScreen from "../Screens/EditProfileScreen";
@@ -34,6 +35,8 @@ import Bleeding from "../Screens/First-Aid Screens/Bleeding";
 import Burns from "../Screens/First-Aid Screens/Burns";
 import Fractures from "../Screens/First-Aid Screens/Fractures";
 
+import VisitedProfileScreen from "../Screens/VisitedProfileScreen";
+
 import DiagnosisScreen from "../Screens/DiagnosisScreen";
 import CurrentReport from "../Screens/CurrentReport";
 import DoctorRequests from "../Screens/Doctor Only Screens/DoctorRequests";
@@ -44,6 +47,7 @@ import { faBorderNone } from "@fortawesome/free-solid-svg-icons";
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
 const DoctorRequestsStack = createStackNavigator();
+const SearchStack = createStackNavigator();
 
 //Tab Navigation
 const Tab = createMaterialBottomTabNavigator();
@@ -66,6 +70,16 @@ function Tabs() {
           tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="home" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Search"
+        component={SearchStackScreen}
+        options={{
+          tabBarLabel: "Search",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="magnify" color={color} size={26} />
           ),
         }}
       />
@@ -341,6 +355,21 @@ const DoctorRequestsStackScreen = () => (
   </DoctorRequestsStack.Navigator>
 );
 
+const SearchStackScreen = () => (
+  <SearchStack.Navigator>
+    <SearchStack.Screen
+      name="Search"
+      component={SearchScreen}
+      options={{ title: "Search" }}
+    />
+    <SearchStack.Screen
+      name="VisitedProfile"
+      component={VisitedProfileScreen}
+      options={{ title: "Search" }}
+    />
+  </SearchStack.Navigator>
+);
+
 const FirstAidStackScreen = ({ navigation }) => (
   <FirstAidStack.Navigator mode="modal"
   screenOptions={{
@@ -350,7 +379,7 @@ const FirstAidStackScreen = ({ navigation }) => (
       name="FirstAid"
       component={FirstAidSection}
     />
-    <FirstAidStack.Screen
+    {/* <FirstAidStack.Screen
       name="Hypothermia"
       component={Hypothermia}
       options={{
@@ -412,7 +441,7 @@ const FirstAidStackScreen = ({ navigation }) => (
       options={{
         title: "Fractures",
       }}
-    />
+    /> */}
   </FirstAidStack.Navigator>
 );
 

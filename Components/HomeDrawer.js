@@ -1,7 +1,7 @@
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
-import sosStackScreen from "../Screens/SOS/EmergencyContacts";
+import EmergencyContacts from "../Screens/SOS/EmergencyContacts";
 import CurrentReport from "../Screens/CurrentReport";
 import Tabs from "../HomeNavigation/tabs";
 import userRatingStackScreen from "../Screens/UserRating";
@@ -15,6 +15,7 @@ import AccountSettings from "../Screens/Settings Screens/AccountSettings";
 import EditProfileScreen from "../Screens/EditProfileScreen";
 import LocationSettings from "../Screens/Settings Screens/LocationSettings";
 import AccidentsList from "../Screens/AccidentsListScreen";
+import Search from "../Screens/SearchScreen";
 
 //for initial signup
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -64,9 +65,10 @@ const HomeDrawer = ({ props }) => {
         //   headerShown: true,
         // }}
         name="Emergency Contacts"
-        component={sosStackScreen}
+        component={EmergencyContactsScreen}
       />
       <Drawer.Screen name="User Rating" component={userRatingStackScreen} />
+      
       <Drawer.Screen
         name="View Nearest Hospital"
         component={ViewNearestHospital}
@@ -81,6 +83,7 @@ const HomeDrawer = ({ props }) => {
 
 //Settings --> Edit Medical ID/Account Settings/location
 const SettingsStack = createStackNavigator();
+const EmergencyContactsStack = createStackNavigator();
 const SettingsStackScreen = ({navigation}) => (
   <SettingsStack.Navigator>
     <SettingsStack.Screen
@@ -113,5 +116,18 @@ const SettingsStackScreen = ({navigation}) => (
       options={{ title: "Location Service" }}
     />
   </SettingsStack.Navigator>
+);
+
+const EmergencyContactsScreen = ({navigation}) => (
+  <EmergencyContactsStack.Navigator>
+    <EmergencyContactsStack.Screen
+      name="Emergency Contacts"
+      component={EmergencyContacts}
+    />
+    <EmergencyContactsStack.Screen
+      name="Search"
+      component={Search}
+    />
+    </EmergencyContactsStack.Navigator>
 );
 export default HomeDrawer;

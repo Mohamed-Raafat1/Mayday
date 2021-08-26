@@ -20,7 +20,7 @@ import tempData from '../Data/tempData';
 
 export default function FirstAidSection() {
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
-  const [categories, setCategories] = useState([]);
+  const [tips, setTips] = useState([]);
   const [query, setQuery] = useState('');
   const [fullData, setFullData] = useState([]);
   const [search, setSearch]= useState('');
@@ -28,19 +28,19 @@ export default function FirstAidSection() {
 
   useEffect(() => {
     const subscriber = firebase.firestore()
-      .collection('firstAidCategories')
+      .collection('firstAidTips')
       .onSnapshot(querySnapshot => {
-        const categories = [];
+        const tips = [];
   
         querySnapshot.forEach(documentSnapshot => {
-          categories.push({
+          tips.push({
             ...documentSnapshot.data(),
             key: documentSnapshot.id,
           });
         });
   
-        setCategories(categories);
-        setFullData(categories);
+        setTips(tips);
+        setFullData(tips);
         setLoading(false);
       });
   
@@ -54,20 +54,23 @@ export default function FirstAidSection() {
 
   const handleSearch = text => {
     const formattedQuery = text;
-    const filteredData = filter(fullData, categories => {
-      return contains(categories, formattedQuery);
+    const filteredData = filter(fullData, tips => {
+      return contains1(tips, formattedQuery);
     });
-    setCategories(filteredData);
+    setTips(filteredData);
     setQuery(text);
   };
   
-  const contains = ({category}, query) => {
+  const contains1 = ({text}, query) => {
   
-    if (category.includes(query)) {
-      return true;
+    var keywords = query.split(" ");
+    for(var i = 0; i < keywords.length; i++){
+      if(keywords[i] == "") continue;
+      if (!(text.toLowerCase().match(keywords[i]))) {
+        return false;
+      }
     }
-  
-    return false;
+    return true
   };
 
 
@@ -75,29 +78,31 @@ export default function FirstAidSection() {
 
     <Container >
 
-      <Content style={{ marginLeft: 5, width: '95%' }}>
-      <Header searchBar rounded style={{backgroundColor:'white'}}>
-          <Item>
-            <Icon name="ios-search" />
-            <Input placeholder="Search"
+      
+      <Header searchBar rounded style={{ backgroundColor: "white" }}>
+        <Item>
+          <Icon name="ios-search" />
+          <Input
+            placeholder="Search"
             value={query}
-            onChangeText={(queryText) => handleSearch(queryText)} />
-         
-          </Item>
-          <Button transparent>
-            <Text>Search</Text>
-          </Button>
-        </Header>
-        <View style={{marginBottom: 'auto', marginTop: 'auto'}}>
+            onChangeText={(queryText) => handleSearch(queryText)}
+          />
+        </Item>
+        <Button transparent>
+          <Text>Search</Text>
+        </Button>
+      </Header>
+        
+        
           <FlatList
-            data={categories}
+            data={tips}
             renderItem={({ item }) => (
-              <View>
-                <Text>{item.category}</Text>
+              <View style={styles.tip}>
+                <Text>{item.text}</Text>
               </View>
             )}
         />
-            </View>
+            
 
         
         {/* <List>
@@ -191,7 +196,7 @@ export default function FirstAidSection() {
             </Right>
           </ListItem>
         </List> */}
-      </Content>
+      
     </Container>
   );
 }
@@ -218,6 +223,9 @@ const styles = StyleSheet.create({
   search: {
     height:60,
     borderWidth: 1,
+  },
+  tip: {
+    margin: 10,
   }
 
 });
