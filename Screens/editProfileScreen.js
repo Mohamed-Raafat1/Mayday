@@ -131,7 +131,7 @@ function EditProfileScreen({ navigation, route }) {
 
   return (
     <Container style={styles.container}>
-      <Header style={{flexDirection:"row", justifyContent:'space-between'}}>
+      <Header androidStatusBarColor="gray" style={{flexDirection:"row", justifyContent:'space-between'}}>
         <Left>
           <Button transparent onPress={()=>{navigation.goBack()}}>
             <Icon name="arrow-back"/>
