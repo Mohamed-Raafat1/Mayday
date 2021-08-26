@@ -205,7 +205,7 @@ function SOS({ navigation, route }) {
           </Body>
           <Right>
             {/* Get from Contacts Button */}
-            <Button onPress={onAdd} style={styles.button} primary rounded>
+            <Button onPress={() => navigation.navigate("Search")} style={styles.button} primary rounded>
               <Icon active name="person" />
               <Text style={{ marginLeft: -30 }}>Add</Text>
             </Button>
