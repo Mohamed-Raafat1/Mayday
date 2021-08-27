@@ -9,10 +9,10 @@ import ViewNearestHospital from "../Screens/ViewNearestHospital";
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import { DrawerContent } from "./DrawerContent";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Content, Button,Text, View } from "native-base";
+import { Content, Button, Text, View } from "native-base";
 import Settings from "../Screens/Settings Screens/Settings";
 import AccountSettings from "../Screens/Settings Screens/AccountSettings";
-import EditProfileScreen from "../Screens/EditProfileScreen";
+import EditProfileScreen from "../Screens/editProfileScreen";
 import LocationSettings from "../Screens/Settings Screens/LocationSettings";
 import AccidentsList from "../Screens/AccidentsListScreen";
 import Search from "../Screens/SearchScreen";
@@ -21,14 +21,9 @@ import Search from "../Screens/SearchScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect } from "react";
 
-
 const Drawer = createDrawerNavigator();
 
-
-
 const HomeDrawer = ({ props }) => {
-
-
   // -------------------------this is all for first signup trial-----------------
   // const [isFirstSignup, setisFirstSignup] = useState(null);
   // useEffect(() => {
@@ -42,7 +37,7 @@ const HomeDrawer = ({ props }) => {
   //       setisFirstSignup(true);
   //     } else {
   //       setisFirstSignup(false);
-        
+
   //     }
   //   }); // Add some error handling, also you can simply do setIsFirstLaunch(null)
   // }, []);
@@ -58,7 +53,7 @@ const HomeDrawer = ({ props }) => {
   // ------------------------------------------------------------------------
 
   return (
-    <Drawer.Navigator  drawerContent={(props) => <DrawerContent {...props} />}>
+    <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={Tabs} />
       <Drawer.Screen
         // options={{
@@ -68,7 +63,7 @@ const HomeDrawer = ({ props }) => {
         component={EmergencyContactsScreen}
       />
       <Drawer.Screen name="User Rating" component={userRatingStackScreen} />
-      
+
       <Drawer.Screen
         name="View Nearest Hospital"
         component={ViewNearestHospital}
@@ -84,12 +79,12 @@ const HomeDrawer = ({ props }) => {
 //Settings --> Edit Medical ID/Account Settings/location
 const SettingsStack = createStackNavigator();
 const EmergencyContactsStack = createStackNavigator();
-const SettingsStackScreen = ({navigation}) => (
+const SettingsStackScreen = ({ navigation }) => (
   <SettingsStack.Navigator>
     <SettingsStack.Screen
       name="Settings"
       component={Settings}
-      options={{  headerShown:true,title: "Settings" }}
+      options={{ headerShown: true, title: "Settings" }}
     />
     <SettingsStack.Screen
       name="AccountSettings"
@@ -118,16 +113,14 @@ const SettingsStackScreen = ({navigation}) => (
   </SettingsStack.Navigator>
 );
 
-const EmergencyContactsScreen = ({navigation}) => (
+const EmergencyContactsScreen = ({ navigation }) => (
   <EmergencyContactsStack.Navigator>
     <EmergencyContactsStack.Screen
       name="Emergency Contacts"
       component={EmergencyContacts}
+      options={{ headerShown: false }}
     />
-    <EmergencyContactsStack.Screen
-      name="Search"
-      component={Search}
-    />
-    </EmergencyContactsStack.Navigator>
+    <EmergencyContactsStack.Screen name="Search" component={Search} />
+  </EmergencyContactsStack.Navigator>
 );
 export default HomeDrawer;

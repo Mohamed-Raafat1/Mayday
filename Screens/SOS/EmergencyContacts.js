@@ -46,6 +46,7 @@ function SOS({ navigation, route }) {
   const printme = () => {
     console.log("Contact1 = " + Numbers);
   };
+  
   const onAdd = () => {
     let EmergencyContacts = {
       contact1 : "012",
