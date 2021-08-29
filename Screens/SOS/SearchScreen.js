@@ -52,15 +52,6 @@ const SearchScreen = ({ navigation, props, route }) => {
     currentUser.EmergencyContacts
   );
 
-  const dispatch = useDispatch();
-
-
-  // const [contact1, setContact1] = useState(currentUser.EmergencyContacts.contact1);
-  // const [contact2, setContact2] = useState(currentUser.EmergencyContacts.contact2);
-  // const [contact3, setContact3] = useState(currentUser.EmergencyContacts.contact3);
-  // const [contact4, setContact4] = useState(currentUser.EmergencyContacts.contact4);
-  // const [contact5, setContact5] = useState(currentUser.EmergencyContacts.contact5);
-
   const openProfileModal = (firstName, lastName, pressedContact) => {
     setFirstName(firstName);
     setLastName(lastName);
@@ -80,7 +71,6 @@ const SearchScreen = ({ navigation, props, route }) => {
   };
 
   useEffect(() => {
-    dispatch(fetchUser()); //to get current user
     const subscriber = firebase
       .firestore()
       .collection("users")
@@ -102,8 +92,6 @@ const SearchScreen = ({ navigation, props, route }) => {
     // Unsubscribe from events when no longer in use
     return () => subscriber();
   }, []);
-
-  const mycurrentUser = useSelector((state) => state.userState.currentUser);
 
   useEffect(() => {
     firebase
@@ -145,9 +133,9 @@ const SearchScreen = ({ navigation, props, route }) => {
   const onAdd = () => {
     setEmergencyContacts((EmergencyContacts) => {
       if (EmergencyContacts.length < 5) {
-         // adding current user as an Emergency contact handling
-         if(mycurrentUser.uid === contact.uid){
-          Toast.show("Can't add yourself as an Emergency Contact")
+        // adding current user as an Emergency contact handling
+        if (currentUser.uid === contact.uid) {
+          Toast.show("Can't add yourself as an Emergency Contact");
           return EmergencyContacts;
         }
         // handling not entering the same contact two times
@@ -157,6 +145,7 @@ const SearchScreen = ({ navigation, props, route }) => {
             return EmergencyContacts;
           }
         }
+        Toast.show("Contact is added Successfully");
         return [...EmergencyContacts, contact];
       } else {
         Toast.show("Reached maximum number of contacts");
@@ -187,7 +176,7 @@ const SearchScreen = ({ navigation, props, route }) => {
             <Title>{firstName + " " + lastName}</Title>
           </View>
           <View>
-            <Button rounded style={styles.button} onPress={onAdd}>
+            <Button rounded style={styles.button} onPress={() => {onAdd() ; navigation.navigate("EmergencyContactsPage");} }>
               <Text>Add as an emergency contact</Text>
             </Button>
           </View>

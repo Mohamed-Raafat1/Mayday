@@ -121,7 +121,7 @@ const SettingsStackScreen = ({navigation}) => (
 const EmergencyContactsScreen = ({navigation}) => (
   <EmergencyContactsStack.Navigator>
     <EmergencyContactsStack.Screen
-      name="Emergency Contacts"
+      name="EmergencyContactsPage"
       component={EmergencyContacts}
       options={{headerShown : false}}
     />

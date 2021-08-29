@@ -21,7 +21,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
 function CurrentReport() {
-  const [Selected, c] = useState("Nothing Selected");
+  const [Selected, setSelected] = useState("Nothing Selected");
   const printme = () => {
     console.log(Selected);
   };
@@ -66,7 +66,7 @@ function CurrentReport() {
                 placeholderStyle={{ color: "#bfc6ea" }}
                 placeholderIconColor="#007aff"
                 selectedValue={Selected}
-                onValueChange={SetSelected}
+                onValueChange={setSelected}
               >
                 <Picker.Item
                   label="Select Accident Type"

@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../../redux/actions";
 import { useLayoutEffect } from "react";
+import Toast from "react-native-simple-toast";
 import { Ionicons } from "@expo/vector-icons";
 import firebase from "firebase";
 require("firebase/firestore");
@@ -37,26 +38,58 @@ function SOS({ navigation, route }) {
   //To save contact numbers (first contact only right now as a Test)
 
   const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.userState.currentUser);
+  const contacts = currentUser.EmergencyContacts;
+  const [EmergencyContacts, setEmergencyContacts] = useState(
+    currentUser.EmergencyContacts
+  );
 
   useLayoutEffect(() => {
     dispatch(fetchUser());
+     firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid)
+      .update({
+        EmergencyContacts,
+      })
+      .catch((error) => {
+        Toast.show({
+          text: error.message,
+          duration: 2000,
+        });
+        console.log(error);
+      });
   }, [route]);
 
-  const currentUser = useSelector((state) => state.userState.currentUser);
-  const contacts = currentUser.EmergencyContacts
 
-  const [Numbers, SetNumbers] = useState("");
-  
-  
-  const printme = () => {
-    console.log("Contact1 = " + Numbers);
-  };
-  
+  //update Contacts
+  // useEffect(() => {
+    
+  // });
+
+
+
+  // const onDelete = (id) => {
+  //   setEmergencyContacts((EmergencyContacts) => {
+  //     for (var i = 0; i < EmergencyContacts.length; i++) {
+  //       if (id === EmergencyContacts[i].uid) {
+  //         EmergencyContacts.splice(i, 1);
+  //         Toast.show("Contact has been removed");
+  //         return EmergencyContacts;
+  //       }
+  //     }
+  //   });
+  // };
 
   function display() {
     return contacts.map((item) => {
-      return(
-        <ListItem key={item.uid} icon style={{ marginBottom: 10, marginTop: 10 }}>
+      return (
+        <ListItem
+          key={item.uid}
+          icon
+          style={{ marginBottom: 10, marginTop: 10 }}
+        >
           <Left>
             <Thumbnail
               source={{
@@ -65,35 +98,43 @@ function SOS({ navigation, route }) {
             />
           </Left>
           {/* Emergency Number */}
-          <Body >
-            <Text >{item.FirstName + ' ' + item.LastName}</Text>
+          <Body>
+            <Text>{item.FirstName + " " + item.LastName}</Text>
             <Text note numberOfLines={1}>
               {item.PhoneNumber}
             </Text>
           </Body>
-          {/* <Right>
-            
-            <Button onPress={printme} style={styles.button} primary rounded>
+          <Right>
+            <Button
+              // onPress={onDelete(item.uid)}
+              style={styles.button}
+              primary
+              rounded
+            >
               <Icon active name="person" />
-              <Text style={{ marginLeft: -30 }}>Change</Text>
+              <Text style={{ marginLeft: -30 }}>Remove</Text>
             </Button>
-          </Right> */}
+          </Right>
         </ListItem>
       );
     });
   }
 
   return (
-    <Container>      
+    <Container>
       <View>
+        <Text style={styles.Text}>Add up to 5 Emergency Contacts</Text>
         {display()}
       </View>
-      <Fab  onPress={() => navigation.navigate("Search", {currentUser: currentUser})}>
-      <Icon name="add" />
-    </Fab >
+      <Fab
+        style={styles.fab}
+        onPress={() =>
+          navigation.navigate("Search", { currentUser: currentUser })
+        }
+      >
+        <Icon name="add" />
+      </Fab>
     </Container>
-
-      
   );
 }
 
@@ -135,7 +176,7 @@ const styles = StyleSheet.create({
   button: {
     marginHorizontal: 10,
     marginBottom: 10,
-    backgroundColor: "#00C1D4",
+    backgroundColor: "rgb(250,91,90)",
     shadowColor: "rgba(0, 0, 255, 255)",
     shadowOpacity: 1,
     shadowRadius: 20,
@@ -148,5 +189,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 10,
     marginVertical: 20,
+  },
+  Text: {
+    fontSize: 15,
+    color: "#8fccd9",
+    fontWeight: "bold",
+    marginLeft: 10,
+    marginVertical: 20,
+  },
+  fab: {
+    backgroundColor: "#00C1D4",
+    shadowColor: "rgba(0, 0, 255, 255)",
+    shadowOpacity: 1,
+    shadowRadius: 20,
+    shadowOffset: { width: 100, height: 100 },
   },
 });
