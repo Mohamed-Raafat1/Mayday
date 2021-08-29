@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../../redux/actions";
 import { useLayoutEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import firebase from "firebase";
-require("firebase/firestore")
-require("firebase/firebase-storage")
+require("firebase/firestore");
+require("firebase/firebase-storage");
 import {
   Container,
   Header,
@@ -22,9 +22,11 @@ import {
   Title,
   Input,
   Thumbnail,
+  FlatList,
+  Fab,
 } from "native-base";
 
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 const Stack = createStackNavigator();
 function SOS({ navigation, route }) {
@@ -41,56 +43,20 @@ function SOS({ navigation, route }) {
   }, [route]);
 
   const currentUser = useSelector((state) => state.userState.currentUser);
+  const contacts = currentUser.EmergencyContacts
 
   const [Numbers, SetNumbers] = useState("");
+  
+  
   const printme = () => {
     console.log("Contact1 = " + Numbers);
   };
   
-  const onAdd = () => {
-    let EmergencyContacts = {
-      contact1 : "012",
-      contact2 : "0125",
-      contact3: "01256",
-      contact4: "0123",
-      contact5: "0125754",
-    };
 
-    firebase
-      .firestore()
-      .collection("users")
-      .doc(currentUser.uid)
-      .update({
-        EmergencyContacts,
-      })
-      .catch((error) => {
-        Toast.show({
-          text: error.message,
-          duration: 2000,
-        });
-        console.log(error);
-      });
-  };
-
-  return (
-    <Container>
-      <Content>
-        {/* Switch  */}
-        {/* <ListItem icon style={{ marginBottom: 50 }}>
-          <Left>
-            <Button style={{ backgroundColor: "#FF9501" }}>
-              <Icon active name="person" />
-            </Button>
-          </Left>
-          <Body>
-            <Text>Emergency Contacts</Text>
-          </Body>
-          <Right>
-            <Switch onValueChange={toggleSwitch} value={isEnabled} />
-          </Right>
-        </ListItem> */}
-        <Text style={styles.Title}>Current 5 Emergency Contacts</Text>
-        <ListItem icon style={{ marginBottom: 10, marginTop: 10 }}>
+  function display() {
+    return contacts.map((item) => {
+      return(
+        <ListItem key={item.uid} icon style={{ marginBottom: 10, marginTop: 10 }}>
           <Left>
             <Thumbnail
               source={{
@@ -99,121 +65,35 @@ function SOS({ navigation, route }) {
             />
           </Left>
           {/* Emergency Number */}
-          <Body>
-            {/* <Input
-              placeholder="First Contact"
-              onChangeText={SetNumbers}
-              value={Numbers}
-            >
-              +2010004545584
-            </Input> */}
-            <Text>Ahmed</Text>
+          <Body >
+            <Text >{item.FirstName + ' ' + item.LastName}</Text>
             <Text note numberOfLines={1}>
-              +2010004545584
+              {item.PhoneNumber}
             </Text>
           </Body>
-          <Right>
-            {/* Get from Contacts Button */}
+          {/* <Right>
+            
             <Button onPress={printme} style={styles.button} primary rounded>
               <Icon active name="person" />
               <Text style={{ marginLeft: -30 }}>Change</Text>
             </Button>
-          </Right>
+          </Right> */}
         </ListItem>
+      );
+    });
+  }
 
-        <ListItem icon style={{ marginBottom: 10, marginTop: 10 }}>
-          <Left>
-            <Thumbnail
-              source={{
-                uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
-              }}
-            />
-          </Left>
-          <Body>
-            <Text>Mohamed</Text>
-            <Text note numberOfLines={1}>
-              +2010004545584
-            </Text>
-          </Body>
-          <Right>
-            {/* Get from Contacts Button */}
-            <Button onPress={printme} style={styles.button} primary rounded>
-              <Icon active name="person" />
-              <Text style={{ marginLeft: -30 }}>Change</Text>
-            </Button>
-          </Right>
-        </ListItem>
-
-        <ListItem icon style={{ marginBottom: 10, marginTop: 10 }}>
-          <Left>
-            <Thumbnail
-              source={{
-                uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
-              }}
-            />
-          </Left>
-          <Body>
-            <Text>Amr</Text>
-            <Text note numberOfLines={1}>
-              +2010004545584
-            </Text>
-          </Body>
-          <Right>
-            {/* Get from Contacts Button */}
-            <Button onPress={printme} style={styles.button} primary rounded>
-              <Icon active name="person" />
-              <Text style={{ marginLeft: -30 }}>Change</Text>
-            </Button>
-          </Right>
-        </ListItem>
-
-        <ListItem icon style={{ marginBottom: 10, marginTop: 10 }}>
-          <Left>
-            <Thumbnail
-              source={{
-                uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
-              }}
-            />
-          </Left>
-          <Body>
-            <Text>Raafat</Text>
-            <Text note numberOfLines={1}>
-              +2010004545584
-            </Text>
-          </Body>
-          <Right>
-            {/* Get from Contacts Button */}
-            <Button onPress={printme} style={styles.button} primary rounded>
-              <Icon active name="person" />
-              <Text style={{ marginLeft: -30 }}>Change</Text>
-            </Button>
-          </Right>
-        </ListItem>
-
-        <ListItem icon style={{ marginBottom: 10, marginTop: 10 }}>
-          <Left>
-            <Thumbnail
-              source={{
-                uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
-              }}
-            />
-          </Left>
-          <Body>
-            <Text>Empty</Text>
-            <Text note numberOfLines={2}>
-              -
-            </Text>
-          </Body>
-          <Right>
-            {/* Get from Contacts Button */}
-            <Button onPress={() => navigation.navigate("Search")} style={styles.button} primary rounded>
-              <Icon active name="person" />
-              <Text style={{ marginLeft: -30 }}>Add</Text>
-            </Button>
-          </Right>
-        </ListItem>
-      </Content>
+  return (
+    <Container>      
+      <View>
+        {display()}
+      </View>
+      <Fab  onPress={() => navigation.navigate("Search", {currentUser: currentUser})}>
+      <Icon name="add" />
+    </Fab >
     </Container>
+
+      
   );
 }
 
