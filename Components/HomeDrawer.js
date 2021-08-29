@@ -123,6 +123,7 @@ const EmergencyContactsScreen = ({navigation}) => (
     <EmergencyContactsStack.Screen
       name="Emergency Contacts"
       component={EmergencyContacts}
+      options={{headerShown : false}}
     />
     <EmergencyContactsStack.Screen
       name="Search"

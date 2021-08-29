@@ -29,40 +29,38 @@ import { Avatar, Title, Caption, TouchableRipple } from "react-native-paper";
 import Modal from "react-native-modal";
 import firebase from "firebase";
 import filter from "lodash.filter";
-import Toast from 'react-native-simple-toast';
-import { MaterialIcons } from '@expo/vector-icons';
+import Toast from "react-native-simple-toast";
+import { MaterialIcons } from "@expo/vector-icons";
 import VisitedProfileScreen from "../VisitedProfileScreen";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "../../redux/actions";
 
 const SearchScreen = ({ navigation, props, route }) => {
   const currentUser = route.params.currentUser;
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
   const [users, setusers] = useState([]);
-  const [contact, setContact] = useState()
+  const [contact, setContact] = useState();
   const [query, setQuery] = useState("");
   const [fullData, setFullData] = useState([]);
   var [isPress, setIsPress] = React.useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [firstName, setFirstName] = useState('');
+  const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [id, setId] = useState("123");
-  const [EmergencyContacts, setEmergencyContacts] = useState(currentUser.EmergencyContacts)
-  
- 
+  const [EmergencyContacts, setEmergencyContacts] = useState(
+    currentUser.EmergencyContacts
+  );
 
-  
-  
-  
+  const dispatch = useDispatch();
+
+
   // const [contact1, setContact1] = useState(currentUser.EmergencyContacts.contact1);
   // const [contact2, setContact2] = useState(currentUser.EmergencyContacts.contact2);
   // const [contact3, setContact3] = useState(currentUser.EmergencyContacts.contact3);
   // const [contact4, setContact4] = useState(currentUser.EmergencyContacts.contact4);
   // const [contact5, setContact5] = useState(currentUser.EmergencyContacts.contact5);
 
-
-  
-
-  
   const openProfileModal = (firstName, lastName, pressedContact) => {
     setFirstName(firstName);
     setLastName(lastName);
@@ -70,8 +68,8 @@ const SearchScreen = ({ navigation, props, route }) => {
     setModalVisible(!modalVisible);
   };
   const toggleModal = () => {
-    setModalVisible(!modalVisible)
-  }
+    setModalVisible(!modalVisible);
+  };
   var touchProps = {
     activeOpacity: 1,
     underlayColor: "#eaeaea", // <-- "backgroundColor" will be always overwritten by "underlayColor"
@@ -82,6 +80,7 @@ const SearchScreen = ({ navigation, props, route }) => {
   };
 
   useEffect(() => {
+    dispatch(fetchUser()); //to get current user
     const subscriber = firebase
       .firestore()
       .collection("users")
@@ -103,6 +102,8 @@ const SearchScreen = ({ navigation, props, route }) => {
     // Unsubscribe from events when no longer in use
     return () => subscriber();
   }, []);
+
+  const mycurrentUser = useSelector((state) => state.userState.currentUser);
 
   useEffect(() => {
     firebase
@@ -141,25 +142,38 @@ const SearchScreen = ({ navigation, props, route }) => {
     return true;
   };
 
-  
-
   const onAdd = () => {
-    setEmergencyContacts(EmergencyContacts => {
-      if(EmergencyContacts.length < 5) return [...EmergencyContacts, contact]
-      else{
-        Toast.show("Reached maximum number of contacts")
-        return EmergencyContacts};
-    } 
-    );
-    
-    
+    setEmergencyContacts((EmergencyContacts) => {
+      if (EmergencyContacts.length < 5) {
+         // adding current user as an Emergency contact handling
+         if(mycurrentUser.uid === contact.uid){
+          Toast.show("Can't add yourself as an Emergency Contact")
+          return EmergencyContacts;
+        }
+        // handling not entering the same contact two times
+        for (var i = 0; i < EmergencyContacts.length; i++) {
+          if (contact.uid === EmergencyContacts[i].uid) {
+            Toast.show("Contact is already added");
+            return EmergencyContacts;
+          }
+        }
+        return [...EmergencyContacts, contact];
+      } else {
+        Toast.show("Reached maximum number of contacts");
+        return EmergencyContacts;
+      }
+    });
   };
 
   return (
     <View style={styles.container}>
-      <Modal visible={modalVisible} backdropOpacity={0} onBackdropPress={toggleModal} style={styles.bottomModalView}>
+      <Modal
+        visible={modalVisible}
+        backdropOpacity={0}
+        onBackdropPress={toggleModal}
+        style={styles.bottomModalView}
+      >
         <View style={styles.modal}>
-          
           <View>
             <Avatar.Image
               source={{
@@ -170,15 +184,14 @@ const SearchScreen = ({ navigation, props, route }) => {
           </View>
 
           <View>
-            <Title>
-            {firstName + ' ' + lastName }
-            </Title>
+            <Title>{firstName + " " + lastName}</Title>
           </View>
           <View>
-              <Button rounded style={styles.button} onPress={onAdd}><Text>Add as an emergency contact</Text></Button>
-              </View>
+            <Button rounded style={styles.button} onPress={onAdd}>
+              <Text>Add as an emergency contact</Text>
+            </Button>
+          </View>
         </View>
-    
       </Modal>
       <Header searchBar rounded style={{ backgroundColor: "white" }}>
         <Item>
@@ -224,9 +237,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  Buttons: {
-    
-  },
+  Buttons: {},
   search: {
     height: 60,
     borderWidth: 1,
@@ -242,21 +253,20 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   modalToggle: {
-    margin:0,
-    
+    margin: 0,
+
     height: "50%",
   },
   modalClose: {
-    margin:0,
-    
+    margin: 0,
   },
   modalContent: {
     flex: 0,
     height: "50%",
-    margin:0,
+    margin: 0,
   },
   bottomModalView: {
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     margin: 0,
   },
   modal: {
@@ -265,7 +275,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-    borderStyle: 'solid',
-    backgroundColor: "white"
+    borderStyle: "solid",
+    backgroundColor: "white",
   },
 });
