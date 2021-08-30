@@ -89,14 +89,7 @@ function RegistrationScreen({ navigation }) {
     };
 
     //Emergency Contacts
-    let EmergencyContacts = {
-      contact1: "-",
-      contact2: "-",
-      contact3: "-",
-      contact4: "-",
-      contact5: "-",
-    };
-
+    let EmergencyContacts = [];
     //retrieving gender
     let gender = "";
     radioButtons.map((radio) => {

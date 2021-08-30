@@ -40,57 +40,67 @@ function SOS({ navigation, route }) {
 
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.userState.currentUser);
-  const [EmergencyContacts, setEmergencyContacts] = useState(
-    currentUser.EmergencyContacts
+  let EmergencyContacts = useSelector(
+    (state) => state.userState.currentUser.EmergencyContacts
   );
+  console.log(EmergencyContacts);
+  // const [EmergencyContacts, setEmergencyContacts] = useState(
+  //   currentUser.EmergencyContacts
+  // );
 
   useLayoutEffect(() => {
     dispatch(fetchUser());
-  });
+  }, []);
 
-function Update(){
-  firebase
-  .firestore()
-  .collection("users")
-  .doc(currentUser.uid)
-  .update({
-    EmergencyContacts,
-  })
-  .catch((error) => {
-    Toast.show({
-      text: error.message,
-      duration: 2000,
-    });
-    console.log(error);
-  });
-
-}
-
-function find(item,elm){
-  if(item===elm){
-    return true
+  function Update() {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid)
+      .update({
+        EmergencyContacts: EmergencyContacts,
+      })
+      .catch((error) => {
+        Toast.show({
+          text: error.message,
+          duration: 2000,
+        });
+        console.log(error);
+      });
   }
-  return false
-}
 
-function onDelete(item){
-  let index
-     index = EmergencyContacts.findIndex(function(elm,i){
-      return item.Email === elm.Email
-    } )
-    let array =EmergencyContacts
-    setEmergencyContacts(array.splice(index,1))
+  function find(item, elm) {
+    if (item === elm) {
+      return true;
+    }
+    return false;
+  }
+
+  function onDelete(item) {
+    let index;
+    console.log(currentUser.EmergencyContacts);
+    index = EmergencyContacts.findIndex(function (elm, i) {
+      return item.Email === elm.Email;
+    });
+    let array = EmergencyContacts;
+    console.log(
+      "Before removal------------------------------------\n",
+      EmergencyContacts
+    );
+    EmergencyContacts.splice(index, 1);
+    console.log(
+      "After removal------------------------------------\n",
+      EmergencyContacts
+    );
     Toast.show("Contact removed successfully");
-    console.log(array)
-    Update()
-       // return (removed);
-}
+
+    Update();
+    // return (removed);
+  }
   //update Contacts
   // useEffect(() => {
-    
+
   // });
-
-
 
   // const onDelete = (id) => {
   //   setEmergencyContacts((EmergencyContacts) => {
@@ -128,7 +138,9 @@ function onDelete(item){
           </Body>
           <Right>
             <Button
-              onPress={()=>{onDelete(item)}}
+              onPress={() => {
+                onDelete(item);
+              }}
               style={styles.button}
               primary
               rounded
@@ -141,23 +153,23 @@ function onDelete(item){
       );
     });
   }
-
-  return (
-    <Container>
-      <View>
-        <Text style={styles.Text}>Add up to 5 Emergency Contacts</Text>
-        {display()}
-      </View>
-      <Fab
-        style={styles.fab}
-        onPress={() =>
-          navigation.navigate("Search", { currentUser: currentUser })
-        }
-      >
-        <Icon name="add" />
-      </Fab>
-    </Container>
-  );
+  if (EmergencyContacts)
+    return (
+      <Container>
+        <View>
+          <Text style={styles.Text}>Add up to 5 Emergency Contacts</Text>
+          {display()}
+        </View>
+        <Fab
+          style={styles.fab}
+          onPress={() =>
+            navigation.navigate("Search", { currentUser: currentUser })
+          }
+        >
+          <Icon name="add" />
+        </Fab>
+      </Container>
+    );
 }
 function sosStackScreen({ navigation }) {
   return (
