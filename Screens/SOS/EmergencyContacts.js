@@ -28,6 +28,7 @@ import {
 } from "native-base";
 
 import { StyleSheet, View } from "react-native";
+import { update } from "lodash";
 
 const Stack = createStackNavigator();
 function SOS({ navigation, route }) {
@@ -39,30 +40,51 @@ function SOS({ navigation, route }) {
 
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.userState.currentUser);
-  const contacts = currentUser.EmergencyContacts;
   const [EmergencyContacts, setEmergencyContacts] = useState(
     currentUser.EmergencyContacts
   );
 
   useLayoutEffect(() => {
     dispatch(fetchUser());
-     firebase
-      .firestore()
-      .collection("users")
-      .doc(currentUser.uid)
-      .update({
-        EmergencyContacts,
-      })
-      .catch((error) => {
-        Toast.show({
-          text: error.message,
-          duration: 2000,
-        });
-        console.log(error);
-      });
-  }, [route]);
+  });
 
+function Update(){
+  firebase
+  .firestore()
+  .collection("users")
+  .doc(currentUser.uid)
+  .update({
+    EmergencyContacts,
+  })
+  .catch((error) => {
+    Toast.show({
+      text: error.message,
+      duration: 2000,
+    });
+    console.log(error);
+  });
 
+}
+
+function find(item,elm){
+  if(item===elm){
+    return true
+  }
+  return false
+}
+
+function onDelete(item){
+  let index
+     index = EmergencyContacts.findIndex(function(elm,i){
+      return item.Email === elm.Email
+    } )
+    let array =EmergencyContacts
+    setEmergencyContacts(array.splice(index,1))
+    Toast.show("Contact removed successfully");
+    console.log(array)
+    Update()
+       // return (removed);
+}
   //update Contacts
   // useEffect(() => {
     
@@ -83,7 +105,7 @@ function SOS({ navigation, route }) {
   // };
 
   function display() {
-    return contacts.map((item) => {
+    return EmergencyContacts.map((item) => {
       return (
         <ListItem
           key={item.uid}
@@ -106,7 +128,7 @@ function SOS({ navigation, route }) {
           </Body>
           <Right>
             <Button
-              // onPress={onDelete(item.uid)}
+              onPress={()=>{onDelete(item)}}
               style={styles.button}
               primary
               rounded
@@ -137,7 +159,6 @@ function SOS({ navigation, route }) {
     </Container>
   );
 }
-
 function sosStackScreen({ navigation }) {
   return (
     <Stack.Navigator>

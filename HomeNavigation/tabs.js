@@ -14,7 +14,7 @@ import EmergencyTab from "./EmergencyTab";
 import HomeScreen from "../Screens/HomeScreen";
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import MedicalIdScreen from "../Screens/MedicalIdScreen";
-import EditProfileScreen from "../Screens/editProfileScreen";
+import EditProfileScreen from "../Screens/EditProfileScreen";
 import FirstAidSection from "../Screens/FirstAidSection";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
 import {Button,Icon,Header,Item,Input,Text, Content,View} from "native-base";

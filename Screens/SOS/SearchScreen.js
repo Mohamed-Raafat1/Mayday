@@ -209,7 +209,7 @@ const SearchScreen = ({ navigation, props, route }) => {
                   }}
                 >
                   <Text>{item.FirstName + " " + item.LastName}</Text>
-                  <Text>{item.uid}</Text>
+                  <Text>{item.Email}</Text>
                 </TouchableOpacity>
               </View>
             </TouchableHighlight>

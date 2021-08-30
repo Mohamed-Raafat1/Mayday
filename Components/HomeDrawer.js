@@ -12,7 +12,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Content, Button,Text, View } from "native-base";
 import Settings from "../Screens/Settings Screens/Settings";
 import AccountSettings from "../Screens/Settings Screens/AccountSettings";
-import EditProfileScreen from "../Screens/editProfileScreen";
 import LocationSettings from "../Screens/Settings Screens/LocationSettings";
 import AccidentsList from "../Screens/AccidentsListScreen";
 import Search from "../Screens/SOS/SearchScreen";
