@@ -9,31 +9,27 @@ import ViewNearestHospital from "../Screens/ViewNearestHospital";
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import { DrawerContent } from "./DrawerContent";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Content, Button,Text, View } from "native-base";
+import { Content, Button, Text, View } from "native-base";
 import Settings from "../Screens/Settings Screens/Settings";
 import AccountSettings from "../Screens/Settings Screens/AccountSettings";
 import LocationSettings from "../Screens/Settings Screens/LocationSettings";
 import AccidentsList from "../Screens/AccidentsListScreen";
 import Search from "../Screens/SOS/SearchScreen";
- 
+import temp from "../Screens/temp";
+
 //for initial signup
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect } from "react";
- 
- 
+
 const Drawer = createDrawerNavigator();
- 
- 
- 
+
 const HomeDrawer = ({ props }) => {
- 
- 
   // -------------------------this is all for first signup trial-----------------
   // const [isFirstSignup, setisFirstSignup] = useState(null);
   // useEffect(() => {
- 
+
   //   AsyncStorage.getItem("alreadyLoggedin").then(async (value) => {
- 
+
   //     await console.log(value)
   //     // console.log(isFirstSignup)
   //     if (value == null || value==false) {
@@ -41,12 +37,12 @@ const HomeDrawer = ({ props }) => {
   //       setisFirstSignup(true);
   //     } else {
   //       setisFirstSignup(false);
-        
+
   //     }
   //   }); // Add some error handling, also you can simply do setIsFirstLaunch(null)
   // }, []);
   // let routeName
- 
+
   // if (isFirstSignup === null) {
   //   return (<View></View>); // This is the 'tricky' part: The query to AsyncStorage is not finished, but we have to present something to the user. Null will just render nothing, so you can also put a placeholder of some sort, but effectively the interval between the first mount and AsyncStorage retrieving your data won't be noticeable to the user. But if you want to display anything then you can use a LOADER here
   // } else if (isFirstSignup == true) {
@@ -55,9 +51,9 @@ const HomeDrawer = ({ props }) => {
   //   routeName = "Home";
   // }
   // ------------------------------------------------------------------------
- 
+
   return (
-    <Drawer.Navigator  drawerContent={(props) => <DrawerContent {...props} />}>
+    <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={Tabs} />
       <Drawer.Screen
         // options={{
@@ -67,28 +63,29 @@ const HomeDrawer = ({ props }) => {
         component={EmergencyContactsScreen}
       />
       <Drawer.Screen name="User Rating" component={userRatingStackScreen} />
-      
+
       <Drawer.Screen
         name="View Nearest Hospital"
         component={ViewNearestHospital}
       />
       <Drawer.Screen name="Request Doctor" component={DoctorsScreen} />
       <Drawer.Screen name="Accidents List" component={AccidentsList} />
- 
+
       <Drawer.Screen name="Settings" component={SettingsStackScreen} />
+      <Drawer.Screen name="temp" component={temp} />
     </Drawer.Navigator>
   );
 };
- 
+
 //Settings --> Edit Medical ID/Account Settings/location
 const SettingsStack = createStackNavigator();
 const EmergencyContactsStack = createStackNavigator();
-const SettingsStackScreen = ({navigation}) => (
+const SettingsStackScreen = ({ navigation }) => (
   <SettingsStack.Navigator>
     <SettingsStack.Screen
       name="Settings"
       component={Settings}
-      options={{  headerShown:true,title: "Settings" }}
+      options={{ headerShown: true, title: "Settings" }}
     />
     <SettingsStack.Screen
       name="AccountSettings"
@@ -116,18 +113,15 @@ const SettingsStackScreen = ({navigation}) => (
     />
   </SettingsStack.Navigator>
 );
- 
-const EmergencyContactsScreen = ({navigation}) => (
+
+const EmergencyContactsScreen = ({ navigation }) => (
   <EmergencyContactsStack.Navigator>
     <EmergencyContactsStack.Screen
       name="EmergencyContactsPage"
       component={EmergencyContacts}
-      options={{headerShown : false}}
+      options={{ headerShown: false }}
     />
-    <EmergencyContactsStack.Screen
-      name="Search"
-      component={Search}
-    />
-    </EmergencyContactsStack.Navigator>
+    <EmergencyContactsStack.Screen name="Search" component={Search} />
+  </EmergencyContactsStack.Navigator>
 );
 export default HomeDrawer;

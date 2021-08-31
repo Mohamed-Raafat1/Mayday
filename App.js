@@ -2,25 +2,26 @@ import "react-native-gesture-handler";
 import React, { useState, useEffect, useMemo } from "react";
 import { ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
-import firebase from 'firebase'
+import firebase from "firebase";
 import { Provider } from "react-redux";
-import { createStore,applyMiddleware } from "redux";
+import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
-import { LogBox, StatusBar } from 'react-native';
+import { LogBox, StatusBar } from "react-native";
+import * as geofirestore from "geofirestore";
+
 // symbol polyfills
-global.Symbol = require('core-js/es6/symbol');
-require('core-js/fn/symbol/iterator');
+global.Symbol = require("core-js/es6/symbol");
+require("core-js/fn/symbol/iterator");
 
 // collection fn polyfills
-require('core-js/fn/map');
-require('core-js/fn/set');
-require('core-js/fn/array/find');
+require("core-js/fn/map");
+require("core-js/fn/set");
+require("core-js/fn/array/find");
 
 //for Toast to work
 import { Root } from "native-base";
 
-LogBox.ignoreLogs(['Setting a timer']);
-
+LogBox.ignoreLogs(["Setting a timer"]);
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -29,28 +30,27 @@ import RootStackScreen from "./Screens/RootStackScreen";
 import { View } from "native-base";
 
 import HomeDrawer from "./Components/HomeDrawer";
-import rootReducer  from "./redux/reducers/index";
-const firebaseConfig={
-    apiKey: "AIzaSyCH4QqZ1C8cgycNz3X8uaaubH3R3gPoIGg",
-    authDomain: "rescu-dev.firebaseapp.com",
-    projectId: "rescu-dev",
-    storageBucket: "rescu-dev.appspot.com",
-    messagingSenderId: "993325528560",
-    appId: "1:993325528560:web:d907645f689b19fe161935",
-    measurementId: "G-JFLZQPN8BD"
-  };
-if (firebase.apps.length===0)
-{
-  const app =firebase.initializeApp(firebaseConfig);
+import rootReducer from "./redux/reducers/index";
+const firebaseConfig = {
+  apiKey: "AIzaSyCH4QqZ1C8cgycNz3X8uaaubH3R3gPoIGg",
+  authDomain: "rescu-dev.firebaseapp.com",
+  projectId: "rescu-dev",
+  storageBucket: "rescu-dev.appspot.com",
+  messagingSenderId: "993325528560",
+  appId: "1:993325528560:web:d907645f689b19fe161935",
+  measurementId: "G-JFLZQPN8BD",
+};
+if (firebase.apps.length === 0) {
+  const app = firebase.initializeApp(firebaseConfig);
 }
+const firestore = firebase.firestore();
+export const Geofirestore = geofirestore.initializeApp(firestore);
 
-
-const store=createStore(rootReducer,applyMiddleware(thunk));
+const store = createStore(rootReducer, applyMiddleware(thunk));
 
 const Stack = createStackNavigator();
 //exporting fonts needed for nativebase
 export default function App({ props }) {
-
   const [isLoading, setIsLoading] = useState(true);
   const [LoggedIn, setLoggedIn] = useState(false);
   const [loaded] = useFonts({
@@ -59,24 +59,20 @@ export default function App({ props }) {
   });
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged((user)=>{
-      if(!user){
+    firebase.auth().onAuthStateChanged((user) => {
+      if (!user) {
         setLoggedIn(false);
         setIsLoading(false);
-        
-      }
-      else{
+      } else {
         setLoggedIn(true);
         setIsLoading(false);
       }
-
-    })
-   firebase
-   }, [])
+    });
+    firebase;
+  }, []);
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        
         <ActivityIndicator color="red" size="large"></ActivityIndicator>
       </View>
     );
@@ -91,20 +87,11 @@ export default function App({ props }) {
   return (
     <Provider store={store}>
       <Root>
-      <NavigationContainer>
-      <StatusBar backgroundColor="white"
-     barStyle="dark-content"/>
-      
-      
-      {LoggedIn
-        ?  <HomeDrawer/>
-        :  <RootStackScreen/>
-      }
-         
-       
-         
-         
-      </NavigationContainer>
+        <NavigationContainer>
+          <StatusBar backgroundColor="white" barStyle="dark-content" />
+
+          {LoggedIn ? <HomeDrawer /> : <RootStackScreen />}
+        </NavigationContainer>
       </Root>
     </Provider>
   );

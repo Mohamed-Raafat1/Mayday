@@ -172,7 +172,7 @@ export function DrawerContent(props) {
           )}
           label="bagarab"
           onPress={() => {
-            console.log(currentUser);
+            props.navigation.navigate("temp");
           }}
         />
       </Drawer.Section>
