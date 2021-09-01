@@ -9,6 +9,7 @@ import {
   USER_STATE_CHANGE,
   USER_MESSAGES_UPDATE,
   EMERGENCY_CONTACTS_CHANGE,
+  REQUEST_STATE_CHANGE,
 } from "../constants";
 
 export function fetchUser() {
@@ -26,6 +27,26 @@ export function fetchUser() {
       });
   };
 }
+
+
+
+export function fetchRequest(id) {
+  return (dispatch) => {
+    console.log("halo?")
+    firebase
+      .firestore()
+      .collection("requests")
+      .doc(id)
+      .onSnapshot((snapshot) => {
+        if (snapshot.exists) {
+          dispatch({ type: REQUEST_STATE_CHANGE, currentRequest: snapshot.data() });
+        } else {
+          console.log("does not exist");
+        }
+      });
+  };
+}
+
 
 // Badawi woooork 
 
