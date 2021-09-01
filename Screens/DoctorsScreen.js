@@ -208,6 +208,7 @@ const apiCall = () => {
       requestPermissions();
 
       return () => {
+        setisRequested(false);
         //   PauseLocation()
         setPermissionGranted(null);
         setError(null);
@@ -216,18 +217,22 @@ const apiCall = () => {
   );
 
   useEffect(() => {
-    if (PermissionGranted == true && TrackingStatus == false) {
-      console.log("entering useeffect after permission granted");
-      _getLocationAsync();
-    } else if (PermissionGranted == true && TrackingStatus == true) {
-      console.log("2");
-      StopTracking();
-      _getLocationAsync();
-    } else if (PermissionGranted == false && TrackingStatus == true) {
-      console.log("3");
-      StopTracking();
+    if (isRequested) {
+      if (PermissionGranted == true && TrackingStatus == false) {
+        console.log("entering useeffect after permission granted");
+        _getLocationAsync();
+      } else if (PermissionGranted == true && TrackingStatus == true) {
+        console.log("2");
+        StopTracking();
+        _getLocationAsync();
+      } else if (PermissionGranted == false && TrackingStatus == true) {
+        console.log("3");
+        StopTracking();
+      }
+    } else {
+      if (TrackingStatus == true) StopTracking();
     }
-  }, [PermissionGranted]);
+  }, [PermissionGranted, isRequested]);
   //this is big part of create request and send it and set loading to true till a doctor accepts request (for now spinner waits only for 2 seconds then shows doctor)
   async function SendRequest() {
     let id = await firebase
