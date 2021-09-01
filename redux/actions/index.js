@@ -28,18 +28,18 @@ export function fetchUser() {
   };
 }
 
-
-
 export function fetchRequest(id) {
   return (dispatch) => {
-    console.log("halo?")
     firebase
       .firestore()
       .collection("requests")
       .doc(id)
       .onSnapshot((snapshot) => {
         if (snapshot.exists) {
-          dispatch({ type: REQUEST_STATE_CHANGE, currentRequest: snapshot.data() });
+          dispatch({
+            type: REQUEST_STATE_CHANGE,
+            currentRequest: snapshot.data(),
+          });
         } else {
           console.log("does not exist");
         }
@@ -47,8 +47,7 @@ export function fetchRequest(id) {
   };
 }
 
-
-// Badawi woooork 
+// Badawi woooork
 
 // export function fetchEmergencyContacts(){
 //   return (dispatch) => {
@@ -66,7 +65,6 @@ export function fetchRequest(id) {
 //       });
 //   }
 // }
-
 
 export function updateMessages(message, sender, reciever, chatid) {
   console.log("i am updatingf---------------------------------------------");
