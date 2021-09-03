@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import MapView from "react-native-maps";
 import { useLayoutEffect } from "react";
@@ -26,7 +26,9 @@ import firebase from "firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser, fetchRequest } from "../redux/actions";
 
-//------------------------------TASK MANAGER-----------------------------
+// To DO: apply the fix from viewnearesthospital
+
+////////////////////////  TASK MANAGER  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
   console.log("im in taskmanager");
   if (error) {
@@ -38,19 +40,17 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
     // console.log(data);
     const { locations } = data;
 
-    console.log("im in taskmanager", locations);
-
-    let lat = locations[0].coords.latitude;
-    let long = locations[0].coords.longitude;
-    const hash = geofire.geohashForLocation([lat, long]);
-    let location = new firebase.firestore.GeoPoint(lat, long);
+    let latitude = locations[0].coords.latitude;
+    let longitude = locations[0].coords.longitude;
+    const hash = geofire.geohashForLocation([latitude, longitude]);
+    let location = { latitude, longitude }
     firebase
       .firestore()
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .update({
         geohash: hash,
-        loc: location,
+        location,
       })
       .catch((error) => {
         console.log(
@@ -62,29 +62,35 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
 });
 // ==============================================================
 
+
+////////////////////////////  MAIN COMPONENT   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 function DoctorsScreen() {
+
   //=============================CONSTANTS=========================================================
   const [isLoading, setIsLoading] = useState(false); // do we show spinner or show screen
   const [isRequested, setisRequested] = useState(false); //state of request (is button pressed or not?)
   const [RequestID, setRequestID] = useState(null);
-  const [location, setlocation] = useState({
-    longitude: 0,
-    latitude: 0,
-  });
-  const [Error, setError] = useState(null);
+
+  const [Err, setErr] = useState(null);
   const [TrackingStatus, setTrackingStatus] = useState(false); //currently tracking ?
   const [PermissionGranted, setPermissionGranted] = useState(false); //foreground and background permissions granted?
 
   const currentUser = useSelector((state) => state.userState.currentUser);
-  const currentRequest = useSelector((state) => state.requestState);
+  const currentRequest = useSelector((state) => state);
 
   const dispatch = useDispatch();
+
+  //----------------------constants for mapview
+  const [location, setlocation] = useState({
+    longitude: 0,
+    latitude: 0,
+  });
+  const { height: HEIGHT, width: WIDTH } = Dimensions.get('window');
+  const LATITUDE_DELTA = 0.02; //This controls default zoom
+  const LONGITUDE_DELTA = LATITUDE_DELTA * (WIDTH / HEIGHT);
+  const [themargin, setthemargin] = useState(0)  //this is just for a workaround to mapview issue
   //=====================================================================================================
 
-  //Done on mount
-  useLayoutEffect(() => {
-    dispatch(fetchUser());
-  }, []);
 
   if (currentUser == undefined)
     return (
@@ -93,161 +99,123 @@ function DoctorsScreen() {
       </View>
     );
 
-  if (currentRequest == null)
-    return (
-      <View style={{ justifyContent: "space-evenly" }}>
-        <Text>request undefined</Text>
-      </View>
-    );
+  // if (currentRequest == null)
+  //   return (
+  //     <View style={{ justifyContent: "space-evenly" }}>
+  //       <Text>request undefined</Text>
+  //     </View>
+  //   );
 
-  {
-    /*if u want to make button call the loading:
-const apiCall = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 5000);
-  };*/
-  }
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setIsLoading(false);
-  //   }, 1000);
-  // }, []);
-
-  // Toast.show({
-  //   text: error.message,
-  //   duration: 2000,
-  // });
   //========================Functions==========================
 
   //--------------------------------fn to request permissions----------------------------------------------------
   const requestPermissions = async () => {
-    //----------------request foregroundlocationpermission
-    const { status: ForegroundStatus } =
-      await Location.requestForegroundPermissionsAsync().catch((err) => {
-        console.log("Foreground Permission Error:", err);
-        setError("Foreground Permission Error\n" + err);
-      });
+    try {
+      //---------------- request foregroundlocationpermission
+      const { status: ForegroundStatus } =
+        await Location.requestForegroundPermissionsAsync()
 
-    if (ForegroundStatus !== "granted") {
-      setError("Foreground Location permission not granted! ");
-      return;
+
+      //if foregroundpermission not granted exit the whole function
+      if (ForegroundStatus !== "granted") {
+        throw Error("Foreground Location permission not granted! ")
+      }
+
+
+      //---------------- request backgroundlocationpermission
+      const { status: BackgroundStatus } =
+        await Location.requestBackgroundPermissionsAsync()
+
+      //if backgroundpermission not granted exit the whole function
+      if (BackgroundStatus !== "granted") {
+        throw Error("Background Location permission not granted!")
+      }
+
+      console.log("Background permission granted");
+      //opening location services
+      await Location.enableNetworkProviderAsync()
+
+      console.log('location services enabled')
+      setPermissionGranted(true);
+
     }
-
-    //----------------request backgroundlocationpermission
-    const { status: BackgroundStatus } =
-      await Location.requestBackgroundPermissionsAsync().catch((err) => {
-        console.log("Background Permission Error:", err);
-        setError("Background Permission Error\n" + err);
-      });
-
-    if (BackgroundStatus !== "granted") {
-      setError("Background Location permission not granted!");
-      return;
+    catch (e) {
+      console.log('Permission Error:\n ', e)
+      setErr('Permission Error!\n' + e.message)
     }
-
-    console.log("Background permission granted, calling get location function");
-
-    //opening location services
-    Location.enableNetworkProviderAsync()
-      .then(() => {
-        setPermissionGranted(true);
-      })
-      .catch((err) => setError("Networkservice error\n" + err));
   };
   //--------------------------------------------------------------------------------------------------
 
   //-------------Fn to retrieve location in the foreground and the background------------
   const _getLocationAsync = async () => {
-    console.log("entering get location");
+    try {
+      console.log("entering get location");
 
-    //------------------------fn to get initial location for the mapview
-    Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.BestForNavigation,
-    })
-      .then((loc) => {
-        setlocation(loc.coords);
-        console.log(location);
-      })
-      .catch((err) => {
-        console.log("getcurrentposition error:", err);
-        setError("GetCurrentPosition Error \n" + err);
-      });
 
-    //---------------------------starting fn to fetch location in the background
-    Location.startLocationUpdatesAsync(RESCU_TRACKING, {
-      accuracy: Location.Accuracy.BestForNavigation,
-      showsBackgroundLocationIndicator: true,
-      timeInterval: 3000,
-    })
-      .then(() => {
-        console.log("Background location tracking has started");
-        setTrackingStatus(true);
+      //---------------------------starting fn to fetch location in the background
+      await Location.startLocationUpdatesAsync(RESCU_TRACKING, {
+        accuracy: Location.Accuracy.BestForNavigation,
+        showsBackgroundLocationIndicator: true,
+        timeInterval: 3000,
       })
-      .catch((err) => {
-        console.log("StartLocationUpdate Error:", err);
-        setError("Error when starting LocationUpdate:\n" + err);
-      });
+
+      console.log("Background location tracking has started");
+      setTrackingStatus(true);
+
+
+    }
+    catch (e) {
+      setErr('Location Fetch Error\n' + e.message)
+    }
   };
   //--------------------------------------------------------
 
   //------------------------------------to stop location updates----------------------------------------------
   const StopTracking = async () => {
-    await Location.stopLocationUpdatesAsync(RESCU_TRACKING)
-      .then(() => {
-        setTrackingStatus(false);
-      })
-      .catch((err) => setError("StopTracking Error\n" + err));
+    if (TrackingStatus)
+      await Location.stopLocationUpdatesAsync(RESCU_TRACKING)
+        .then(() => {
+          setTrackingStatus(false);
+        })
+        .catch((err) => setErr("StopTracking Error\n" + err));
   };
 
-  //-------------------for focusing and unfocusing Screen------------------------------
-  useFocusEffect(
-    React.useCallback(() => {
-      requestPermissions();
 
-      return () => {
-        setisRequested(false);
-        //   PauseLocation()
-        setPermissionGranted(null);
-        setError(null);
-      };
-    }, [])
-  );
 
-  useEffect(() => {
-    if (isRequested) {
-      if (PermissionGranted == true && TrackingStatus == false) {
-        console.log("entering useeffect after permission granted");
-        _getLocationAsync();
-      } else if (PermissionGranted == true && TrackingStatus == true) {
-        console.log("2");
-        StopTracking();
-        _getLocationAsync();
-      } else if (PermissionGranted == false && TrackingStatus == true) {
-        console.log("3");
-        StopTracking();
-      }
-    } else {
-      if (TrackingStatus == true) StopTracking();
-    }
-  }, [PermissionGranted, isRequested]);
-  //this is big part of create request and send it and set loading to true till a doctor accepts request (for now spinner waits only for 2 seconds then shows doctor)
+
+
+
+  const getRequest = useCallback(() => {
+    
+    dispatch(fetchRequest(RequestID));
+    console.log('current request:=============================== ', currentRequest)
+  }, []);
+
+
+
+  //this is big part of create request and send it and set loading
+  // to true till a doctor accepts request (for now spinner waits only for 2 seconds then shows doctor)
   async function SendRequest() {
-    let id = await firebase
+
+   
+
+    // console.log('cajusdubhiuaszbdijk:', currentUser)
+    // let loc = currentUser.location
+    // console.log('LOC_____________________', currentUser.location)
+
+    let { id } = await firebase
       .firestore()
       .collection("requests")
       .add({
         AccidentType: "",
         DoctorID: "",
-        Location: currentUser.loc,
+        DoctorGeoHash: "",
+        'Location': currentUser.location,
+        PatientGeoHash: currentUser.geohash,
         PatientID: currentUser.uid,
         RequestType: "Location",
         State: "Pending",
-      })
-      .then((result) => {
-        setRequestID(result.id);
       })
       .catch((error) => {
         Toast.show({
@@ -256,10 +224,13 @@ const apiCall = () => {
         });
         console.log(error);
       });
-    console.log(RequestID);
-    setRequestID(id);
+
+  console.log('new ID00000000000000',id)
+    console.log('requestId: ', RequestID);
+    await setRequestID(id);
+    console.log('newer newest id 9999999999999999999999',RequestID)
     setisRequested(true);
-    console.log(isRequested);
+    
 
     setIsLoading(true);
 
@@ -267,14 +238,75 @@ const apiCall = () => {
     setTimeout(() => {
       setIsLoading(false);
     }, 2000);
+
+
+    await getRequest()
+    console.log(currentRequest)
+
   }
 
-  useEffect(() => {
-    console.log(isRequested);
-    if (isRequested === true) {
-      dispatch(fetchRequest(RequestID));
+ 
+
+
+  //=====================================  USE EFFECTS  ========================================
+
+  //Done on mount
+  useLayoutEffect(() => {
+    dispatch(fetchUser());
+    return () => {
+      StopTracking()
     }
+  }, []);
+
+  useEffect(() => {
+    console.log('isrequested?', isRequested);
+    // if (isRequested === true) {
+    //   bati5a()
+
+    // }
   }, [isRequested]);
+
+
+  useEffect(() => {
+    if (Err) {
+      console.log('there is ERROR\n', Err)
+      if (TrackingStatus == true)
+        StopTracking()
+    }
+    else {
+      if (PermissionGranted == true && TrackingStatus == false) {
+        console.log("entering useeffect after permission granted");
+        _getLocationAsync();
+      }
+
+      else if (PermissionGranted == false && TrackingStatus == true) {
+        console.log("3: was tracking but permission now denied so stopping");
+        StopTracking();
+      }
+    }
+
+
+  }, [PermissionGranted, isRequested, Err, TrackingStatus]);
+
+
+
+  //-------------------for focusing and unfocusing Screen
+  useFocusEffect(
+    React.useCallback(() => {
+      requestPermissions();
+
+      return () => {
+        setisRequested(false);
+        setPermissionGranted(null);
+        setErr(null);
+      };
+    }, [])
+  );
+
+
+
+
+
 
   let screen;
   if (isLoading) {
@@ -283,44 +315,68 @@ const apiCall = () => {
         <Spinner color="red" />
       </View>
     );
-  } else if (isRequested) {
-    screen = (
-      <View style={{ flex: 1, width: "100%" }}>
-        <MapView
-          region={{
-            latitude: location.latitude,
-            longitude: location.longitude,
-            latitudeDelta: 0.045,
-            longitudeDelta: 0.045,
-          }}
-          showsUserLocation={true}
-          userLocationUpdateInterval={5000}
-          followsUserLocation={true}
-          showsCompass={true}
-          showsMyLocationButton={true}
-          showsPointsOfInterest={true}
-          loadingEnabled={true}
-          loadingIndicatorColor="blue"
-          style={{ width: "100%", flex: 1 }}
-        />
-        <Button
-          style={[styles.button, { alignSelf: "center" }]}
-          onPress={() => {
-            console.log("------------------pressed-------------");
-            //       // await terminationFn.remove()
-            //       // fcn()
-            StopTracking();
-          }}
-        >
-          <Text>Stop Tracking</Text>
-        </Button>
-      </View>
-    );
-  } else {
+  }
+  else if (isRequested) {
+    if (location.latitude === 0 && location.longitude === 0) {
+
+      screen = (
+        <View>
+          <Spinner color='red' />
+        </View>
+      )
+      console.log('in settimeout now')
+      setTimeout(() => {
+        setlocation(currentUser.location)
+      }, 500);
+
+    }
+    else {
+      screen = (
+        <View style={{ flex: 1, width: "100%" }}>
+          <MapView
+            initialRegion={{
+              latitude: location.latitude,
+              longitude: location.longitude,
+              latitudeDelta: LATITUDE_DELTA,
+              longitudeDelta: LONGITUDE_DELTA,
+            }}
+            provider="google"
+            showsUserLocation={true}
+            userLocationUpdateInterval={5000}
+            followsUserLocation={true}
+            showsCompass={true}
+            // showsMyLocationButton={true}
+            showsPointsOfInterest={true}
+            loadingEnabled={true}
+            loadingIndicatorColor="red"
+            onMapReady={() => {
+              if (themargin === 0) setthemargin(1)
+              else setthemargin(0)
+            }}
+            style={{ width: "100%", flex: 1, marginTop: themargin, alignSelf: 'center' }}
+          />
+          <Button
+            style={[styles.button, { alignSelf: "center" }]}
+            onPress={() => {
+              console.log("------------------pressed-------------");
+              //       // await terminationFn.remove()
+              //       // fcn()
+              StopTracking();
+            }}
+          >
+            <Text>Stop Tracking</Text>
+          </Button>
+        </View>
+      );
+    }
+  }
+  else {
     screen = (
       <View style={styles.View}>
         <Button
-          onPress={SendRequest}
+          onPress={() => {
+            SendRequest()
+          }}
           style={styles.button}
           primary
           iconRight

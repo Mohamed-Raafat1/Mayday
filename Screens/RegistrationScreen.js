@@ -101,7 +101,10 @@ function RegistrationScreen({ navigation }) {
       .createUserWithEmailAndPassword(Email, Password)
       .then((result) => {
         let uid = firebase.auth().currentUser.uid;
-        let loc = new firebase.firestore.GeoPoint(0, 0);
+        let location = {
+          latitude: 0,
+          longitude: 0
+        };
         firebase.firestore().collection("users").doc(uid).set({
           uid,
           Email,
@@ -114,7 +117,7 @@ function RegistrationScreen({ navigation }) {
           medicalProfessional,
           MedicalID,
           EmergencyContacts,
-          loc,
+          location,
         });
 
         console.log(result);
