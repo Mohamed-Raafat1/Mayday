@@ -30,23 +30,19 @@ export function fetchUser() {
 
 export function fetchRequest(id) {
   return (dispatch) => {
-
-console.log('kosom el id:',id)
     firebase
       .firestore()
-      .collection('requests')
+      .collection("requests")
       .doc(id)
       .onSnapshot((snapshot) => {
-        snapshot
         if (snapshot) {
-          dispatch({ type: 'a7a', currentRequest: snapshot.data() });
+          let data = snapshot.data();
 
+          dispatch({ type: "a7a", currentRequest: { ...data, id } });
         } else {
           console.log("does not exist");
         }
-      })
-
-
+      });
   };
 }
 
