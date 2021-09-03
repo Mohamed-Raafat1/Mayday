@@ -6,13 +6,12 @@ import {
   EMERGENCY_CONTACTS_CHANGE,
 } from "../constants";
 
-
 const initialState = {
   currentUser: null,
   conversations: [],
   messages: [],
   medicalID: [],
-  emergencyContacts : [],
+  emergencyContacts: [],
 };
 
 export const user = (state = initialState, action) => {
@@ -32,17 +31,17 @@ export const user = (state = initialState, action) => {
         ...state,
         messages: action.messages,
       };
-    case USER_MESSAGES_UPDATE: 
+    case USER_MESSAGES_UPDATE:
       return {
         ...state,
       };
-      // case EMERGENCY_CONTACTS_CHANGE: 
-      // return {
-      //   ...state,
-      //   emergencyContacts: action.emergencyContacts,
-      // };
-   
+    // case EMERGENCY_CONTACTS_CHANGE:
+    // return {
+    //   ...state,
+    //   emergencyContacts: action.emergencyContacts,
+    // };
+
     default:
-      return { state };
+      return state;
   }
 };

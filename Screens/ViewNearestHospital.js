@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import MapView from "react-native-maps";
-import { StyleSheet, Text, View } from "react-native";
-import { Left, Body, Right, Button } from "native-base";
+import { Dimensions, StyleSheet, Text, View, Linking } from "react-native";
+import { Left, Body, Right, Button, Spinner } from "native-base";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import firebase from "firebase";
@@ -11,7 +11,7 @@ import { fetchUser } from "../redux/actions";
 const geofire = require("geofire-common");
 
 const RESCU_TRACKING = "background-location-task";
-//------------------------------TASK MANAGER-----------------------------
+////////////////////////  TASK MANAGER  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
   console.log("im in taskmanager");
   if (error) {
@@ -20,22 +20,22 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
     return;
   }
   if (data) {
-    console.log(data);
+    // console.log(data);
     const { locations } = data;
 
-    console.log("im in taskmanager", locations);
+    // console.log("im in taskmanager", locations);
 
-    let lat = locations[0].coords.latitude;
-    let long = locations[0].coords.longitude;
-    const hash = geofire.geohashForLocation([lat, long]);
-    let location = new firebase.firestore.GeoPoint(lat, long);
+    let latitude = locations[0].coords.latitude;
+    let longitude = locations[0].coords.longitude;
+    const hash = geofire.geohashForLocation([latitude, longitude]);
+    let location = {latitude,longitude}
     firebase
       .firestore()
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .update({
         geohash: hash,
-        loc: location,
+        location,
       })
       .catch((error) => {
         console.log(
@@ -47,17 +47,11 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
 });
 // ==============================================================
 
-//----------------------------COMPONENT-----------------------------------
+////////////////////////////  MAIN COMPONENT   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 export default function ViewNearestHospital({ navigation, route }) {
+
+  //==============================  Constants  =================================
   const dispatch = useDispatch();
-
-  //Done everytime u navigate to the screen
-  useLayoutEffect(() => {
-    //Fetch user regardless of permission granted or not
-    dispatch(fetchUser());
-  }, [route]);
-
-  //====================Constants=============================
   const currentUser = useSelector((state) => state.userState.currentUser);
   if (currentUser == undefined)
     return (
@@ -66,163 +60,266 @@ export default function ViewNearestHospital({ navigation, route }) {
       </View>
     );
 
-  //to carry the stop function of the watchposition fn
-  // const [WatchPositionPromise, setWatchPositionPromise] = useState(null)
 
-  const [Error, setError] = useState(null);
+  const [Err, setErr] = useState(null);
   const [TrackingStatus, setTrackingStatus] = useState(false); //currently tracking ?
   const [PermissionGranted, setPermissionGranted] = useState(false); //foreground and background permissions granted?
 
+
+
+  //----------------------constants for mapview
   const [location, setlocation] = useState({
-    longitude: 0,
-    latitude: 0,
+    longitude: currentUser.location.longitude,
+    latitude: currentUser.location.latitude,
   });
-  //========================Functions==========================
+  const { height: HEIGHT, width: WIDTH } = Dimensions.get('window');
+  const LATITUDE_DELTA = 0.02; //This controls default zoom
+  const LONGITUDE_DELTA = LATITUDE_DELTA * (WIDTH / HEIGHT);
+  const [themargin, setthemargin] = useState(0)  //this is just for a workaround to mapview issue
 
-  //--------------------------------fn to request permissions----------------------------------------------------
+
+  //======================================   Functions   ======================================================================
+  //--------------------------------  fn to request permissions  ----------------------------------------------------
   const requestPermissions = async () => {
-    //----------------request foregroundlocationpermission
-    const { status: ForegroundStatus } =
-      await Location.requestForegroundPermissionsAsync().catch((err) => {
-        console.log("Foreground Permission Error:", err);
-        setError("Foreground Permission Error\n" + err);
-      });
 
-    if (ForegroundStatus !== "granted") {
-      setError("Foreground Location permission not granted! ");
-      return;
+    try {
+      //---------------- request foregroundlocationpermission
+      const { status: ForegroundStatus } =
+        await Location.requestForegroundPermissionsAsync()
+      // .catch((err) => {
+      //   console.log("Foreground Permission Error:", err);
+      //   setErr("Foreground Permission Error\n" + err);
+      // });
+
+      //if foregroundpermission not granted exit the whole function
+      if (ForegroundStatus !== "granted") {
+        throw Error("Foreground Location permission not granted! ")
+      }
+
+      //if request foreground returned error then exit
+      // if (Error) return
+
+      //---------------- request backgroundlocationpermission
+      const { status: BackgroundStatus } =
+        await Location.requestBackgroundPermissionsAsync()
+      // .catch((err) => {
+      //   console.log("Background Permission Error:", err);
+      //   setErr("Background Permission Error\n" + err);
+      // });
+
+      //if backgroundpermission not granted exit the whole function
+      if (BackgroundStatus !== "granted") {
+        throw Error("Background Location permission not granted!")
+      }
+
+
+
+      console.log("Background permission granted");
+      //opening location services
+      await Location.enableNetworkProviderAsync()
+      // .then(() => {
+      console.log('location services enabled')
+      setPermissionGranted(true);
+      // })
+      // .catch((err) => setErr("Networkservice error\n" + err));
     }
-
-    //----------------request backgroundlocationpermission
-    const { status: BackgroundStatus } =
-      await Location.requestBackgroundPermissionsAsync().catch((err) => {
-        console.log("Background Permission Error:", err);
-        setError("Background Permission Error\n" + err);
-      });
-
-    if (BackgroundStatus !== "granted") {
-      setError("Background Location permission not granted!");
-      return;
+    catch (e) {
+      console.log('Permission Error:\n ', e)
+      setErr('Permission Error!\n' + e.message)
     }
-
-    console.log("Background permission granted, calling get location function");
-
-    //opening location services
-    Location.enableNetworkProviderAsync()
-      .then(() => {
-        setPermissionGranted(true);
-      })
-      .catch((err) => setError("Networkservice error\n" + err));
   };
   //--------------------------------------------------------------------------------------------------
 
-  //-------------Fn to retrieve location in the foreground and the background------------
+  //-------------  Fn to retrieve location in the foreground and the background------------
   const _getLocationAsync = async () => {
-    console.log("entering get location");
+    try {
+      console.log("entering get location");
 
-    //------------------------fn to get initial location for the mapview
-    Location.getCurrentPositionAsync({
-      accuracy: Location.Accuracy.BestForNavigation,
-    })
-      .then((loc) => {
-        setlocation(loc.coords);
-      })
-      .catch((err) => {
-        console.log("getcurrentposition error:", err);
-        setError("GetCurrentPosition Error \n" + err);
-      });
 
-    //---------------------------starting fn to fetch location in the background
-    Location.startLocationUpdatesAsync(RESCU_TRACKING, {
-      accuracy: Location.Accuracy.BestForNavigation,
-      showsBackgroundLocationIndicator: true,
-      timeInterval: 3000,
-    })
-      .then(() => {
-        console.log("Background location tracking has started");
-        setTrackingStatus(true);
+      // await Location.hasServicesEnabledAsync()
+      //   .then(r => {
+      //     console.log(r)
+      //   }
+      //   )
+      //   .catch(e => {
+      //     throw Error('serveice fujk' + e.message)
+      //   })
+      //------------------------  fn to get initial location for the mapview
+      // const currentloc = await 
+      // await Location.getCurrentPositionAsync({
+      //   accuracy: Location.Accuracy.Balanced,
+
+      // })
+      //   .then((loc) => {
+      //     console.log('initial Location received\n', loc)
+      //     setlocation(loc.coords);
+      //   })
+      //   .catch((err) => {
+      //     // console.log("getcurrentposition error:", err);
+      //     // setErr("GetCurrentPosition Error \n" + err);
+      //     throw Error('Error' + err.message)
+      //   });
+
+
+      // console.log('currentloc:',currentloc)
+      // setlocation(currentloc.coords)
+
+
+
+
+      //if getlocation returned an error then exit
+      // if (Err) return
+
+      //---------------------------starting fn to fetch location in the background
+      await Location.startLocationUpdatesAsync(RESCU_TRACKING, {
+        accuracy: Location.Accuracy.BestForNavigation,
+        showsBackgroundLocationIndicator: true,
+        timeInterval: 3000,
       })
-      .catch((err) => {
-        console.log("StartLocationUpdate Error:", err);
-        setError("Error when starting LocationUpdate:\n" + err);
-      });
+
+      console.log("Background location tracking has started");
+      setTrackingStatus(true);
+
+      // .catch((err) => {
+      //   console.log("StartLocationUpdate Error:", err);
+      //   setErr("Error when starting LocationUpdate:\n" + err);
+      // });
+    }
+    catch (e) {
+      setErr('Location Fetch Error\n' + e.message)
+    }
   };
   //--------------------------------------------------------
 
-  //------------------------------------to stop location updates----------------------------------------------
+  //------------------------------------  to stop location updates  ----------------------------------------------
   const StopTracking = async () => {
-    await Location.stopLocationUpdatesAsync(RESCU_TRACKING)
-      .then(() => {
-        setTrackingStatus(false);
-      })
-      .catch((err) => setError("StopTracking Error\n" + err));
+    if (TrackingStatus)
+      Location.stopLocationUpdatesAsync(RESCU_TRACKING)
+        .then(() => {
+          setTrackingStatus(false);
+        })
+        .catch((err) => setErr("StopTracking Error\n" + err));
   };
 
-  //-------------------for focusing and unfocusing Screen------------------------------
+  //=====================================  USE EFFECTS  ========================================
+
+  //-------------------Done on Mount
+  useLayoutEffect(() => {
+    //Fetch user regardless of permission granted or not
+    dispatch(fetchUser());
+    return () => {
+      StopTracking()
+    }
+  }, []);
+
+  //-------------------for focusing and unfocusing Screen
   useFocusEffect(
     React.useCallback(() => {
       requestPermissions();
-
+      // setthemargin(3)
       return () => {
         //   PauseLocation()
         setPermissionGranted(null);
-        setError(null);
+        setErr(null);
       };
     }, [])
   );
 
   useEffect(() => {
-    if (PermissionGranted == true && TrackingStatus == false) {
-      console.log("entering useeffect after permission granted");
-      _getLocationAsync();
-    } else if (PermissionGranted == true && TrackingStatus == true) {
-      console.log("2");
-      StopTracking();
-      _getLocationAsync();
-    } else if (PermissionGranted == false && TrackingStatus == true) {
-      console.log("3");
-      StopTracking();
+
+    if (Err) {
+      console.log('there is ERROR\n', Err)
+      if (TrackingStatus == true)
+        StopTracking()
     }
-  }, [PermissionGranted]);
+    else {
+      if (PermissionGranted == true && TrackingStatus == false) {
+        console.log("Getting Location After Permission Granted");
+        _getLocationAsync();
+      }
+
+      else if (PermissionGranted == false && TrackingStatus == true) {
+        console.log("3: was tracking but permission now denied so stopping");
+        StopTracking();
+      }
+    }
+
+
+  }, [PermissionGranted, Err]);
 
   //----------------Conditions to decide what to show in the screen--------
   let screen;
-  if (Error) {
+  if (Err) {
     screen = (
       <View>
-        <Text>{Error}</Text>
+        <Text>{Err}</Text>
       </View>
     );
-  } else {
+  }
+  else if (TrackingStatus == false) {
     screen = (
-      <View style={{ flex: 1, width: "100%" }}>
+      <View>
+        <Text>Tracking Disabled</Text>
+        <Button style={styles.button} onPress={() => {
+          setPermissionGranted(null)
+          requestPermissions()
+        }}>
+          <Text>Enable Tracking</Text>
+        </Button>
+      </View>)
+  }
+  else if (location.latitude === 0 && location.longitude === 0) {
+    console.log('entering settimeout______________________________________', location)
+
+    screen = (
+      <View>
+        <Spinner color='red' />
+      </View>
+    )
+
+    setTimeout(() => {
+    
+      setlocation(currentUser.location)
+    }, 500);
+
+  }
+
+  else {
+    screen = (
+      <View style={{ flex: 1, width: "100%", }}>
         <MapView
-          region={{
+          initialRegion={{
             latitude: location.latitude,
             longitude: location.longitude,
-            latitudeDelta: 0.045,
-            longitudeDelta: 0.045,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA,
           }}
+          provider="google"
           showsUserLocation={true}
           userLocationUpdateInterval={5000}
           followsUserLocation={true}
           showsCompass={true}
-          showsMyLocationButton={true}
+          // showsMyLocationButton={true}
           showsPointsOfInterest={true}
           loadingEnabled={true}
-          loadingIndicatorColor="blue"
-          style={{ width: "100%", flex: 1 }}
+          loadingIndicatorColor="red"
+          onMapReady={() => {
+            if (themargin === 0) setthemargin(1)
+            else setthemargin(0)
+          }}
+          style={{ width: "100%", flex: 1, marginTop: themargin, alignSelf: 'center' }}
         />
         <Button
           style={[styles.button, { alignSelf: "center" }]}
           onPress={() => {
             console.log("------------------pressed-------------");
-            //       // await terminationFn.remove()
-            //       // fcn()
             StopTracking();
           }}
         >
           <Text>Stop Tracking</Text>
+        </Button>
+        <Button onPress={() => { Linking.openURL('https://www.google.com/maps/dir/?api=1&destination=' + location.latitude + ',' + location.longitude) }}>
+          <Text>maps</Text>
         </Button>
       </View>
     );
@@ -442,7 +539,7 @@ const styles = StyleSheet.create({
 //     // }
 //   ).catch(err => {
 //     console.log("watchposition Error", err)
-//     setError("WatchPosition Error\n" + err)
+//     setErr("WatchPosition Error\n" + err)
 //   })
 //   setWatchPositionPromise(terminationFn)
 

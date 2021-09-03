@@ -18,6 +18,7 @@ const temp = () => {
     //Fetch user regardless of permission granted or not
     dispatch(fetchUser());
   }, []);
+
   useEffect(() => {
     const query = firebase
       .firestore()
@@ -40,10 +41,11 @@ const temp = () => {
         console.log("Error getting documents: ", error);
       });
   }, []);
+
   const getNearMe = () => {
-    let loc = currentUser.loc;
-    let longitude = Number(JSON.stringify(loc.longitude));
-    let latitude = Number(JSON.stringify(loc.latitude));
+    let loc = currentUser.location;
+    let longitude = loc.longitude;
+    let latitude = loc.latitude;
 
     const center = [latitude, longitude];
     const radiusInM = 50;

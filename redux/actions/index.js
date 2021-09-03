@@ -9,6 +9,7 @@ import {
   USER_STATE_CHANGE,
   USER_MESSAGES_UPDATE,
   EMERGENCY_CONTACTS_CHANGE,
+  REQUEST_STATE_CHANGE,
 } from "../constants";
 
 export function fetchUser() {
@@ -27,7 +28,25 @@ export function fetchUser() {
   };
 }
 
-// Badawi woooork 
+export function fetchRequest(id) {
+  return (dispatch) => {
+    firebase
+      .firestore()
+      .collection("requests")
+      .doc(id)
+      .onSnapshot((snapshot) => {
+        if (snapshot) {
+          let data = snapshot.data();
+
+          dispatch({ type: REQUEST_STATE_CHANGE, currentRequest: { ...data, id } });
+        } else {
+          console.log("does not exist");
+        }
+      });
+  };
+}
+
+// Badawi woooork
 
 // export function fetchEmergencyContacts(){
 //   return (dispatch) => {
@@ -45,7 +64,6 @@ export function fetchUser() {
 //       });
 //   }
 // }
-
 
 export function updateMessages(message, sender, reciever, chatid) {
   console.log("i am updatingf---------------------------------------------");
