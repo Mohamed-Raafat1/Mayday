@@ -38,7 +38,7 @@ export function fetchRequest(id) {
         if (snapshot) {
           let data = snapshot.data();
 
-          dispatch({ type: "a7a", currentRequest: { ...data, id } });
+          dispatch({ type: REQUEST_STATE_CHANGE, currentRequest: { ...data, id } });
         } else {
           console.log("does not exist");
         }

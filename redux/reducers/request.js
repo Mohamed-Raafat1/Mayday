@@ -6,15 +6,13 @@ const initialState = {
 
 export const request = (state = initialState, action) => {
   switch (action.type) {
-    case "a7a":
+    case REQUEST_STATE_CHANGE:
       return {
         ...state,
         currentRequest: action.currentRequest,
       };
     default:
-      console.log(
-        "im in default case________________________________________________"
-      );
+     
       return state;
   }
 };

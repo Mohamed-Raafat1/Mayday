@@ -75,7 +75,7 @@ function DoctorsScreen() {
 
   const currentUser = useSelector((state) => state.userState.currentUser);
   const state = useSelector((state) => state);
-  console.log("this is the state-------------------------------", state);
+  // console.log("this is the state-------------------------------", state);
   const currentRequest = useSelector(
     (state) => state.requestState.currentRequest
   );
@@ -194,7 +194,7 @@ function DoctorsScreen() {
         console.log(error);
       });
 
-    console.log("new ID00000000000000", id);
+  
 
     await setRequestID(id);
 
@@ -221,14 +221,7 @@ function DoctorsScreen() {
     };
   }, []);
 
-  useEffect(() => {
-    console.log("isrequested?", isRequested);
-    console.log("this is the current Request", currentRequest);
-    // if (isRequested === true) {
-    //   bati5a()
 
-    // }
-  }, [currentRequest]);
 
   useEffect(() => {
     if (Err) {
@@ -243,7 +236,7 @@ function DoctorsScreen() {
         StopTracking();
       }
     }
-  }, [PermissionGranted, isRequested, Err, TrackingStatus]);
+  }, [PermissionGranted, isRequested, Err]);
 
   //-------------------for focusing and unfocusing Screen
   useFocusEffect(
@@ -259,7 +252,7 @@ function DoctorsScreen() {
   );
   let screen;
   if (!currentUser) {
-    console.log(currentUser);
+    
     screen = (
       <View style={{ justifyContent: "space-evenly" }}>
         <Text>user undefined</Text>
@@ -320,6 +313,7 @@ function DoctorsScreen() {
                 //       // await terminationFn.remove()
                 //       // fcn()
                 StopTracking();
+                setPermissionGranted(null)
               }}
             >
               <Text>Stop Tracking</Text>
