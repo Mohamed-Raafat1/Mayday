@@ -5,6 +5,8 @@ import { fetchUser } from "../../redux/actions";
 import { useLayoutEffect } from "react";
 import Toast from "react-native-simple-toast";
 import { Ionicons } from "@expo/vector-icons";
+import Modal from "react-native-modal";
+import filter from "lodash.filter";
 import firebase from "firebase";
 require("firebase/firestore");
 require("firebase/firebase-storage");
@@ -20,18 +22,28 @@ import {
   Body,
   Right,
   Switch,
-  Title,
   Input,
   Thumbnail,
   FlatList,
   Fab,
+  Item,
 } from "native-base";
-
-import { StyleSheet, View } from "react-native";
+import { Avatar, Title, Caption, TouchableRipple } from "react-native-paper";
+import { StyleSheet, View, TextInput } from "react-native";
 import { update } from "lodash";
 
 const Stack = createStackNavigator();
 function SOS({ navigation, route }) {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [users, setusers] = useState([]);
+  const [fullData, setFullData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [contact, setContact] = useState();
+  let flag = 0;
   //Toggle Switch to enable SOS
   // const [isEnabled, setIsEnabled] = useState(false);
   // const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
@@ -43,16 +55,40 @@ function SOS({ navigation, route }) {
   let EmergencyContacts = useSelector(
     (state) => state.userState.currentUser.EmergencyContacts
   );
-  console.log(EmergencyContacts);
+
   // const [EmergencyContacts, setEmergencyContacts] = useState(
   //   currentUser.EmergencyContacts
   // );
+
+  useEffect(() => {
+    const subscriber = firebase
+      .firestore()
+      .collection("users")
+      .onSnapshot((querySnapshot) => {
+        const users = [];
+
+        querySnapshot.forEach((documentSnapshot) => {
+          users.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
+        });
+
+        setusers(users);
+        setFullData(users);
+        setLoading(false);
+      });
+
+    // Unsubscribe from events when no longer in use
+    return () => subscriber();
+  }, []);
 
   useLayoutEffect(() => {
     dispatch(fetchUser());
   }, []);
 
   function Update() {
+    console.log("upppppppppppppppppppppppppppppppppp");
     firebase
       .firestore()
       .collection("users")
@@ -97,6 +133,62 @@ function SOS({ navigation, route }) {
     Update();
     // return (removed);
   }
+
+  const openProfileModal = (contact1) => {
+    setFirstName(contact1.FirstName);
+    setLastName(contact1.LastName);
+    setContact(contact1);
+    setModalVisible(!modalVisible);
+  };
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
+
+  const handleSearch = () => {
+    for (var i = 0; i < users.length; i++) {
+      if (searchText.toLowerCase() === users[i].Email.toLowerCase()) {
+        setFirstName(users[i].FirstName);
+        setLastName(users[i].LastName);
+        openProfileModal(users[i]);
+        return;
+
+        // console.log("Before ------------------------------------\n", EmergencyContacts[0]);
+        // console.log("------4--------")
+        // EmergencyContacts.push(users[i]);
+        // Toast.show("Contact is added Successfully");
+        // Update();
+        // return;
+      }
+    }
+    Toast.show("User doesnt exist")
+  };
+  const onAdd=()=>{
+    if (EmergencyContacts.length < 5) {
+      console.log("------1--------");
+      // adding current user as an Emergency contact handling
+      if (currentUser.Email.toLowerCase() === searchText.toLowerCase()) {
+        console.log("------2--------");
+        Toast.show("Can't add yourself as an Emergency Contact");
+        return;
+      }
+      // handling not entering the same contact two times
+      for (var i = 0; i < EmergencyContacts.length; i++) {
+        if (searchText.toLowerCase() === EmergencyContacts[i].Email.toLowerCase()) {
+          console.log("------3--------");
+          Toast.show("Contact is already added");
+          return;
+        }
+      }
+      EmergencyContacts.push(contact);
+      Toast.show("Contact is added Successfully");
+      Update();
+      
+    } else {
+      Toast.show("Reached maximum number of contacts");
+    }
+    update();
+  }
+    
   //update Contacts
   // useEffect(() => {
 
@@ -156,15 +248,64 @@ function SOS({ navigation, route }) {
   if (EmergencyContacts)
     return (
       <Container>
-        <View>
-          <Text style={styles.Text}>Add up to 5 Emergency Contacts</Text>
-          {display()}
-        </View>
+        <Modal
+          visible={modalVisible}
+          backdropOpacity={0}
+          onBackdropPress={toggleModal}
+          style={styles.bottomModalView}
+        >
+          <View style={styles.modal}>
+            <View>
+              <Avatar.Image
+                source={{
+                  uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+                }}
+                size={80}
+              />
+            </View>
+
+            <View>
+              <Title>{firstName + " " + lastName}</Title>
+            </View>
+            <View>
+              <Button
+                rounded
+                style={styles.button}
+                onPress={onAdd}
+              >
+                <Text>Add as an emergency contact</Text>
+              </Button>
+            </View>
+          </View>
+        </Modal>
+
+        {/* <Text style={styles.Text}>Add up to 5 Emergency Contacts</Text> */}
+        <Header searchBar style={{ backgroundColor: "white" }}>
+          <Item style={styles.search}>
+            <Icon name="ios-search" />
+            <Input
+              placeholder="Add up to 5 Emergency Contacts"
+              onChangeText={(searchText) => setSearchText(searchText)}
+            />
+          </Item>
+          <Text
+            style={{
+              marginBottom: "auto",
+              marginTop: "auto",
+              marginLeft: 20,
+              marginRight: 10,
+            }}
+            onPress={handleSearch}
+          >
+            Search
+          </Text>
+        </Header>
+        <View>{display()}</View>
         <Fab
           style={styles.fab}
-          onPress={() =>
-            navigation.navigate("Search", { currentUser: currentUser })
-          }
+          onPress={() => {
+            openProfileModal();
+          }}
         >
           <Icon name="add" />
         </Fab>
@@ -179,7 +320,7 @@ function sosStackScreen({ navigation }) {
           headerRight: () => (
             <Content style={{ paddingTop: 5 }}>
               <Button transparent onPress={() => navigation.goBack()}>
-                <Text>Save</Text>
+                {/* <Text>Save</Text> */}
               </Button>
             </Content>
           ),
@@ -218,7 +359,7 @@ const styles = StyleSheet.create({
   },
   Title: {
     fontSize: 20,
-    color: "#8fccd9",
+    color: "black",
     fontWeight: "bold",
     marginLeft: 10,
     marginVertical: 20,
@@ -236,5 +377,24 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 20,
     shadowOffset: { width: 100, height: 100 },
+  },
+  modal: {
+    width: "100%",
+    height: "40%",
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    borderStyle: "solid",
+    backgroundColor: "white",
+  },
+  bottomModalView: {
+    justifyContent: "flex-end",
+    margin: 0,
+  },
+  search: {
+    borderWidth: 0,
+    borderRadius: 20,
+    height: 40,
+    backgroundColor: "#c3c2c8",
   },
 });
