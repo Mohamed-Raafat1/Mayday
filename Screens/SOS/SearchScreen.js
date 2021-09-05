@@ -52,6 +52,7 @@ const SearchScreen = ({ navigation, props, route }) => {
     currentUser.EmergencyContacts
   );
 
+
   const openProfileModal = (firstName, lastName, pressedContact) => {
     setFirstName(firstName);
     setLastName(lastName);
@@ -71,27 +72,28 @@ const SearchScreen = ({ navigation, props, route }) => {
   };
 
   useEffect(() => {
-    const subscriber = firebase
+    let user
+    const result = firebase
       .firestore()
       .collection("users")
-      .onSnapshot((querySnapshot) => {
-        const users = [];
+      .where('Email', '==', 'g@g.com').get().then(doc => {
+        user={...doc.data(),
+        key: doc.id}
+      })
 
-        querySnapshot.forEach((documentSnapshot) => {
-          users.push({
-            ...documentSnapshot.data(),
-            key: documentSnapshot.id,
-          });
-        });
+        // querySnapshot.forEach((documentSnapshot) => {
+        //   users.push({
+        //     ...documentSnapshot.data(),
+        //     key: documentSnapshot.id,
+        //   });
+        // });
 
-        setusers(users);
-        setFullData(users);
-        setLoading(false);
-      });
-
+        // setusers(users);
+        // setFullData(users);
+        // setLoading(false);
     // Unsubscribe from events when no longer in use
-    return () => subscriber();
-  }, []);
+    
+    },[]);
 
   useEffect(() => {
     firebase
