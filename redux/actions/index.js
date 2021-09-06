@@ -38,7 +38,10 @@ export function fetchRequest(id) {
         if (snapshot) {
           let data = snapshot.data();
 
-          dispatch({ type: REQUEST_STATE_CHANGE, currentRequest: { ...data, id } });
+          dispatch({
+            type: REQUEST_STATE_CHANGE,
+            currentRequest: { ...data, id },
+          });
         } else {
           console.log("does not exist");
         }
@@ -66,39 +69,81 @@ export function fetchRequest(id) {
 // }
 
 export function updateMessages(message, sender, reciever, chatid) {
-  console.log("i am updatingf---------------------------------------------");
-  console.log(message, sender, reciever, chatid);
-  console.log("i am updatingf---------------------------------------------");
+  // console.log("i am updatingf---------------------------------------------");
+  // console.log(message, sender, reciever, chatid);
+  // console.log("i am updatingf---------------------------------------------");
   return async (dispatch) => {
+    let messageid;
     await firebase
       .firestore()
       .collection("users")
       .doc(sender)
       .collection("messages")
-      .doc(message._id)
-      .set({
+
+      .add({
         _id: message._id,
         createdAt: String(message.createdAt),
         text: message.text,
+        timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
         chatid: chatid,
         user: message.user,
         chatRecepient: reciever,
         uid: sender,
+      })
+      .then((snapshot) => {
+        messageid = snapshot.id;
       });
     await firebase
       .firestore()
       .collection("users")
       .doc(reciever)
       .collection("messages")
-      .doc(message._id)
+      .doc(messageid)
       .set({
         _id: message._id,
         createdAt: String(message.createdAt),
         text: message.text,
+        timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
         chatid: chatid,
         user: message.user,
         chatRecepient: reciever,
         uid: reciever,
+      });
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(sender)
+      .collection("conversations")
+      .doc(chatid)
+      .update({
+        latestMessage: {
+          _id: message._id,
+          createdAt: String(message.createdAt),
+          text: message.text,
+          timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+          chatid: chatid,
+          user: message.user,
+          chatRecepient: reciever,
+          uid: sender,
+        },
+      });
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(reciever)
+      .collection("conversations")
+      .doc(chatid)
+      .update({
+        latestMessage: {
+          _id: message._id,
+          createdAt: String(message.createdAt),
+          text: message.text,
+          timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+          chatid: chatid,
+          user: message.user,
+          chatRecepient: reciever,
+          uid: reciever,
+        },
       });
     let payloadmessage = {
       _id: message._id,
@@ -184,7 +229,7 @@ export function fetchConversations() {
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("conversations")
-      .orderBy("timeStamp", "asc")
+      .orderBy("latestMessage.createdAt", "desc")
       .onSnapshot((snapshot) => {
         let conversations = snapshot.docs.map((doc) => {
           const data = doc.data();
