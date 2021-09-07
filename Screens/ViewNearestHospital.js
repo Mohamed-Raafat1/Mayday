@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import MapView from "react-native-maps";
+import MapView, { Callout } from "react-native-maps";
 import { Dimensions, StyleSheet, Text, View, Linking } from "react-native";
 import { Left, Body, Right, Button, Spinner } from "native-base";
 import * as Location from "expo-location";
@@ -76,8 +76,8 @@ export default function ViewNearestHospital({ navigation, route }) {
   const LATITUDE_DELTA = 0.02; //This controls default zoom
   const LONGITUDE_DELTA = LATITUDE_DELTA * (WIDTH / HEIGHT);
   const [themargin, setthemargin] = useState(0)  //this is just for a workaround to mapview issue
-
-
+  const [MarkerName, setMarkerName] = useState()
+  const [MarkerPosition, setMarkerPosition] = useState()
   //======================================   Functions   ======================================================================
   //--------------------------------  fn to request permissions  ----------------------------------------------------
   const requestPermissions = async () => {
@@ -252,6 +252,29 @@ export default function ViewNearestHospital({ navigation, route }) {
 
   }, [PermissionGranted, Err]);
 
+
+  const onMarkerPress = async () => {
+    return (
+      <MapView>
+        <Callout
+          alphaHitTest
+          tooltip
+          onPress={(e) => {
+            if (
+              e.nativeEvent.action === 'marker-inside-overlay-press' ||
+              e.nativeEvent.action === 'callout-inside-press'
+            ) {
+              return;
+            }
+
+            console.log("callout pressed");
+          }}
+          style={styles.customView}
+        ></Callout>
+      </MapView>
+    )
+  };
+
   //----------------Conditions to decide what to show in the screen--------
   let screen;
   if (Err) {
@@ -261,6 +284,9 @@ export default function ViewNearestHospital({ navigation, route }) {
       </View>
     );
   }
+
+
+
   else if (TrackingStatus == false) {
     screen = (
       <View>
@@ -289,16 +315,113 @@ export default function ViewNearestHospital({ navigation, route }) {
 
   }
 
-  else {
+  else if (MarkerName) {
     screen = (
       <View style={{ flex: 1, width: "100%", }}>
         <MapView
+          onPoiClick={e => {
+            setMarkerName(e.nativeEvent.name)
+            setMarkerPosition(e.nativeEvent.coordinate)
+          }}
+          customMapStyle={[
+            {
+              featureType: "poi.medical",
+              stylers: [
+                {
+                  visibility: "on"
+                }
+              ]
+            },
+            {
+              featureType: "administrative",
+              elementType: "geometry",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.attraction",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.business",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.government",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.park",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.place_of_worship",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.school",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.sports_complex",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "road",
+              elementType: "labels.icon",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "transit",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            }
+          ]}
           initialRegion={{
             latitude: location.latitude,
             longitude: location.longitude,
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
           }}
+
           provider="google"
           showsUserLocation={true}
           userLocationUpdateInterval={5000}
@@ -323,8 +446,146 @@ export default function ViewNearestHospital({ navigation, route }) {
         >
           <Text>Stop Tracking</Text>
         </Button>
-        <Button onPress={() => { Linking.openURL('https://www.google.com/maps/dir/?api=1&destination=' + location.latitude + ',' + location.longitude) }}>
-          <Text>maps</Text>
+        <Button onPress={() => { 
+
+          console.log(MarkerPosition);
+          Linking.openURL('https://www.google.com/maps/dir/?api=1&destination=' + MarkerPosition.latitude + ',' + MarkerPosition.longitude) }}>
+          <Text>Get Direction To {MarkerName}</Text>
+        </Button>
+      </View>
+    );
+  }
+
+  else {
+    screen = (
+      <View style={{ flex: 1, width: "100%", }}>
+        <MapView
+          onPoiClick={e => {
+            setMarkerName(e.nativeEvent.name)
+            setMarkerPosition(e.nativeEvent.coordinate)
+          }}
+          customMapStyle={[
+            {
+              featureType: "poi.medical",
+              stylers: [
+                {
+                  visibility: "on"
+                }
+              ]
+            },
+            {
+              featureType: "administrative",
+              elementType: "geometry",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.attraction",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.business",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.government",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.park",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.place_of_worship",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.school",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.sports_complex",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "road",
+              elementType: "labels.icon",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "transit",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            }
+          ]}
+          initialRegion={{
+            latitude: location.latitude,
+            longitude: location.longitude,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA,
+          }}
+
+          provider="google"
+          showsUserLocation={true}
+          userLocationUpdateInterval={5000}
+          followsUserLocation={true}
+          showsCompass={true}
+          // showsMyLocationButton={true}
+          showsPointsOfInterest={true}
+          loadingEnabled={true}
+          loadingIndicatorColor="red"
+          onMapReady={() => {
+            if (themargin === 0) setthemargin(1)
+            else setthemargin(0)
+          }}
+          style={{ width: "100%", flex: 1, marginTop: themargin, alignSelf: 'center' }}
+        />
+        <Button
+          style={[styles.button, { alignSelf: "center" }]}
+          onPress={() => {
+            console.log("------------------pressed-------------");
+            StopTracking();
+          }}
+        >
+          <Text>Stop Tracking</Text>
         </Button>
       </View>
     );
