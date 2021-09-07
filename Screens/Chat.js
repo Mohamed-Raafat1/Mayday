@@ -10,13 +10,16 @@ import {
   Label,
   Form,
 } from "native-base";
+import { AntDesign } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React, {
   useState,
   useCallback,
   useEffect,
   useLayoutEffect,
 } from "react";
-import { Bubble, GiftedChat } from "react-native-gifted-chat";
+import { Bubble, GiftedChat, Send } from "react-native-gifted-chat";
 import firebase from "firebase";
 import { SafeAreaView } from "react-native";
 import GlobalStyles from "../GlobalStyles";
@@ -72,34 +75,59 @@ function Chat({ route, navigation }) {
     // console.log("new fetched messages ---------------------------------\n");
     // console.log(fetchedmessages);
   }, []);
+  const scrolllToBottomComponent = (props) => {
+    return <Feather name="chevrons-down" size={24} color="black" />;
+  };
   const renderBubble = (props) => {
     return (
       <Bubble
         {...props}
         wrapperStyle={{
           right: {
-            backgroundColor: "grey",
+            backgroundColor: "#4287f5",
+          },
+          left: {
+            backgroundColor: "gray",
           },
         }}
         textStyle={{
           right: {
             color: "white",
           },
+          left: { color: "white" },
         }}
       ></Bubble>
+    );
+  };
+  const renderSend = (props) => {
+    return (
+      <Send {...props}>
+        <View style={{ marginRight: 10, marginBottom: 10 }}>
+          <MaterialCommunityIcons
+            name="send-circle-outline"
+            size={30}
+            color="#4287f5"
+          />
+        </View>
+      </Send>
     );
   };
   if (!fetchedmessages) return <View></View>;
   else
     return (
       <GiftedChat
+        scrollToBottom={true}
+        renderS
         messages={fetchedmessages}
         onSend={(messages) => onSend(messages)}
         user={{
           _id: firebase.auth().currentUser.uid,
           name: currentUser.FirstName + " " + currentUser.LastName,
         }}
+        showUserAvatar={true}
         renderBubble={renderBubble}
+        renderSend={renderSend}
+        scrollToBottomComponent={scrolllToBottomComponent}
       />
     );
 }

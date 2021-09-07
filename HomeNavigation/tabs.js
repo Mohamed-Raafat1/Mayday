@@ -1,10 +1,22 @@
 //BUTTONS NATIVE BASE
 
 import React, { useState } from "react";
+import { TouchableOpacity } from "react-native";
 //React Native
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+} from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { StyleSheet, Image, StatusBar } from "react-native";
 import { Avatar, Badge, withBadge } from "react-native-elements";
-import { createStackNavigator,CardStyleInterpolators   } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import EmergencyTab from "./EmergencyTab";
@@ -17,7 +29,16 @@ import MedicalIdScreen from "../Screens/MedicalIdScreen";
 import EditProfileScreen from "../Screens/EditProfileScreen";
 import FirstAidSection from "../Screens/FirstAidSection";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
-import {Button,Icon,Header,Item,Input,Text, Content,View} from "native-base";
+import {
+  Button,
+  Icon,
+  Header,
+  Item,
+  Input,
+  Text,
+  Content,
+  View,
+} from "native-base";
 import ChatListStackScreen from "../Screens/ChatList";
 import Notifications from "../Screens/Notifications";
 import Chat from "../Screens/Chat";
@@ -41,23 +62,18 @@ import CurrentReport from "../Screens/CurrentReport";
 import DoctorRequests from "../Screens/Doctor Only Screens/DoctorRequests";
 import { faBorderNone } from "@fortawesome/free-solid-svg-icons";
 
-
-
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
 const DoctorRequestsStack = createStackNavigator();
 
-
 //Tab Navigation
-const Tab = createMaterialBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 // const EmergencyTab = createMaterialTopTabNavigator();
-
-
-
-function Tabs() {
+const newTabs = createBottomTabNavigator();
+function Mytabs() {
   //2 Tabs Home , First Aid
   return (
-    <Tab.Navigator
+    <newTabs.Navigator
       initialRouteName="Home"
       activeColor="#cf5b72"
       barStyle={{ backgroundColor: "white" }}
@@ -72,7 +88,7 @@ function Tabs() {
           ),
         }}
       />
-      
+
       <Tab.Screen
         name="First Aid"
         component={FirstAidStackScreen}
@@ -90,46 +106,96 @@ function Tabs() {
       <Tab.Screen
         name="DoctorRequests"
         component={DoctorRequestsStackScreen}
-        options={{
+        options={({ route }) => ({
+          tabBarVisible: getTabBarVisibility(route),
           tabBarLabel: "Requests",
+          tabBarBadge: "1",
+          tabBarBadgeStyle: { margin: 30 },
+
           tabBarIcon: ({ color }) => (
-            <Button transparent>
-              <Badge
-                badgeStyle={{}}
-                value="3"
-                status="primary"
-                containerStyle={{ position: "absolute", top: -5, right: -5 }}
-              />
-              <MaterialCommunityIcons
-                name="medical-bag"
-                size={24}
-                color={color}
-                style={{ marginBottom: 10 }}
-              />
-            </Button>
+            <MaterialCommunityIcons
+              name="medical-bag"
+              size={24}
+              color={color}
+              style={{ marginBottom: 10 }}
+            />
+          ),
+        })}
+      />
+    </newTabs.Navigator>
+  );
+}
+
+function Tabs() {
+  const getTabBarVisibility = (route) => {
+    const routeName = getFocusedRouteNameFromRoute(route) ?? "Home";
+    console.log(routeName);
+    if (routeName === "Chat") return false;
+    else return true;
+  };
+  //2 Tabs Home , First Aid
+  return (
+    <Tab.Navigator
+      initialRouteName="Home"
+      activeColor="#cf5b72"
+      barStyle={{ backgroundColor: "white" }}
+      tabBarOptions={{
+        activeTintColor: "rgb(250,91,90)",
+        keyboardHidesTabBar: true,
+        labelStyle: { alignSelf: "auto", marginBottom: 5 },
+      }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeStackScreen}
+        options={({ route }) => ({
+          tabBarVisible: getTabBarVisibility(route),
+          tabBarLabel: "Home",
+
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              style={{ marginTop: 10 }}
+              name="home"
+              color={color}
+              size={26}
+            />
+          ),
+        })}
+      />
+
+      <Tab.Screen
+        name="First Aid"
+        component={FirstAidStackScreen}
+        options={{
+          tabBarLabel: "First Aid",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              style={{ marginTop: 10 }}
+              name="television-play"
+              color={color}
+              size={26}
+            />
           ),
         }}
       />
-      {/* <Tab.Screen
-            name="Doctors"
-            component={DoctorsStackScreen}
-            options={{
-              tabBarLabel: 'Doctors',
-              tabBarIcon: ({ color }) => (
-                <MaterialCommunityIcons name="doctor" color={color} size={26} />
-              ),
-            }}
-          /> */}
-      {/* <Tab.Screen
-            name="More"
-            component={MoreStackScreen}
-            options={{
-              tabBarLabel: 'More',
-              tabBarIcon: ({ color }) => (
-                <MaterialCommunityIcons name="menu" color={color} size={26} />
-              ),
-            }}
-          /> */}
+      <Tab.Screen
+        name="DoctorRequests"
+        component={DoctorRequestsStackScreen}
+        options={({ route }) => ({
+          tabBarLabel: "Requests",
+          tabBarBadge: 1,
+          tabBarBadgeStyle: { color: "white", backgroundColor: "red" },
+
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              style={{ marginTop: 10 }}
+              name="medical-bag"
+              size={24}
+              color={color}
+            />
+          ),
+        })}
+      />
     </Tab.Navigator>
   );
 }
@@ -212,25 +278,6 @@ const HomeStackScreen = ({ navigation }) => (
       component={MedicalIdScreen}
       options={{
         headerShown: false,
-        // title: "Medical ID",
-        // headerRight: () => (
-        //   <Content style={styles.iconStyle}>
-        //     <Button
-        //       transparent
-        //       onPress={() => {
-        //         MedicalIdScreen.
-        //         navigation.navigate("EditProfile")}
-        //     }
-        //     >
-        //       {/* <MaterialCommunityIcons
-        //         name="account-edit-outline"
-        //         size={30}
-        //         onPress={() => navigation.navigate("EditProfile")}
-        //       /> */}
-        //       <Text>Edit</Text>
-        //     </Button>
-        //   </Content>
-        // ),
       }}
     />
 
@@ -240,17 +287,6 @@ const HomeStackScreen = ({ navigation }) => (
       component={EditProfileScreen}
       options={{
         headerShown: false,
-        // headerRight: () => (
-        //   <Content style={styles.iconStyle}>
-        //     <Button
-        //       transparent
-        //       onPress={() => navigation.navigate("Medical ID")}
-        //     >
-        //       <Text>Save</Text>
-        //     </Button>
-        //   </Content>
-        // ),
-        // title: "Edit Profile",
       }}
     />
 
@@ -268,7 +304,6 @@ const HomeStackScreen = ({ navigation }) => (
       options={{}}
     />
 
-
     <HomeStack.Screen
       name="ChatList"
       style={styles.icon}
@@ -285,6 +320,7 @@ const HomeStackScreen = ({ navigation }) => (
       options={{
         headerShown: false,
         title: "Chat",
+        tabBarLabel: "Chat",
       }}
     />
     <HomeStack.Screen
@@ -306,7 +342,6 @@ const HomeStackScreen = ({ navigation }) => (
       }}
     />
 
-  
     <HomeStack.Screen
       name="Notifications"
       style={styles.icon}
@@ -345,16 +380,14 @@ const DoctorRequestsStackScreen = () => (
   </DoctorRequestsStack.Navigator>
 );
 
-
 const FirstAidStackScreen = ({ navigation }) => (
-  <FirstAidStack.Navigator mode="modal"
-  screenOptions={{
-    cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
-  }}>
-    <FirstAidStack.Screen
-      name="FirstAid"
-      component={FirstAidSection}
-    />
+  <FirstAidStack.Navigator
+    mode="modal"
+    screenOptions={{
+      cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+    }}
+  >
+    <FirstAidStack.Screen name="FirstAid" component={FirstAidSection} />
     {/* <FirstAidStack.Screen
       name="Hypothermia"
       component={Hypothermia}
