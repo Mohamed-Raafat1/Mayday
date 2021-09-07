@@ -28,7 +28,7 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
     let latitude = locations[0].coords.latitude;
     let longitude = locations[0].coords.longitude;
     const hash = geofire.geohashForLocation([latitude, longitude]);
-    let location = {latitude,longitude}
+    let location = { latitude, longitude }
     firebase
       .firestore()
       .collection("users")
@@ -169,6 +169,11 @@ export default function ViewNearestHospital({ navigation, route }) {
 
       //if getlocation returned an error then exit
       // if (Err) return
+      //---------------------------Checking if Task Already Running
+      const TaskStarted = await Location.hasStartedLocationUpdatesAsync(RESCU_TRACKING)
+      if (TaskStarted) {
+        Location.stopLocationUpdatesAsync(RESCU_TRACKING)
+      }
 
       //---------------------------starting fn to fetch location in the background
       await Location.startLocationUpdatesAsync(RESCU_TRACKING, {
@@ -278,7 +283,7 @@ export default function ViewNearestHospital({ navigation, route }) {
     )
 
     setTimeout(() => {
-    
+
       setlocation(currentUser.location)
     }, 500);
 
