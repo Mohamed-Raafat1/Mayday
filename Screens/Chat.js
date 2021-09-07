@@ -10,6 +10,8 @@ import {
   Label,
   Form,
 } from "native-base";
+import { AntDesign } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React, {
   useState,
@@ -73,6 +75,9 @@ function Chat({ route, navigation }) {
     // console.log("new fetched messages ---------------------------------\n");
     // console.log(fetchedmessages);
   }, []);
+  const scrolllToBottomComponent = (props) => {
+    return <Feather name="chevrons-down" size={24} color="black" />;
+  };
   const renderBubble = (props) => {
     return (
       <Bubble
@@ -122,6 +127,7 @@ function Chat({ route, navigation }) {
         showUserAvatar={true}
         renderBubble={renderBubble}
         renderSend={renderSend}
+        scrollToBottomComponent={scrolllToBottomComponent}
       />
     );
 }
