@@ -141,6 +141,11 @@ function DoctorsScreen() {
     try {
       console.log("entering get location");
 
+      //---------------------------Checking if Task Already Running
+      const TaskStarted = await Location.hasStartedLocationUpdatesAsync(RESCU_TRACKING)
+      if (TaskStarted) {
+        Location.stopLocationUpdatesAsync(RESCU_TRACKING)
+      }
       //---------------------------starting fn to fetch location in the background
       await Location.startLocationUpdatesAsync(RESCU_TRACKING, {
         accuracy: Location.Accuracy.BestForNavigation,
@@ -194,7 +199,7 @@ function DoctorsScreen() {
         console.log(error);
       });
 
-  
+
 
     await setRequestID(id);
 
@@ -252,7 +257,7 @@ function DoctorsScreen() {
   );
   let screen;
   if (!currentUser) {
-    
+
     screen = (
       <View style={{ justifyContent: "space-evenly" }}>
         <Text>user undefined</Text>
