@@ -5,9 +5,11 @@ import firebase from "firebase";
 import { result } from "lodash";
 import { useEffect, useLayoutEffect } from "react";
 const geofire = require("geofire-common");
-
+import * as geofirex from 'geofirex';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/actions";
+
+const geo = geofirex.init(firebase);
 
 const temp = () => {
   const dispatch = useDispatch();
@@ -43,64 +45,76 @@ const temp = () => {
   }, []);
 
   const getNearMe = () => {
-    let loc = currentUser.location;
-    let longitude = loc.longitude;
-    let latitude = loc.latitude;
+    const cities = firebase.firestore().collection('cities');
+    const position = geo.point(40, -119);
 
-    const center = [latitude, longitude];
-    const radiusInM = 50;
+    //cities.add({ name: 'Phoenix', position });
 
-    // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
-    // a separate query for each pair. There can be up to 9 pairs of bounds
-    // depending on overlap, but in most cases there are 4.
-    const bounds = geofire.geohashQueryBounds(center, radiusInM);
-    const promises = [];
-    for (const b of bounds) {
-      const q = firebase
-        .firestore()
-        .collection("locations")
-        .orderBy("geohash")
-        .startAt(b[0])
-        .endAt(b[1]);
+    const center = geo.point(40.1, -119.1);
+    const radius = 10000000;
+    const field = 'position';
 
-      promises.push(q.get());
-    }
+    const query = geo.query(cities).within(center, radius, field);
+    query.subscribe(console.log);
 
-    // Collect all the query results together into a single list
-    Promise.all(promises)
-      .then((snapshots) => {
-        const matchingDocs = [];
+    // let loc = currentUser.location;
+    // let longitude = loc.longitude;
+    // let latitude = loc.latitude;
 
-        for (const snap of snapshots) {
-          for (const doc of snap.docs) {
-            const lat = doc.get("lat");
-            const lng = doc.get("lng");
+    // const center = [latitude, longitude];
+    // const radiusInM = 50;
 
-            // We have to filter out a few false positives due to GeoHash
-            // accuracy, but most will match
-            const distanceInKm = geofire.distanceBetween([lat, lng], center);
-            console.log(distanceInKm);
-            const distanceInM = distanceInKm * 1000;
-            if (distanceInM <= radiusInM) {
-              matchingDocs.push(doc);
-            }
-          }
-        }
+    // // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
+    // // a separate query for each pair. There can be up to 9 pairs of bounds
+    // // depending on overlap, but in most cases there are 4.
+    // const bounds = geofire.geohashQueryBounds(center, radiusInM);
+    // const promises = [];
+    // for (const b of bounds) {
+    //   const q = firebase
+    //     .firestore()
+    //     .collection("locations")
+    //     .orderBy("geohash")
+    //     .startAt(b[0])
+    //     .endAt(b[1]);
 
-        return matchingDocs;
-      })
-      .then((matchingDocs) => {
-        // const jsonContent = JSON.stringify(matchingDocs);
-        matchingDocs.map((doc) => {
-          let id = doc.id;
-          let data = doc.data();
-          let object = { ...data, id };
-          console.log("this is the data--------------------", object);
-        });
+    //   promises.push(q.get());
+    // }
 
-        // ...
-      })
-      .catch((error) => console.log(error));
+    // // Collect all the query results together into a single list
+    // Promise.all(promises)
+    //   .then((snapshots) => {
+    //     const matchingDocs = [];
+
+    //     for (const snap of snapshots) {
+    //       for (const doc of snap.docs) {
+    //         const lat = doc.get("lat");
+    //         const lng = doc.get("lng");
+
+    //         // We have to filter out a few false positives due to GeoHash
+    //         // accuracy, but most will match
+    //         const distanceInKm = geofire.distanceBetween([lat, lng], center);
+    //         console.log(distanceInKm);
+    //         const distanceInM = distanceInKm * 1000;
+    //         if (distanceInM <= radiusInM) {
+    //           matchingDocs.push(doc);
+    //         }
+    //       }
+    //     }
+
+    //     return matchingDocs;
+    //   })
+    //   .then((matchingDocs) => {
+    //     // const jsonContent = JSON.stringify(matchingDocs);
+    //     matchingDocs.map((doc) => {
+    //       let id = doc.id;
+    //       let data = doc.data();
+    //       let object = { ...data, id };
+    //       console.log("this is the data--------------------", object);
+    //     });
+
+    //     // ...
+    //   })
+    //   .catch((error) => console.log(error));
   };
   return (
     <View style={{ flex: 1, alignContent: "center", alignItems: "center" }}>
