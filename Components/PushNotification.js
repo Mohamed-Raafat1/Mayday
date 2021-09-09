@@ -95,7 +95,7 @@ export default function MyNotifications() {
 }
 
 //===================================================================================//
-// For Test ExponentPushToken[wxPKxFBTZBL03Rs8UWP2U9] amr's Token
+
 // Message Push Notification
 // Can use Expo's Push Notification Tool-> https://expo.dev/notifications
 
