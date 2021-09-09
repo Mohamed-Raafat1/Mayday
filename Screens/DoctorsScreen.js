@@ -25,8 +25,10 @@ import { Avatar, Title } from "react-native-paper";
 import firebase from "firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser, fetchRequest } from "../redux/actions";
-
-// To DO: apply the fix from viewnearesthospital
+import { Geofirestore } from "../App";
+let RequestCreated = false;
+let Requestid = null;
+// To DO: apply the fix from ViewNearestHospital
 
 ////////////////////////  TASK MANAGER  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
@@ -58,16 +60,23 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
           error
         );
       });
+    if (Requestid)
+      Geofirestore.collection("requests")
+        .doc(Requestid)
+        .update({
+          coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
+        });
   }
 });
 // ==============================================================
 
 ////////////////////////////  MAIN COMPONENT   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 function DoctorsScreen() {
+  const [RequestCreated, setRequestCreated] = useState(false);
   //=============================CONSTANTS=========================================================
   const [isLoading, setIsLoading] = useState(false); // do we show spinner or show screen
   const [isRequested, setisRequested] = useState(false); //state of request (is button pressed or not?)
-  const [RequestID, setRequestID] = useState(null);
+  const [RequestID, setRequestID] = useState(false);
 
   const [Err, setErr] = useState(null);
   const [TrackingStatus, setTrackingStatus] = useState(false); //currently tracking ?
@@ -142,9 +151,11 @@ function DoctorsScreen() {
       console.log("entering get location");
 
       //---------------------------Checking if Task Already Running
-      const TaskStarted = await Location.hasStartedLocationUpdatesAsync(RESCU_TRACKING)
+      const TaskStarted = await Location.hasStartedLocationUpdatesAsync(
+        RESCU_TRACKING
+      );
       if (TaskStarted) {
-        Location.stopLocationUpdatesAsync(RESCU_TRACKING)
+        Location.stopLocationUpdatesAsync(RESCU_TRACKING);
       }
       //---------------------------starting fn to fetch location in the background
       await Location.startLocationUpdatesAsync(RESCU_TRACKING, {
@@ -178,7 +189,7 @@ function DoctorsScreen() {
     // let loc = currentUser.location
     // console.log('LOC_____________________', currentUser.location)
 
-    let { id } = await firebase
+    await firebase
       .firestore()
       .collection("requests")
       .add({
@@ -191,6 +202,9 @@ function DoctorsScreen() {
         RequestType: "Location",
         State: "Pending",
       })
+      .then((result) => {
+        Requestid = result.id;
+      })
       .catch((error) => {
         Toast.show({
           text: error.message,
@@ -199,9 +213,7 @@ function DoctorsScreen() {
         console.log(error);
       });
 
-
-
-    await setRequestID(id);
+    await setRequestID(Requestid);
 
     setisRequested(true);
 
@@ -212,7 +224,7 @@ function DoctorsScreen() {
       setIsLoading(false);
     }, 2000);
 
-    await dispatch(fetchRequest(id));
+    await dispatch(fetchRequest(Requestid));
   }
 
   //=====================================  USE EFFECTS  ========================================
@@ -225,8 +237,6 @@ function DoctorsScreen() {
       StopTracking();
     };
   }, []);
-
-
 
   useEffect(() => {
     if (Err) {
@@ -257,7 +267,6 @@ function DoctorsScreen() {
   );
   let screen;
   if (!currentUser) {
-
     screen = (
       <View style={{ justifyContent: "space-evenly" }}>
         <Text>user undefined</Text>
@@ -318,7 +327,7 @@ function DoctorsScreen() {
                 //       // await terminationFn.remove()
                 //       // fcn()
                 StopTracking();
-                setPermissionGranted(null)
+                setPermissionGranted(null);
               }}
             >
               <Text>Stop Tracking</Text>
@@ -369,6 +378,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   button: {
+    position: "absolute",
     marginHorizontal: 10,
     marginBottom: 10,
     backgroundColor: "rgb(250,91,90)",

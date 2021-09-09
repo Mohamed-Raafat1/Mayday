@@ -1,18 +1,26 @@
-import React from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { Container, Text, Content, Card, CardItem, Body, Left, View } from "native-base"
-import YoutubePlayer from 'react-native-youtube-iframe';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import React from "react";
+import { useNavigation } from "@react-navigation/native";
+import {
+  Container,
+  Text,
+  Content,
+  Card,
+  CardItem,
+  Body,
+  Left,
+  View,
+} from "native-base";
+import YoutubePlayer from "react-native-youtube-iframe";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { StyleSheet } from "react-native";
-import Data from "../../Data/Meningitis.json"
+import Data from "../../Data/Meningitis.json";
 export default function Meningitis() {
-
   const navigation = useNavigation();
 
   function MeningitisNav() {
     navigation.navigate("Home");
   }
-  var res = Data.filter(function(item) {
+  var res = Data.filter(function (item) {
     return item.id;
   });
 
@@ -34,9 +42,11 @@ export default function Meningitis() {
       <Content padder>
         <Card style={{ borderRadius: 15 }}>
           <CardItem style={styles.Item} bordered>
-            <Text style={{fontSize:20, fontFamily:'sans-serif-medium'}}>Tips</Text>
+            <Text style={{ fontSize: 20, fontFamily: "sans-serif-medium" }}>
+              Tips
+            </Text>
           </CardItem>
-          <CardItem style={{ flexDirection: 'column' }} bordered>
+          <CardItem style={{ flexDirection: "column" }} bordered>
             <View>{list()}</View>
             {/* <View style={styles.content}>
               <MaterialCommunityIcons name="numeric-1-circle" size={25} />
@@ -62,11 +72,7 @@ export default function Meningitis() {
             </View> */}
           </CardItem>
           <View>
-            <YoutubePlayer
-              height={300}
-              play={false}
-              videoId={'su_MyX6BG6A'}
-            />
+            <YoutubePlayer height={300} play={false} videoId={"su_MyX6BG6A"} />
           </View>
         </Card>
       </Content>
@@ -76,19 +82,19 @@ export default function Meningitis() {
 
 const card = {
   width: 350,
-  height: 150
-}
+  height: 150,
+};
 const text = {
-  textAlign: 'center',
-  fontWeight: 'bold',
-  color: '#5d1a0c',
+  textAlign: "center",
+  fontWeight: "bold",
+  color: "#5d1a0c",
   fontSize: 18,
-}
+};
 const button = {
   width: 50,
   height: 50,
-  alignContent: 'center',
-  justifyContent: 'center'
+  alignContent: "center",
+  justifyContent: "center",
 };
 
 const styles = StyleSheet.create({
@@ -96,18 +102,17 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginLeft: 10,
     marginBottom: 15,
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   Item: {
-    borderBottomColor: 'grey',
+    borderBottomColor: "grey",
     borderBottomWidth: 2,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
-
