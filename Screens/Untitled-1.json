@@ -1,0 +1,114 @@
+
+    Object {
+      "Birthdate": Object {
+        "nanoseconds": 61000000,
+        "seconds": 1629477328,
+      },
+      "Email": "muhammedraafat10@gmail.com",
+      "EmergencyContacts": Array [
+        Object {
+          "Birthdate": Object {
+            "nanoseconds": 41000000,
+            "seconds": 1629299173,
+          },
+          "Email": "q@q.com",
+          "EmergencyContacts": Array [],
+          "FirstName": "qe",
+          "Gender": "",
+          "LastName": "q",
+          "MedicalID": Object {
+            "Allergies": "ff",
+            "BloodType": "O-",
+            "Height": "120",
+            "MedicalConditions": "sdf",
+            "Medications": "ggg",
+            "Weight": "130",
+          },
+          "NationalID": "",
+          "PhoneNumber": "+20",
+          "geohash": "9q9hvumnuw",
+          "key": "7lD0jbz8R6MDeK9BNPlISR3jbfB3",
+          "location": Object {
+            "latitude": 0,
+            "longitude": 0,
+          },
+          "medicalProfessional": false,
+          "uid": "7lD0jbz8R6MDeK9BNPlISR3jbfB3",
+        },
+      ],
+      "FirstName": "muhammed",
+      "Gender": "Male",
+      "LastName": "raafat",
+      "MedicalID": Object {
+        "Allergies": "",
+        "BloodType": "A+",
+        "Height": "169",
+        "MedicalConditions": "bigdicksyndrome",
+        "Medications": "",
+        "Weight": "69",
+      },
+      "NationalID": "123123123141231",
+      "PhoneNumber": "+201024768465",
+      "chats": Array [
+        Object {
+          "Recepient": "PpWJaaNfNhaCa1hlIGoZYfsKWGU2",
+          "chatid": "KUrgaCqonL9IYhoJeg6u",
+        },
+      ],
+      "g": Object {
+        "geohash": "stq7319t8z",
+        "geopoint": Object {
+          "latitude": 30.1117645,
+          "longitude": 31.3351053,
+        },
+      },
+      "geohash": "stq7319tbb",
+      "id": "7lpew9GXIvNCZywnBmLZbHTSSV23",
+      "location": Object {
+        "latitude": 30.1117686,
+        "longitude": 31.3351028,
+      },
+      "medicalProfessional": true,
+      "uid": "7lpew9GXIvNCZywnBmLZbHTSSV23",
+    },
+    Object {
+      "Birthdate": Object {
+        "nanoseconds": 266000000,
+        "seconds": 1630554653,
+      },
+      "Email": "G@g.com",
+      "EmergencyContacts": Array [],
+      "FirstName": "",
+      "Gender": "",
+      "LastName": "",
+      "MedicalID": Object {
+        "Allergies": "",
+        "BloodType": "?",
+        "Height": "0",
+        "MedicalConditions": "",
+        "Medications": "",
+        "Weight": "0",
+      },
+      "NationalID": "",
+      "PhoneNumber": "+20",
+      "coordinates": Object {
+        "latitude": 30.1117633,
+        "longitude": 31.335155,
+      },
+      "g": Object {
+        "geohash": "stq7319tc5",
+        "geopoint": Object {
+          "latitude": 30.1117633,
+          "longitude": 31.335155,
+        },
+      },
+      "geohash": "stq5n0czeq",
+      "id": "3q6YIu3omcNC5K4CaBtW6j4wzF82",
+      "location": Object {
+        "latitude": 0,
+        "longitude": 0,
+      },
+      "medicalProfessional": false,
+      "uid": "3q6YIu3omcNC5K4CaBtW6j4wzF82",
+    },
+  

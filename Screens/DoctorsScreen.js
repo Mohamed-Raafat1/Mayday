@@ -6,6 +6,7 @@ import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import { StyleSheet, Dimensions } from "react-native";
 const geofire = require("geofire-common");
+import { Marker } from "react-native-maps";
 
 const RESCU_TRACKING = "background-location-task";
 import {
@@ -25,8 +26,11 @@ import { Avatar, Title } from "react-native-paper";
 import firebase from "firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser, fetchRequest } from "../redux/actions";
-
-// To DO: apply the fix from viewnearesthospital
+import { Geofirestore } from "../App";
+let RequestCreated = false;
+let Requestid;
+let users = [];
+// To DO: apply the fix from ViewNearestHospital
 
 ////////////////////////  TASK MANAGER  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
@@ -51,6 +55,11 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
       .update({
         geohash: hash,
         location,
+        g: {
+          geohash: geofire.geohashForLocation([latitude, longitude]),
+
+          geopoint: new firebase.firestore.GeoPoint(latitude, longitude),
+        },
       })
       .catch((error) => {
         console.log(
@@ -58,16 +67,24 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
           error
         );
       });
+    if (Requestid) {
+      Geofirestore.collection("requests")
+        .doc(Requestid)
+        .update({
+          coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
+        });
+    }
   }
 });
 // ==============================================================
 
 ////////////////////////////  MAIN COMPONENT   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 function DoctorsScreen() {
+  const [RequestCreated, setRequestCreated] = useState(false);
   //=============================CONSTANTS=========================================================
   const [isLoading, setIsLoading] = useState(false); // do we show spinner or show screen
   const [isRequested, setisRequested] = useState(false); //state of request (is button pressed or not?)
-  const [RequestID, setRequestID] = useState(null);
+  const [RequestID, setRequestID] = useState(false);
 
   const [Err, setErr] = useState(null);
   const [TrackingStatus, setTrackingStatus] = useState(false); //currently tracking ?
@@ -142,9 +159,11 @@ function DoctorsScreen() {
       console.log("entering get location");
 
       //---------------------------Checking if Task Already Running
-      const TaskStarted = await Location.hasStartedLocationUpdatesAsync(RESCU_TRACKING)
+      const TaskStarted = await Location.hasStartedLocationUpdatesAsync(
+        RESCU_TRACKING
+      );
       if (TaskStarted) {
-        Location.stopLocationUpdatesAsync(RESCU_TRACKING)
+        Location.stopLocationUpdatesAsync(RESCU_TRACKING);
       }
       //---------------------------starting fn to fetch location in the background
       await Location.startLocationUpdatesAsync(RESCU_TRACKING, {
@@ -178,18 +197,24 @@ function DoctorsScreen() {
     // let loc = currentUser.location
     // console.log('LOC_____________________', currentUser.location)
 
-    let { id } = await firebase
-      .firestore()
-      .collection("requests")
+    await firebase;
+    Geofirestore.collection("requests")
       .add({
         AccidentType: "",
         DoctorID: "",
         DoctorGeoHash: "",
+        coordinates: new firebase.firestore.GeoPoint(
+          location.latitude,
+          location.longitude
+        ),
         Location: currentUser.location,
         PatientGeoHash: currentUser.geohash,
         PatientID: currentUser.uid,
         RequestType: "Location",
         State: "Pending",
+      })
+      .then((result) => {
+        Requestid = result.id;
       })
       .catch((error) => {
         Toast.show({
@@ -199,9 +224,7 @@ function DoctorsScreen() {
         console.log(error);
       });
 
-
-
-    await setRequestID(id);
+    await setRequestID(Requestid);
 
     setisRequested(true);
 
@@ -212,11 +235,38 @@ function DoctorsScreen() {
       setIsLoading(false);
     }, 2000);
 
-    await dispatch(fetchRequest(id));
+    await dispatch(fetchRequest(Requestid));
   }
 
   //=====================================  USE EFFECTS  ========================================
+  const getNearByUsers = async () => {
+    const query = await Geofirestore.collection("users").near({
+      center: new firebase.firestore.GeoPoint(30.1117513, 31.3351607),
+      radius: 1000,
+    });
 
+    await query
+      .where("medicalProfessional", "==", false)
+      .get()
+      .then((snapshot) => {
+        users = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          return {
+            ...data,
+            id,
+          };
+          //shet
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // users = users.filter((x) => x.uid != firebase.auth().currentUser.uid);
+    console.log(users);
+  };
+
+  useLayoutEffect(() => {}, [users]);
   //Done on mount
   useLayoutEffect(() => {
     dispatch(fetchUser());
@@ -225,8 +275,6 @@ function DoctorsScreen() {
       StopTracking();
     };
   }, []);
-
-
 
   useEffect(() => {
     if (Err) {
@@ -257,7 +305,6 @@ function DoctorsScreen() {
   );
   let screen;
   if (!currentUser) {
-
     screen = (
       <View style={{ justifyContent: "space-evenly" }}>
         <Text>user undefined</Text>
@@ -310,7 +357,19 @@ function DoctorsScreen() {
                 marginTop: themargin,
                 alignSelf: "center",
               }}
-            />
+            >
+              {users.map((marker) => (
+                <Marker
+                  key={marker.id}
+                  coordinate={{
+                    latitude: marker.g.geopoint.latitude,
+                    longitude: marker.g.geopoint.longitude,
+                  }}
+                  title={marker.FirstName}
+                  description={marker.LastName}
+                ></Marker>
+              ))}
+            </MapView>
             <Button
               style={[styles.button, { alignSelf: "center" }]}
               onPress={() => {
@@ -318,10 +377,20 @@ function DoctorsScreen() {
                 //       // await terminationFn.remove()
                 //       // fcn()
                 StopTracking();
-                setPermissionGranted(null)
+                setPermissionGranted(null);
               }}
             >
               <Text>Stop Tracking</Text>
+            </Button>
+            <Button
+              onPress={() => {
+                getNearByUsers();
+              }}
+              primary
+              iconRight
+              rounded
+            >
+              <Text>Print NearBy users</Text>
             </Button>
           </View>
         );
@@ -369,6 +438,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   button: {
+    position: "absolute",
     marginHorizontal: 10,
     marginBottom: 10,
     backgroundColor: "rgb(250,91,90)",

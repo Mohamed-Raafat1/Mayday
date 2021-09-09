@@ -8,6 +8,7 @@ const geofire = require("geofire-common");
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/actions";
+import { Geofirestore } from "../App";
 
 const temp = () => {
   const dispatch = useDispatch();
@@ -43,64 +44,73 @@ const temp = () => {
   }, []);
 
   const getNearMe = () => {
-    let loc = currentUser.location;
-    let longitude = loc.longitude;
-    let latitude = loc.latitude;
+    const query = Geofirestore.collection("locations").near({
+      center: new firebase.firestore.GeoPoint(30.0641549, 31.2038198),
+      radius: 1000,
+    });
+    query.onSnapshot((snapshot) => {
+      console.log(snapshot.docs[0].data());
+    });
+    // let loc = currentUser.location;
+    // let longitude = loc.longitude;
+    // let latitude = loc.latitude;
 
-    const center = [latitude, longitude];
-    const radiusInM = 50;
+    // const center = [latitude, longitude];
+    // const radiusInM = 50 * 1000;
 
-    // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
-    // a separate query for each pair. There can be up to 9 pairs of bounds
-    // depending on overlap, but in most cases there are 4.
-    const bounds = geofire.geohashQueryBounds(center, radiusInM);
-    const promises = [];
-    for (const b of bounds) {
-      const q = firebase
-        .firestore()
-        .collection("locations")
-        .orderBy("geohash")
-        .startAt(b[0])
-        .endAt(b[1]);
+    // // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
+    // // a separate query for each pair. There can be up to 9 pairs of bounds
+    // // depending on overlap, but in most cases there are 4.
+    // const bounds = geofire.geohashQueryBounds(center, radiusInM);
+    // const promises = [];
+    // for (const b of bounds) {
+    //   const q = firebase
+    //     .firestore()
+    //     .collection("locations")
+    //     .orderBy("geohash")
+    //     .startAt(b[0])
+    //     .endAt(b[1]);
 
-      promises.push(q.get());
-    }
+    //   promises.push(q.get());
+    // }
 
-    // Collect all the query results together into a single list
-    Promise.all(promises)
-      .then((snapshots) => {
-        const matchingDocs = [];
+    // // Collect all the query results together into a single list
+    // Promise.all(promises)
+    //   .then((snapshots) => {
+    //     const matchingDocs = [];
 
-        for (const snap of snapshots) {
-          for (const doc of snap.docs) {
-            const lat = doc.get("lat");
-            const lng = doc.get("lng");
+    //     for (const snap of snapshots) {
+    //       for (const doc of snap.docs) {
+    //         const lat = doc.get("lat");
+    //         const lng = doc.get("lng");
 
-            // We have to filter out a few false positives due to GeoHash
-            // accuracy, but most will match
-            const distanceInKm = geofire.distanceBetween([lat, lng], center);
-            console.log(distanceInKm);
-            const distanceInM = distanceInKm * 1000;
-            if (distanceInM <= radiusInM) {
-              matchingDocs.push(doc);
-            }
-          }
-        }
+    //         // We have to filter out a few false positives due to GeoHash
+    //         // accuracy, but most will match
+    //         const distanceInKm = geofire.distanceBetween([lat, lng], center);
+    //         console.log(distanceInKm);
+    //         const distanceInM = distanceInKm * 1000;
+    //         if (distanceInM <= radiusInM) {
+    //           matchingDocs.push(doc);
+    //         }
+    //       }
+    //     }
 
-        return matchingDocs;
-      })
-      .then((matchingDocs) => {
-        // const jsonContent = JSON.stringify(matchingDocs);
-        matchingDocs.map((doc) => {
-          let id = doc.id;
-          let data = doc.data();
-          let object = { ...data, id };
-          console.log("this is the data--------------------", object);
-        });
+    //     return matchingDocs;
+    //   })
+    //   .then((matchingDocs) => {
+    //     console.log("iam here");
+    //     console.log(matchingDocs);
+    //     // const jsonContent = JSON.stringify(matchingDocs);
+    //     matchingDocs.map((doc) => {
+    //       let id = doc.id;
+    //       let data = doc.data();
+    //       let object = { ...data, id };
+    //       console.log("this is the data--------------------", object);
+    //     });
 
-        // ...
-      })
-      .catch((error) => console.log(error));
+    //     // ...
+    //   })
+    //   .catch((error) => console.log(error));
   };
   return (
     <View style={{ flex: 1, alignContent: "center", alignItems: "center" }}>
@@ -112,20 +122,9 @@ const temp = () => {
           const lng = 31.2038198;
           const hash = geofire.geohashForLocation([lat, lng]);
 
-          firebase
-            .firestore()
-            .collection("locations")
-            .add({
-              geohash: hash,
-              lat: lat,
-              lng: lng,
-
-              // The coordinates field must be a GeoPoint!
-            })
-
-            .catch((error) => {
-              console.log(error);
-            });
+          Geofirestore.collection("locations").add({
+            coordinates: new firebase.firestore.GeoPoint(lat, lng),
+          });
         }}
       ></Button>
       <Button title="Get NearBy locations" onPress={() => getNearMe()}></Button>

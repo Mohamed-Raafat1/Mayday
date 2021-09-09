@@ -89,7 +89,16 @@ const ChatList = ({ navigation, previous }) => {
           lastName: user.LastName,
           email: user.Email,
         },
-        latestMessage: {},
+        latestMessage: {
+          _id: "",
+          createdAt: "",
+          text: "",
+          timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+          chatid: "",
+          user: "",
+          chatRecepient: "",
+          uid: "",
+        },
       })
       .then((snapshot) => {
         chatid = snapshot.id;
@@ -114,8 +123,39 @@ const ChatList = ({ navigation, previous }) => {
           lastName: user.LastName,
           email: user.Email,
         },
-        latestMessage: {},
+        latestMessage: {
+          _id: "",
+          createdAt: "",
+          text: "",
+          timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+          chatid: "",
+          user: "",
+          chatRecepient: "",
+          uid: "",
+        },
       });
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .update(
+        "chats",
+        firebase.firestore.FieldValue.arrayUnion({
+          chatid: chatid,
+          Recepient: uid,
+        })
+      );
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(uid)
+      .update(
+        "chats",
+        firebase.firestore.FieldValue.arrayUnion({
+          chatid: chatid,
+          Recepient: firebase.auth().currentUser.uid,
+        })
+      );
   }
   const usersList = () => {
     return conversations.map((chat) => {
@@ -149,7 +189,7 @@ const ChatList = ({ navigation, previous }) => {
           <Right
             style={{ flexDirection: "column", justifyContent: "flex-end" }}
           >
-            <Text note>{/* put time here */}</Text>
+            <Text note>{/* put time here */} </Text>
             <TouchableOpacity style={{ marginTop: 10 }}>
               <Text style={{ color: "red" }}>Delete</Text>
             </TouchableOpacity>
@@ -165,6 +205,7 @@ const ChatList = ({ navigation, previous }) => {
       <Container>
         <Content>
           <List>{usersList()}</List>
+          <ListItem></ListItem>
         </Content>
       </Container>
     );

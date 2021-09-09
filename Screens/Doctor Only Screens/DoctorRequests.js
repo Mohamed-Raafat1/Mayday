@@ -43,9 +43,9 @@ const DoctorRequests = ({ navigation }) => {
                   <Icon style={{ marginRight: -10 }} active name="location" />
                   <Text>Location</Text>
                 </Button>
-                <Buttxon transparent>
+                <Button transparent>
                   <Text>Accept</Text>
-                </Buttxon>
+                </Button>
                 <Button transparent>
                   <Text style={{ color: "red" }}>Decline</Text>
                 </Button>
