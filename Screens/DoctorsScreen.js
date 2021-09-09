@@ -6,6 +6,7 @@ import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import { StyleSheet, Dimensions } from "react-native";
 const geofire = require("geofire-common");
+import { Marker } from "react-native-maps";
 
 const RESCU_TRACKING = "background-location-task";
 import {
@@ -27,7 +28,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUser, fetchRequest } from "../redux/actions";
 import { Geofirestore } from "../App";
 let RequestCreated = false;
-let Requestid = null;
+let Requestid;
+let users = [];
 // To DO: apply the fix from ViewNearestHospital
 
 ////////////////////////  TASK MANAGER  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -53,6 +55,11 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
       .update({
         geohash: hash,
         location,
+        g: {
+          geohash: geofire.geohashForLocation([latitude, longitude]),
+
+          geopoint: new firebase.firestore.GeoPoint(latitude, longitude),
+        },
       })
       .catch((error) => {
         console.log(
@@ -60,12 +67,13 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
           error
         );
       });
-    if (Requestid)
+    if (Requestid) {
       Geofirestore.collection("requests")
         .doc(Requestid)
         .update({
           coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
         });
+    }
   }
 });
 // ==============================================================
@@ -189,13 +197,16 @@ function DoctorsScreen() {
     // let loc = currentUser.location
     // console.log('LOC_____________________', currentUser.location)
 
-    await firebase
-      .firestore()
-      .collection("requests")
+    await firebase;
+    Geofirestore.collection("requests")
       .add({
         AccidentType: "",
         DoctorID: "",
         DoctorGeoHash: "",
+        coordinates: new firebase.firestore.GeoPoint(
+          location.latitude,
+          location.longitude
+        ),
         Location: currentUser.location,
         PatientGeoHash: currentUser.geohash,
         PatientID: currentUser.uid,
@@ -228,7 +239,34 @@ function DoctorsScreen() {
   }
 
   //=====================================  USE EFFECTS  ========================================
+  const getNearByUsers = async () => {
+    const query = await Geofirestore.collection("users").near({
+      center: new firebase.firestore.GeoPoint(30.1117513, 31.3351607),
+      radius: 1000,
+    });
 
+    await query
+      .where("medicalProfessional", "==", false)
+      .get()
+      .then((snapshot) => {
+        users = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          return {
+            ...data,
+            id,
+          };
+          //shet
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // users = users.filter((x) => x.uid != firebase.auth().currentUser.uid);
+    console.log(users);
+  };
+
+  useLayoutEffect(() => {}, [users]);
   //Done on mount
   useLayoutEffect(() => {
     dispatch(fetchUser());
@@ -319,7 +357,19 @@ function DoctorsScreen() {
                 marginTop: themargin,
                 alignSelf: "center",
               }}
-            />
+            >
+              {users.map((marker) => (
+                <Marker
+                  key={marker.id}
+                  coordinate={{
+                    latitude: marker.g.geopoint.latitude,
+                    longitude: marker.g.geopoint.longitude,
+                  }}
+                  title={marker.FirstName}
+                  description={marker.LastName}
+                ></Marker>
+              ))}
+            </MapView>
             <Button
               style={[styles.button, { alignSelf: "center" }]}
               onPress={() => {
@@ -331,6 +381,16 @@ function DoctorsScreen() {
               }}
             >
               <Text>Stop Tracking</Text>
+            </Button>
+            <Button
+              onPress={() => {
+                getNearByUsers();
+              }}
+              primary
+              iconRight
+              rounded
+            >
+              <Text>Print NearBy users</Text>
             </Button>
           </View>
         );
