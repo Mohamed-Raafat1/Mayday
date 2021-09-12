@@ -1,5 +1,5 @@
 import "react-native-gesture-handler";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import RadioGroup from "react-native-radio-buttons-group";
@@ -32,8 +32,53 @@ import {
   TextInput,
 } from "react-native";
 import GlobalStyles from "../GlobalStyles";
-
 import firebase from "firebase";
+import Constants from "expo-constants";
+import * as Notifications from "expo-notifications";
+// import registerForPushNotificationsAsync from "../Components/PushNotification";
+//====================================================================//
+//Push Motification
+// Notifications.setNotificationHandler({
+//   handleNotification: async () => ({
+//     shouldShowAlert: true,
+//     shouldPlaySound: false,
+//     shouldSetBadge: false,
+//   }),
+// });
+
+async function registerForPushNotificationsAsync() {
+  let token;
+  if (Constants.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync(); //PERMISSIONS REQUEST
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data; //GETTING TOKEN HERE
+    console.log(token);
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+  //=====================================//
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  return token;
+}
+//====================================================================//
+
 function RegistrationScreen({ navigation }) {
   //regex for checking email validity
   const [isValid, setIsValid] = useState(false);
@@ -59,6 +104,40 @@ function RegistrationScreen({ navigation }) {
   const [medicalConditions, setMedicalConditions] = useState("");
   const [allergies, setAllergies] = useState("");
   const [medications, setMedications] = useState("");
+  // ----------------------------Push Notification------------------------------------------------
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(false);
+
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    // // This listener is fired whenever a notification is received while the app is foregrounded
+    // notificationListener.current =
+    //   Notifications.addNotificationReceivedListener((notification) => {
+    //     setNotification(notification);
+    //   });
+
+    // // This listener is fired whenever a user taps on or interacts with a notification
+    // //works when app is foregrounded, backgrounded, or killed
+    // responseListener.current =
+    //   Notifications.addNotificationResponseReceivedListener((response) => {
+    //     console.log(response);
+    //   });
+
+    // // freeing Handlers
+    // return () => {
+    //   Notifications.removeNotificationSubscription(
+    //     notificationListener.current
+    //   );
+    //   Notifications.removeNotificationSubscription(responseListener.current);
+    // };
+  }, []);
+  //====================================================================//
   // ----------------------------------------------------------------------------
 
   //regex for checking email syntax validity
@@ -76,6 +155,7 @@ function RegistrationScreen({ navigation }) {
     if (Password === text) setEqual(true);
     else setEqual(false);
   };
+  //====================================================================//
 
   const onSignUp = () => {
     //Gathering MedicalID
@@ -103,7 +183,7 @@ function RegistrationScreen({ navigation }) {
         let uid = firebase.auth().currentUser.uid;
         let location = {
           latitude: 0,
-          longitude: 0
+          longitude: 0,
         };
         firebase.firestore().collection("users").doc(uid).set({
           uid,
@@ -118,6 +198,7 @@ function RegistrationScreen({ navigation }) {
           MedicalID,
           EmergencyContacts,
           location,
+          ExpoToken: expoPushToken,
         });
 
         console.log(result);
@@ -131,10 +212,8 @@ function RegistrationScreen({ navigation }) {
       });
   };
 
-  const [Selected, SetSelected] = useState(true);
-  const printme = () => {
-    console.log(Selected);
-  };
+  //====================================================================//
+
   const Radio = [
     {
       id: "Male", // acts as primary key, should be unique and non-empty string
@@ -153,6 +232,7 @@ function RegistrationScreen({ navigation }) {
   function onPressRadioButton(radioButtonsArray) {
     setRadioButtons(radioButtonsArray);
   }
+  //====================================================================//
 
   //birth date use state and functions
   const [date, setDate] = useState(new Date());
@@ -182,6 +262,7 @@ function RegistrationScreen({ navigation }) {
     setShow(true);
     setMode(currentMode);
   };
+  //====================================================================//
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
@@ -463,6 +544,9 @@ function RegistrationScreen({ navigation }) {
   );
 }
 export default RegistrationScreen;
+
+//====================================================================//
+
 const styles = StyleSheet.create({
   Loginform: {
     alignContent: "center",

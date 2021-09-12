@@ -3,7 +3,10 @@ import * as Notifications from "expo-notifications";
 import React, { useState, useEffect, useRef } from "react";
 import { Text, View, Button, Platform } from "react-native";
 import firebase from "firebase";
+import { BottomNavigation } from "react-native-paper";
 
+
+//SOUND is only available through IOS /ANDROID --> NO SOUND 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -26,6 +29,7 @@ export default function MyNotifications() {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
+        
       });
 
     // This listener is fired whenever a user taps on or interacts with a notification
@@ -33,6 +37,7 @@ export default function MyNotifications() {
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         console.log(response);
+        
       });
 
     // freeing Handlers
@@ -44,25 +49,7 @@ export default function MyNotifications() {
     };
   }, []);
   //===================================================================================//
-  //Save myToken to firestore
-  async function SaveToken() {
-    let token = await registerForPushNotificationsAsync();
-    await firebase
-      .firestore()
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .update({
-        ExpoToken: token,
-      })
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    return token;
-  }
-  //===================================================================================//
+
   //page views message - not important
   return (
     <View
@@ -87,41 +74,13 @@ export default function MyNotifications() {
         title="Push Notification"
         onPress={async () => {
           await sendPushNotification(expoPushToken);
-          SaveToken(expoPushToken);
+          SaveToken();
         }}
       />
     </View>
   );
-}
-
-//===================================================================================//
-
-// Message Push Notification
-// Can use Expo's Push Notification Tool-> https://expo.dev/notifications
-
-async function sendPushNotification(expoPushToken) {
-  const message = {
-    to: expoPushToken,
-    sound: "default",
-    title: "RESCU",
-    body: "Emergency Contact Location ",
-    data: { someData: "goes here", Location: "" },
-  };
-
-  await fetch("https://exp.host/--/api/v2/push/send", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Accept-encoding": "gzip, deflate",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(message),
-  });
-}
-
-//===================================================================================//
-// Setup for Notification , getting Permissions and Token
-async function registerForPushNotificationsAsync() {
+  // Setup for Notification , getting Permissions and Token
+  async function registerForPushNotificationsAsync() {
   let token;
   if (Constants.isDevice) {
     const { status: existingStatus } =
@@ -152,3 +111,51 @@ async function registerForPushNotificationsAsync() {
 
   return token;
 }
+  //Save myToken to firestore
+  async function SaveToken() {
+    let token = await registerForPushNotificationsAsync();
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        ExpoToken: token,
+      })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    return token;
+  }
+  //===================================================================================//
+
+// Message Push Notification
+// Can use Expo's Push Notification Tool-> https://expo.dev/notifications
+
+async function sendPushNotification(expoPushToken) {
+  const message = {
+    to: expoPushToken,
+    sound: "default",
+    title: "RESCU",
+    body: "Emergency Contact Location ",
+    data: { someData: "goes here", Location: "" },
+  };
+
+  await fetch("https://exp.host/--/api/v2/push/send", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Accept-encoding": "gzip, deflate",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(message),
+  });
+}
+
+//===================================================================================//
+}
+
+
+
