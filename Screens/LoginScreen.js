@@ -21,9 +21,48 @@ import { SafeAreaView, StyleSheet, TouchableOpacity } from "react-native";
 import { Thumbnail } from "native-base";
 import GlobalStyles from "../GlobalStyles";
 import { Feather } from "@expo/vector-icons";
+import Constants from "expo-constants";
+import * as Notifications from "expo-notifications";
+//====================================================================//
+
+// Notif. Token Registeration function
+async function registerForPushNotificationsAsync() {
+  let token;
+  if (Constants.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync(); //PERMISSIONS REQUEST
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data; //GETTING TOKEN HERE
+    console.log(token);
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+  //=====================================//
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  return token;
+}
+//====================================================================//
 
 function LoginScreen({ navigation }) {
-  //regex for checking email validity
+  // ----------------------------Push Notification------------------------------------------------
+  const [expoPushToken, setExpoPushToken] = useState("");
+
   useEffect(
     () =>
       navigation.addListener("beforeRemove", (e) => {
@@ -34,6 +73,17 @@ function LoginScreen({ navigation }) {
       }),
     [navigation]
   );
+
+
+  useEffect(() => {
+          //Reg Token Notif.
+          registerForPushNotificationsAsync().then((token) =>
+          setExpoPushToken(token)
+        );
+  
+  }, [])
+  //====================================================================//
+  //regex for checking email validity
   const [isValid, setIsValid] = useState(null);
   const emailRegex = /\S+@\S+\.\S+/;
   //regex for checking email syntax validity
@@ -65,6 +115,8 @@ function LoginScreen({ navigation }) {
       setIsValid(false);
     }
   };
+  //====================================================================//
+
   //accessing context to use signIn functionality
 
   //called when text changes in the password input
@@ -78,21 +130,35 @@ function LoginScreen({ navigation }) {
   const updateSecureTextEntry = () => {
     setData({ ...data, secureTextEntry: !data.secureTextEntry });
   };
+
+  //====================================================================//
+
   const onSignIn = () => {
     firebase
       .auth()
       .signInWithEmailAndPassword(data.Email, data.Password)
       .then((result) => {
+        //Updating the notification token for new sign in
+        //(to handle the case -> if its a new device)
+        firebase
+          .firestore()
+          .collection("users")
+          .doc(firebase.auth().currentUser.uid)
+          .update({
+            ExpoToken: expoPushToken,
+          });
         console.log(result);
       })
       .catch((error) => {
         Toast.show({
           text: error.message,
           duration: 2000,
-          })
+        });
         console.log(error);
       });
   };
+  //====================================================================//
+
   return (
     <Container>
       <SafeAreaView style={GlobalStyles.droidSafeArea}>
@@ -194,6 +260,9 @@ function LoginScreen({ navigation }) {
   );
 }
 export default LoginScreen;
+
+//====================================================================//
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

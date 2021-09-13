@@ -35,17 +35,9 @@ import GlobalStyles from "../GlobalStyles";
 import firebase from "firebase";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
-// import registerForPushNotificationsAsync from "../Components/PushNotification";
-//====================================================================//
-//Push Motification
-// Notifications.setNotificationHandler({
-//   handleNotification: async () => ({
-//     shouldShowAlert: true,
-//     shouldPlaySound: false,
-//     shouldSetBadge: false,
-//   }),
-// });
 
+//====================================================================//
+// Notif. Token Registeration function  
 async function registerForPushNotificationsAsync() {
   let token;
   if (Constants.isDevice) {
@@ -106,17 +98,17 @@ function RegistrationScreen({ navigation }) {
   const [medications, setMedications] = useState("");
   // ----------------------------Push Notification------------------------------------------------
   const [expoPushToken, setExpoPushToken] = useState("");
-  const [notification, setNotification] = useState(false);
+  // const [notification, setNotification] = useState(false);
 
-  const notificationListener = useRef();
-  const responseListener = useRef();
+  // const notificationListener = useRef();
+  // const responseListener = useRef();
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
       setExpoPushToken(token)
     );
 
-    // // This listener is fired whenever a notification is received while the app is foregrounded
+    // This listener is fired whenever a notification is received while the app is foregrounded
     // notificationListener.current =
     //   Notifications.addNotificationReceivedListener((notification) => {
     //     setNotification(notification);
