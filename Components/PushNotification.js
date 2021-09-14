@@ -80,7 +80,7 @@ export default function MyNotifications() {
   //   </View>
   // );
   // Setup for Notification , getting Permissions and Token
-  
+
   async function registerForPushNotificationsAsync() {
   let token;
   if (Constants.isDevice) {

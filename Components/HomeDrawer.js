@@ -19,11 +19,15 @@ import temp from "../Screens/temp";
 
 //for initial signup
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+
+
 
 const Drawer = createDrawerNavigator();
 
-const HomeDrawer = ({ props }) => {
+const HomeDrawer = ({ navigation  }) => {
+  
+
   // -------------------------this is all for first signup trial-----------------
   // const [isFirstSignup, setisFirstSignup] = useState(null);
   // useEffect(() => {

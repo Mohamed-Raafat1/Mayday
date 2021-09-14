@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container, Header, Content, List, ListItem, Thumbnail, Text, Left, Body, Right, Button } from 'native-base';
-const Notifications = () => {
+const NotificationScreen = () => {
     return (
         <Container>
         <Content>
@@ -70,4 +70,4 @@ const Notifications = () => {
     )
 }
 
-export default Notifications
+export default NotificationScreen

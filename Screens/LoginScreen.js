@@ -60,9 +60,6 @@ async function registerForPushNotificationsAsync() {
 //====================================================================//
 
 function LoginScreen({ navigation }) {
-  // ----------------------------Push Notification------------------------------------------------
-  const [expoPushToken, setExpoPushToken] = useState("");
-
   useEffect(
     () =>
       navigation.addListener("beforeRemove", (e) => {
@@ -73,15 +70,15 @@ function LoginScreen({ navigation }) {
       }),
     [navigation]
   );
-
+  // ----------------------------Push Notification------------------------------------------------
+  const [expoPushToken, setExpoPushToken] = useState("");
 
   useEffect(() => {
-          //Reg Token Notif.
-          registerForPushNotificationsAsync().then((token) =>
-          setExpoPushToken(token)
-        );
-  
-  }, [])
+    //Reg Token Notif.
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+  }, []);
   //====================================================================//
   //regex for checking email validity
   const [isValid, setIsValid] = useState(null);

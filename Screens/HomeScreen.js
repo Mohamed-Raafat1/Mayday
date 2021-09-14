@@ -1,34 +1,24 @@
 import React, { useEffect, useState } from "react";
 import {
-  Animated,
   StyleSheet,
-  Pressable,
   TouchableWithoutFeedback,
   Text,
-  Image,
-  TouchableOpacity,
-  Alert,
-  StatusBar,
-  TouchableWithoutFeedbackBase,
   Dimensions,
 } from "react-native";
 import { Button, Container, Content, View } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import ViewNearestHospital from "../Screens/ViewNearestHospital";
 import LottieView from "lottie-react-native";
 
 import Icon from "react-native-vector-icons/Ionicons";
-import firebase from "firebase";
 import { useDispatch } from "react-redux";
 import { fetchConversations } from "../redux/actions";
 
 //for editprofilescreen
 import { useNavigationState } from "@react-navigation/native";
 
-
 const { width, height } = Dimensions.get("window");
 
- //for ediprofile
+//for ediprofile
 //  function usePreviousRouteName() {
 //   return useNavigationState((state) =>
 //     state.routes[state.index - 1]?.name
@@ -37,11 +27,8 @@ const { width, height } = Dimensions.get("window");
 //   );
 // }
 
-
-
-
-const HomeScreen = ({ navigation, route })=> {
-  // let prevRoute = usePreviousRouteName() == "registration" ? true: false 
+const HomeScreen = ({ navigation, route }) => {
+  // let prevRoute = usePreviousRouteName() == "registration" ? true: false
 
   const requestSOS = () => navigation.navigate("EmergencyTab");
   const helpOthers = () =>
@@ -54,8 +41,6 @@ const HomeScreen = ({ navigation, route })=> {
   //   if(prevRoute == true)
   //    navigation.navigate("View Nearest Hospital")
   // },[route])
-  
- 
 
   return (
     <Container style={styles.container}>
@@ -133,7 +118,7 @@ const HomeScreen = ({ navigation, route })=> {
       {/* </View> */}
     </Container>
   );
-}
+};
 
 export default HomeScreen;
 
