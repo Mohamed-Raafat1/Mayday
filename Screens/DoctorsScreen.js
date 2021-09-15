@@ -190,6 +190,33 @@ function DoctorsScreen() {
         .catch((err) => setErr("StopTracking Error\n" + err));
   };
 
+
+  async function SendNotification() {
+
+    const NearbyUsers = await getNearByUsers();
+    NearbyUsers.map(function (User) {
+      Geofirestore
+        .collection("users").doc(User.uid)
+        .collection("notifications")
+        .add({
+          coordinates: new firebase.firestore.GeoPoint(
+            location.latitude,
+            location.longitude
+          ),
+          PatientID: currentUser.uid,
+        })
+        .catch((error) => {
+          Toast.show({
+            text: error.message,
+            duration: 2000,
+          });
+          console.log(error);
+        });
+    });
+
+  }
+
+
   //this is big part of create request and send it and set loading
   // to true till a doctor accepts request (for now spinner waits only for 2 seconds then shows doctor)
   async function SendRequest() {
@@ -233,8 +260,8 @@ function DoctorsScreen() {
     //this part is just for testing until we can receive requests
     setTimeout(() => {
       setIsLoading(false);
+      SendNotification();
     }, 2000);
-
     await dispatch(fetchRequest(Requestid));
   }
 
@@ -264,9 +291,10 @@ function DoctorsScreen() {
       });
     // users = users.filter((x) => x.uid != firebase.auth().currentUser.uid);
     console.log(users);
+    return (users);
   };
 
-  useLayoutEffect(() => {}, [users]);
+  useLayoutEffect(() => { }, [users]);
   //Done on mount
   useLayoutEffect(() => {
     dispatch(fetchUser());
