@@ -176,9 +176,7 @@ export function updateMessages(message, sender, reciever, chatid) {
       createdAt: String(message.createdAt),
       user: message.user,
     };
-    console.log("does this work???????????????????????????????");
-    console.log(payloadmessage);
-    console.log("does this work???????????????????????????????");
+
     dispatch({ type: USER_MESSAGES_UPDATE, payload: null });
   };
 }
@@ -191,12 +189,7 @@ export function fetchMessages(id, chatid) {
       .orderBy("createdAt", "desc");
 
     await query.where("chatid", "==", chatid).onSnapshot((snapshot) => {
-      snapshot.docs.map((dummy) => {
-        console.log(
-          "dummyyyyyy--------------------------------\n",
-          dummy.data()
-        );
-      });
+      snapshot.docs.map((dummy) => {});
       let messages = snapshot.docs.map((doc) => {
         const data = doc.data();
         const id = doc.id;
