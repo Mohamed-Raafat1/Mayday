@@ -8,7 +8,7 @@ import {
   USER_MESSAGES_CHANGE,
   USER_STATE_CHANGE,
   USER_MESSAGES_UPDATE,
-  EMERGENCY_CONTACTS_CHANGE,
+  USER_NOTIFICATIONS_CHANGE,
   REQUEST_STATE_CHANGE,
 } from "../constants";
 
@@ -27,6 +27,31 @@ export function fetchUser() {
       });
   };
 }
+//--------under construction-----------------------
+export function fetchNotifications() {
+  return (dispatch) => {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("Notifications")
+      .orderBy("createdAt", "desc")
+      // .where("delivered","==",true)
+      // to see new notifications only
+      // (set all notifications delivered == true after eachtime we open notifications screen)
+      //alg for setting delivered for loop untill delivered == true stop descendingly with createdAt
+      //firebase.firestore.FieldValue.serverTimestamp()
+      .onSnapshot((snapshot) => {
+        let notifications = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          return { userid: firebase.auth().currentUser.uid, id, data };
+        });
+        dispatch({ type: USER_NOTIFICATIONS_CHANGE, notifications });
+      });
+  };
+}
+//===========================================================
 
 export function fetchRequest(id) {
   return (dispatch) => {

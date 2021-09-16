@@ -1,6 +1,6 @@
 //BUTTONS NATIVE BASE
 
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { TouchableOpacity } from "react-native";
 //React Native
 import {
@@ -40,7 +40,7 @@ import {
   View,
 } from "native-base";
 import ChatListStackScreen from "../Screens/ChatList";
-import Notifications from "../Screens/Notifications";
+import NotificationScreen from "../Screens/NotificationScreen";
 import Chat from "../Screens/Chat";
 
 //Stacks Navigation
@@ -61,6 +61,40 @@ import DiagnosisScreen from "../Screens/DiagnosisScreen";
 import CurrentReport from "../Screens/CurrentReport";
 import DoctorRequests from "../Screens/Doctor Only Screens/DoctorRequests";
 import { faBorderNone } from "@fortawesome/free-solid-svg-icons";
+//-----------------------Push Notifications------------------------------------
+import * as Notifications from "expo-notifications";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "../redux/actions/index";
+// Function to send notifications given token and and message
+async function sendPushNotification(expoPushToken, Title, Body, Data) {
+  const message = {
+    to: expoPushToken,
+    sound: "default",
+    title: Title,
+    body: Body,
+    data: Data,
+  };
+
+  await fetch("https://exp.host/--/api/v2/push/send", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Accept-encoding": "gzip, deflate",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(message),
+  });
+}
+//===================================================================================//
+//SOUND is only available through IOS /ANDROID --> NO SOUND
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+//=============================================================================
 
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
@@ -126,7 +160,50 @@ function Mytabs() {
   );
 }
 
-function Tabs() {
+function Tabs({ navigation }) {
+  //-----------------------Push Notifications------------------------------------
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.userState.currentUser);
+
+  useLayoutEffect(() => {
+    dispatch(fetchUser());
+  }, []);
+
+  useEffect(() => {
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    // This listener is fired whenever a user taps on or interacts with a notification
+    //works when app is foregrounded, backgrounded, or killed
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+        navigation.navigate("Notifications");
+      });
+
+    // freeing Handlers
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  // const [newNotification, setNewNotification] = useState(false);
+  // const [Body,setBody]=useState("")
+
+  // useEffect(() => {
+  //   sendPushNotification(currentUser.expoToken, body ,);
+
+  // }, [newNotification]);
+  //=============================================================================
   const getTabBarVisibility = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? "Home";
     console.log(routeName);
@@ -345,7 +422,7 @@ const HomeStackScreen = ({ navigation }) => (
     <HomeStack.Screen
       name="Notifications"
       style={styles.icon}
-      component={Notifications}
+      component={NotificationScreen}
       options={{
         title: "Notifications",
       }}
