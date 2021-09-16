@@ -1,7 +1,7 @@
 import { USER_NOTIFICATIONS_CHANGE } from "../constants";
 
 const initialState = {
-  currentNotifications: null,
+  currentNotifications: [],
 };
 
 export const notificationReducer = (state = initialState, action) => {
