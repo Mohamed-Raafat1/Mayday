@@ -66,13 +66,12 @@ import * as Notifications from "expo-notifications";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchNotifications, fetchUser } from "../redux/actions/index";
 // Function to send notifications given token and and message
-async function sendPushNotification(expoPushToken, Title, Body, Data) {
+async function sendPushNotification(expoPushToken, Title, Body) {
   const message = {
     to: expoPushToken,
     sound: "default",
     title: Title,
     body: Body,
-    data: Data,
   };
 
   await fetch("https://exp.host/--/api/v2/push/send", {
@@ -199,11 +198,18 @@ function Tabs({ navigation }) {
     };
   }, []);
 
-  useEffect(() => {
-    console.log("nothing");
-    console.log(currentNotifications);
-    
-  });
+    useEffect(() => {
+      //Hereee error cant evaluate !!
+      if(currentUser&&currentNotifications){
+        console.log(currentUser.ExpoToken);
+        console.log(currentNotifications[0].data.body)
+        for(var i=0;i<currentNotifications.length;i++)
+        sendPushNotification(currentUser.ExpoToken, "RESCU", currentNotifications[i].data.body)
+      }      
+    },[currentNotifications]);
+  
+  
+  
   //=============================================================================
   const getTabBarVisibility = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? "Home";
