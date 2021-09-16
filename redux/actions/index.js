@@ -35,20 +35,23 @@ export function fetchNotifications() {
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Notifications")
-      .orderBy("createdAt", "desc")
+      .get()
+      .then((snapshot) => {
+        let notifications = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+       
+          return { userid: firebase.auth().currentUser.uid, id, data };
+        });
+        dispatch({ type: USER_NOTIFICATIONS_CHANGE, currentNotifications:notifications });
+      })
+         // .orderBy("createdAt", "desc")
       // .where("delivered","==",true)
       // to see new notifications only
       // (set all notifications delivered == true after eachtime we open notifications screen)
       //alg for setting delivered for loop untill delivered == true stop descendingly with createdAt
       //firebase.firestore.FieldValue.serverTimestamp()
-      .onSnapshot((snapshot) => {
-        let notifications = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          const id = doc.id;
-          return { userid: firebase.auth().currentUser.uid, id, data };
-        });
-        dispatch({ type: USER_NOTIFICATIONS_CHANGE, notifications });
-      });
+
   };
 }
 //===========================================================

@@ -1,6 +1,6 @@
 //BUTTONS NATIVE BASE
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { TouchableOpacity } from "react-native";
 //React Native
 import {
@@ -64,7 +64,7 @@ import { faBorderNone } from "@fortawesome/free-solid-svg-icons";
 //-----------------------Push Notifications------------------------------------
 import * as Notifications from "expo-notifications";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUser } from "../redux/actions/index";
+import { fetchNotifications, fetchUser } from "../redux/actions/index";
 // Function to send notifications given token and and message
 async function sendPushNotification(expoPushToken, Title, Body, Data) {
   const message = {
@@ -167,9 +167,12 @@ function Tabs({ navigation }) {
   const responseListener = useRef();
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.userState.currentUser);
+  const currentNotifications = useSelector((state) => state.notificationState.currentNotifications);
+
 
   useLayoutEffect(() => {
     dispatch(fetchUser());
+    dispatch(fetchNotifications());
   }, []);
 
   useEffect(() => {
@@ -196,13 +199,11 @@ function Tabs({ navigation }) {
     };
   }, []);
 
-  // const [newNotification, setNewNotification] = useState(false);
-  // const [Body,setBody]=useState("")
-
-  // useEffect(() => {
-  //   sendPushNotification(currentUser.expoToken, body ,);
-
-  // }, [newNotification]);
+  useEffect(() => {
+    console.log("nothing");
+    console.log(currentNotifications);
+    
+  });
   //=============================================================================
   const getTabBarVisibility = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? "Home";
