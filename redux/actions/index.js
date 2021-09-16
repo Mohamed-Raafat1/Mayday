@@ -35,20 +35,19 @@ export function fetchNotifications() {
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Notifications")
-      // .orderBy("createdAt", "desc")
+      .orderBy("createdAt", "desc")
       // .where("delivered","==",true)
       // to see new notifications only
       // (set all notifications delivered == true after eachtime we open notifications screen)
       //alg for setting delivered for loop untill delivered == true stop descendingly with createdAt
+      //firebase.firestore.FieldValue.serverTimestamp()
       .onSnapshot((snapshot) => {
-        if (snapshot.exists) {
-          dispatch({
-            type: USER_NOTIFICATIONS_CHANGE,
-            currentNotification: snapshot.data(),
-          });
-        } else {
-          console.log("does not exist");
-        }
+        let notifications = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          return { userid: firebase.auth().currentUser.uid, id, data };
+        });
+        dispatch({ type: USER_NOTIFICATIONS_CHANGE, notifications });
       });
   };
 }
