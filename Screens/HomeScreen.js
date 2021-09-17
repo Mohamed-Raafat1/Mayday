@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   StyleSheet,
   TouchableWithoutFeedback,
@@ -10,8 +10,13 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 
 import Icon from "react-native-vector-icons/Ionicons";
-import { useDispatch } from "react-redux";
-import { fetchConversations } from "../redux/actions";
+import { addNotification, sendPushNotification } from "../HomeNavigation/tabs";
+
+//-------------------------------redux------------------------------------------
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser, fetchConversations } from "../redux/actions/index";
+
+//===============================================================================
 
 //for editprofilescreen
 import { useNavigationState } from "@react-navigation/native";
@@ -30,11 +35,40 @@ const { width, height } = Dimensions.get("window");
 const HomeScreen = ({ navigation, route }) => {
   // let prevRoute = usePreviousRouteName() == "registration" ? true: false
 
-  const requestSOS = () => navigation.navigate("EmergencyTab");
+  //-------------------------------redux------------------------------------------
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.userState.currentUser);
+  let ECs;
+  let message;
+  useEffect(() => {
+    if (currentUser) {
+      ECs = currentUser.EmergencyContacts;
+      message = "SOS Recieved from " + currentUser.FirstName;
+    }
+  }, [currentUser]);
+
+  useLayoutEffect(() => {
+    dispatch(fetchUser());
+  }, []);
+  //-------------------------------------------------------------------------
+
+  const requestSOS = () => {
+    navigation.navigate("EmergencyTab");
+
+    for (var i = 0; i < ECs.length; i++) {
+      addNotification(
+        //put here the uids of the emergency contacts[i].uid
+        ECs[i].uid,
+        message,
+        "RESCU",
+        false,
+        "SOS"
+      );
+      sendPushNotification(ECs[i].ExpoToken, "RESCU", message);
+    }
+  };
   const helpOthers = () =>
     navigation.navigate("EmergencyTab", { screen: "Diagnosis" });
-
-  const dispatch = useDispatch();
 
   // useEffect(()=>{
   //   console.log("------------------------------\n",prevRoute)

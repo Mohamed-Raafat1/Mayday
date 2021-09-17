@@ -104,6 +104,7 @@ function RegistrationScreen({ navigation }) {
       setExpoPushToken(token)
     );
   }, []);
+
   //====================================================================//
 
   //regex for checking email syntax validity
