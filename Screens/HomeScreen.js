@@ -67,6 +67,8 @@ const HomeScreen = ({ navigation, route }) => {
       sendPushNotification(ECs[i].ExpoToken, "RESCU", message);
     }
   };
+
+  
   const helpOthers = () =>
     navigation.navigate("EmergencyTab", { screen: "Diagnosis" });
 

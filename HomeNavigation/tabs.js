@@ -87,7 +87,7 @@ export async function sendPushNotification(expoPushToken, Title, Body) {
 }
 // ----------------------------adding Notifications to firestore--------------------------
 // let notificationId;
-export function addNotification(RecieverId,Body, Title, Delivered, Category) {
+export function addNotification(RecieverId, Body, Title, Delivered, Category) {
   firebase
     .firestore()
     .collection("users")
@@ -104,6 +104,19 @@ export function addNotification(RecieverId,Body, Title, Delivered, Category) {
   //   notificationId = result.id;
   // });
 }
+// ----------------------------setting Notifications to delivered--------------------------
+function setNotificationDelivered(id) {
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid)
+    .collection("Notifications")
+    .doc(id)
+    .update({
+      delivered: true,
+    });
+}
+
 //===================================================================================//
 //SOUND is only available through IOS /ANDROID --> NO SOUND
 Notifications.setNotificationHandler({
@@ -196,7 +209,6 @@ function Tabs({ navigation }) {
   }, []);
 
   useEffect(() => {
-   
     // This listener is fired whenever a notification is received while the app is foregrounded
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -226,11 +238,14 @@ function Tabs({ navigation }) {
       console.log(currentUser.ExpoToken);
       // console.log(currentNotifications[0].data.body);
       for (var i = 0; i < currentNotifications.length; i++)
-        sendPushNotification(
-          currentUser.ExpoToken,
-          currentNotifications[i].data.title,
-          currentNotifications[i].data.body
-        );
+        if (currentNotifications[i].id) {
+          sendPushNotification(
+            currentUser.ExpoToken,
+            currentNotifications[i].data.title,
+            currentNotifications[i].data.body
+          );
+          setNotificationDelivered(currentNotifications[i].id);
+        }
     }
   }, [currentNotifications]);
 
