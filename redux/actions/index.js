@@ -37,8 +37,7 @@ export function fetchNotifications() {
       .doc(firebase.auth().currentUser.uid)
       .collection("Notifications")
       .where("delivered", "==", false)
-      // .orderBy("delivered",'desc')
-      // .orderBy("createdAt", "desc")
+      .orderBy("createdAt", "desc")
       .get()
       .then((snapshot) => {
         let notifications = snapshot.docs.map((doc) => {
