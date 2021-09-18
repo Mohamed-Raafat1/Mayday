@@ -4,6 +4,7 @@ import {
   USER_MESSAGES_CHANGE,
   USER_CHATLIST_CHANGE,
   EMERGENCY_CONTACTS_CHANGE,
+  DOCTOR_REQUEST_CHANGE,
 } from "../constants";
 
 const initialState = {
@@ -12,6 +13,7 @@ const initialState = {
   messages: [],
   medicalID: [],
   emergencyContacts: [],
+  Requests: [],
 };
 
 export const user = (state = initialState, action) => {
@@ -34,6 +36,11 @@ export const user = (state = initialState, action) => {
     case USER_MESSAGES_UPDATE:
       return {
         ...state,
+      };
+    case DOCTOR_REQUEST_CHANGE:
+      return {
+        ...state,
+        Requests: action.Requests,
       };
     // case EMERGENCY_CONTACTS_CHANGE:
     // return {

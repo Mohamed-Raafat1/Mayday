@@ -4,7 +4,7 @@ import MapView from "react-native-maps";
 import { useLayoutEffect } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, Image } from "react-native";
 const geofire = require("geofire-common");
 import { Marker } from "react-native-maps";
 
@@ -48,18 +48,10 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
     let longitude = locations[0].coords.longitude;
     const hash = geofire.geohashForLocation([latitude, longitude]);
     let location = { latitude, longitude };
-    firebase
-      .firestore()
-      .collection("users")
+    Geofirestore.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .update({
-        geohash: hash,
-        location,
-        g: {
-          geohash: geofire.geohashForLocation([latitude, longitude]),
-
-          geopoint: new firebase.firestore.GeoPoint(latitude, longitude),
-        },
+        coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
       })
       .catch((error) => {
         console.log(
@@ -67,6 +59,7 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
           error
         );
       });
+    console.log(Requestid);
     if (Requestid) {
       Geofirestore.collection("requests")
         .doc(Requestid)
@@ -107,7 +100,8 @@ function DoctorsScreen() {
   const { height: HEIGHT, width: WIDTH } = Dimensions.get("window");
   const LATITUDE_DELTA = 0.02; //This controls default zoom
   const LONGITUDE_DELTA = LATITUDE_DELTA * (WIDTH / HEIGHT);
-  const [themargin, setthemargin] = useState(0); //this is just for a workaround to mapview issue
+  const [themargin, setthemargin] = useState(0);
+  const [count, setcount] = useState(0); //this is just for a workaround to mapview issue
   //=====================================================================================================
 
   // if (currentRequest == null)
@@ -190,13 +184,11 @@ function DoctorsScreen() {
         .catch((err) => setErr("StopTracking Error\n" + err));
   };
 
-
   async function SendNotification() {
-
     const NearbyUsers = await getNearByUsers();
     NearbyUsers.map(function (User) {
-      Geofirestore
-        .collection("users").doc(User.uid)
+      Geofirestore.collection("users")
+        .doc(User.uid)
         .collection("notifications")
         .add({
           coordinates: new firebase.firestore.GeoPoint(
@@ -213,9 +205,7 @@ function DoctorsScreen() {
           console.log(error);
         });
     });
-
   }
-
 
   //this is big part of create request and send it and set loading
   // to true till a doctor accepts request (for now spinner waits only for 2 seconds then shows doctor)
@@ -237,6 +227,13 @@ function DoctorsScreen() {
         Location: currentUser.location,
         PatientGeoHash: currentUser.geohash,
         PatientID: currentUser.uid,
+        PatientFirstName: currentUser.FirstName,
+        PatientLastName: currentUser.LastName,
+        PatientGender: currentUser.Gender,
+        PatientMedicalID: currentUser.MedicalID,
+        PatientNumber: currentUser.PhoneNumber,
+        PatientEmail: currentUser.Email,
+
         RequestType: "Location",
         State: "Pending",
       })
@@ -290,11 +287,14 @@ function DoctorsScreen() {
         console.log(error);
       });
     // users = users.filter((x) => x.uid != firebase.auth().currentUser.uid);
+    console.log("this is the first user....\n", users[0]);
+    setcount(count + 1);
+
+    users = users.filter((user) => user.id != currentUser.uid);
     console.log(users);
-    return (users);
+    return users;
   };
 
-  useLayoutEffect(() => { }, [users]);
   //Done on mount
   useLayoutEffect(() => {
     dispatch(fetchUser());
@@ -386,17 +386,29 @@ function DoctorsScreen() {
                 alignSelf: "center",
               }}
             >
-              {users.map((marker) => (
-                <Marker
-                  key={marker.id}
-                  coordinate={{
-                    latitude: marker.g.geopoint.latitude,
-                    longitude: marker.g.geopoint.longitude,
-                  }}
-                  title={marker.FirstName}
-                  description={marker.LastName}
-                ></Marker>
-              ))}
+              {users.length > 0 &&
+                users.map((marker) => (
+                  <Marker
+                    onPress={() => {
+                      console.log(
+                        marker.g.geopoint.latitude,
+                        marker.g.geopoint.longitude
+                      );
+                    }}
+                    key={marker.id}
+                    coordinate={{
+                      latitude: marker.g.geopoint.latitude,
+                      longitude: marker.g.geopoint.longitude,
+                    }}
+                    title={marker.FirstName}
+                    description={marker.LastName}
+                  >
+                    <Image
+                      source={require("../assets/doctor.png")}
+                      style={{ height: 35, width: 35 }}
+                    ></Image>
+                  </Marker>
+                ))}
             </MapView>
             <Button
               style={[styles.button, { alignSelf: "center" }]}
@@ -409,16 +421,6 @@ function DoctorsScreen() {
               }}
             >
               <Text>Stop Tracking</Text>
-            </Button>
-            <Button
-              onPress={() => {
-                getNearByUsers();
-              }}
-              primary
-              iconRight
-              rounded
-            >
-              <Text>Print NearBy users</Text>
             </Button>
           </View>
         );

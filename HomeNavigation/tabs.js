@@ -1,12 +1,13 @@
 //BUTTONS NATIVE BASE
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useLayoutEffect, useEffect, useState, useRef } from "react";
 import { TouchableOpacity } from "react-native";
 //React Native
 import {
   NavigationContainer,
   useNavigationContainerRef,
 } from "@react-navigation/native";
+
 import { useRoute } from "@react-navigation/native";
 import { StyleSheet, Image, StatusBar } from "react-native";
 import { Avatar, Badge, withBadge } from "react-native-elements";
