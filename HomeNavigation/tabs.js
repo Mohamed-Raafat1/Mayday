@@ -235,16 +235,18 @@ function Tabs({ navigation }) {
   useEffect(() => {
     //Hereee error cant evaluate !!
     if (currentUser && currentNotifications) {
-      console.log(currentUser.ExpoToken);
-      // console.log(currentNotifications[0].data.body);
+      // console.log(currentUser.ExpoToken);
+      // console.log(currentNotifications);
       for (var i = 0; i < currentNotifications.length; i++)
         if (currentNotifications[i].id) {
-          sendPushNotification(
-            currentUser.ExpoToken,
-            currentNotifications[i].data.title,
-            currentNotifications[i].data.body
-          );
-          setNotificationDelivered(currentNotifications[i].id);
+          if (currentNotifications[i].data.delivered == false) {
+            sendPushNotification(
+              currentUser.ExpoToken,
+              currentNotifications[i].data.title,
+              currentNotifications[i].data.body
+            );
+            setNotificationDelivered(currentNotifications[i].id);
+          }
         }
     }
   }, [currentNotifications]);
