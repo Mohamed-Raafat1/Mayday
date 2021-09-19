@@ -34,32 +34,32 @@ export function fetchUser() {
 //--------under construction-----------------------
 export function fetchNotifications() {
   return (dispatch) => {
+    let bool = false;
     firebase
       .firestore()
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("Notifications")
+      // .where("delivered", "==", false)
       .orderBy("createdAt", "desc")
-      // .where("delivered","==",true)
-      // to see new notifications only
-      // (set all notifications delivered == true after eachtime we open notifications screen)
-      //alg for setting delivered for loop untill delivered == true stop descendingly with createdAt
-      //firebase.firestore.FieldValue.serverTimestamp()
-      .onSnapshot((snapshot) => {
+      .get()
+      .then((snapshot) => {
         let notifications = snapshot.docs.map((doc) => {
           const data = doc.data();
           const id = doc.id;
-          return {
-            userid: firebase.auth().currentUser.uid,
-            id,
-            data,
-          };
+
+          return { userid: firebase.auth().currentUser.uid, id, data };
         });
         dispatch({
           type: USER_NOTIFICATIONS_CHANGE,
-          notifications,
+          currentNotifications: notifications,
         });
       });
+
+    // to see new notifications only
+    // (set all notifications delivered == true after eachtime we open notifications screen)
+    //alg for setting delivered for loop untill delivered == true stop descendingly with createdAt
+    //firebase.firestore.FieldValue.serverTimestamp()
   };
 }
 //===========================================================

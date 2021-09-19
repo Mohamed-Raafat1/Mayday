@@ -1,6 +1,6 @@
 //BUTTONS NATIVE BASE
 
-import React, { useLayoutEffect, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { TouchableOpacity } from "react-native";
 //React Native
 import {
@@ -62,18 +62,18 @@ import DiagnosisScreen from "../Screens/DiagnosisScreen";
 import CurrentReport from "../Screens/CurrentReport";
 import DoctorRequests from "../Screens/Doctor Only Screens/DoctorRequests";
 import { faBorderNone } from "@fortawesome/free-solid-svg-icons";
+import firebase from "firebase";
 //-----------------------Push Notifications------------------------------------
 import * as Notifications from "expo-notifications";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUser } from "../redux/actions/index";
+import { fetchNotifications, fetchUser } from "../redux/actions/index";
 // Function to send notifications given token and and message
-async function sendPushNotification(expoPushToken, Title, Body, Data) {
+export async function sendPushNotification(expoPushToken, Title, Body) {
   const message = {
     to: expoPushToken,
     sound: "default",
     title: Title,
     body: Body,
-    data: Data,
   };
 
   await fetch("https://exp.host/--/api/v2/push/send", {
@@ -86,6 +86,38 @@ async function sendPushNotification(expoPushToken, Title, Body, Data) {
     body: JSON.stringify(message),
   });
 }
+// ----------------------------adding Notifications to firestore--------------------------
+// let notificationId;
+export function addNotification(RecieverId, Body, Title, Delivered, Category) {
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(RecieverId)
+    .collection("Notifications")
+    .add({
+      body: Body,
+      title: Title,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      delivered: Delivered,
+      category: Category,
+    });
+  // .then((result) => {
+  //   notificationId = result.id;
+  // });
+}
+// ----------------------------setting Notifications to delivered--------------------------
+function setNotificationDelivered(id) {
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid)
+    .collection("Notifications")
+    .doc(id)
+    .update({
+      delivered: true,
+    });
+}
+
 //===================================================================================//
 //SOUND is only available through IOS /ANDROID --> NO SOUND
 Notifications.setNotificationHandler({
@@ -168,9 +200,13 @@ function Tabs({ navigation }) {
   const responseListener = useRef();
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.userState.currentUser);
+  const currentNotifications = useSelector(
+    (state) => state.notificationState.currentNotifications
+  );
 
   useLayoutEffect(() => {
     dispatch(fetchUser());
+    dispatch(fetchNotifications());
   }, []);
 
   useEffect(() => {
@@ -197,13 +233,25 @@ function Tabs({ navigation }) {
     };
   }, []);
 
-  // const [newNotification, setNewNotification] = useState(false);
-  // const [Body,setBody]=useState("")
+  useEffect(() => {
+    //Hereee error cant evaluate !!
+    if (currentUser && currentNotifications) {
+      // console.log(currentUser.ExpoToken);
+      // console.log(currentNotifications);
+      for (var i = 0; i < currentNotifications.length; i++)
+        if (currentNotifications[i].id) {
+          if (currentNotifications[i].data.delivered == false) {
+            sendPushNotification(
+              currentUser.ExpoToken,
+              currentNotifications[i].data.title,
+              currentNotifications[i].data.body
+            );
+            setNotificationDelivered(currentNotifications[i].id);
+          }
+        }
+    }
+  }, [currentNotifications]);
 
-  // useEffect(() => {
-  //   sendPushNotification(currentUser.expoToken, body ,);
-
-  // }, [newNotification]);
   //=============================================================================
   const getTabBarVisibility = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? "Home";
