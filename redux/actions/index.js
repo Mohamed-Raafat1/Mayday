@@ -34,7 +34,6 @@ export function fetchUser() {
 //--------under construction-----------------------
 export function fetchNotifications() {
   return (dispatch) => {
-    let bool = false;
     firebase
       .firestore()
       .collection("users")
