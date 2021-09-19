@@ -1,6 +1,6 @@
 import firebase from "firebase";
-import { useState } from "react";
-import { SnapshotViewIOS } from "react-native";
+
+import { Geofirestore } from "../../App";
 require("firebase/firestore");
 import {
   USER_CHATLIST_CHANGE,
@@ -10,6 +10,7 @@ import {
   USER_MESSAGES_UPDATE,
   USER_NOTIFICATIONS_CHANGE,
   REQUEST_STATE_CHANGE,
+  DOCTOR_REQUEST_CHANGE,
 } from "../constants";
 
 export function fetchUser() {
@@ -20,7 +21,10 @@ export function fetchUser() {
       .doc(firebase.auth().currentUser.uid)
       .onSnapshot((snapshot) => {
         if (snapshot.exists) {
-          dispatch({ type: USER_STATE_CHANGE, currentUser: snapshot.data() });
+          dispatch({
+            type: USER_STATE_CHANGE,
+            currentUser: snapshot.data(),
+          });
         } else {
           console.log("does not exist");
         }
@@ -72,11 +76,44 @@ export function fetchRequest(id) {
 
           dispatch({
             type: REQUEST_STATE_CHANGE,
-            currentRequest: { ...data, id },
+            currentRequest: {
+              ...data,
+              id,
+            },
           });
         } else {
           console.log("does not exist");
         }
+      });
+  };
+}
+// function to fetch nearby requests
+// due to the fact that users location keeps changing we need to create a task to keep searching for nearby reqests
+// this needs to happen even when the medical professional is on the move
+// so create a background task for the app that keeps updating the requests, based on the current location
+
+export function fetchRequests(lat, lng, distance) {
+  console.log("i am here");
+  return async (dispatch) => {
+    await Geofirestore.collection("requests")
+      .near({
+        center: new firebase.firestore.GeoPoint(lat, lng),
+        radius: distance,
+      })
+      .where("State", "==", "Pending")
+      .get()
+      .then((snapshot) => {
+        let Requests = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          const distance = doc.distance;
+          return {
+            ...data,
+            Requestid: id,
+            distance: distance,
+          };
+        });
+        dispatch({ type: DOCTOR_REQUEST_CHANGE, Requests });
       });
   };
 }
@@ -184,7 +221,10 @@ export function updateMessages(message, sender, reciever, chatid) {
       user: message.user,
     };
 
-    dispatch({ type: USER_MESSAGES_UPDATE, payload: null });
+    dispatch({
+      type: USER_MESSAGES_UPDATE,
+      payload: null,
+    });
   };
 }
 export function fetchMessages(id, chatid) {
@@ -223,7 +263,10 @@ export function fetchMessages(id, chatid) {
       // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
       // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
-      dispatch({ type: USER_MESSAGES_CHANGE, messages });
+      dispatch({
+        type: USER_MESSAGES_CHANGE,
+        messages,
+      });
     });
   };
 }
@@ -259,9 +302,16 @@ export function fetchConversations() {
         let conversations = snapshot.docs.map((doc) => {
           const data = doc.data();
           const id = doc.id;
-          return { userid: firebase.auth().currentUser.uid, id, data };
+          return {
+            userid: firebase.auth().currentUser.uid,
+            id,
+            data,
+          };
         });
-        dispatch({ type: USER_CHATLIST_CHANGE, conversations });
+        dispatch({
+          type: USER_CHATLIST_CHANGE,
+          conversations,
+        });
       });
   };
 }
@@ -284,7 +334,10 @@ export function fetchChatList() {
             timeStamp: doc.data().timeStamp,
           });
         });
-        dispatch({ type: USER_CHAT_CHANGE, currentchatList: snapshot.docs });
+        dispatch({
+          type: USER_CHAT_CHANGE,
+          currentchatList: snapshot.docs,
+        });
       });
 
     firebase
@@ -301,7 +354,10 @@ export function fetchChatList() {
             timeStamp: doc.data().timeStamp,
           })
         );
-        dispatch({ type: USER_CHAT_CHANGE, currentchatList: conversations });
+        dispatch({
+          type: USER_CHAT_CHANGE,
+          currentchatList: conversations,
+        });
       });
 
     conversations.map((conversation) => {

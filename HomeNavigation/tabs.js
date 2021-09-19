@@ -7,6 +7,7 @@ import {
   NavigationContainer,
   useNavigationContainerRef,
 } from "@react-navigation/native";
+
 import { useRoute } from "@react-navigation/native";
 import { StyleSheet, Image, StatusBar } from "react-native";
 import { Avatar, Badge, withBadge } from "react-native-elements";
