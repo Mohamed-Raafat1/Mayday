@@ -233,7 +233,6 @@ function Tabs({ navigation }) {
   }, []);
 
   useEffect(() => {
-    //Hereee error cant evaluate !!
     if (currentUser && currentNotifications) {
       // console.log(currentUser.ExpoToken);
       // console.log(currentNotifications);

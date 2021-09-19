@@ -1,5 +1,10 @@
 import React from "react";
-import { SafeAreaView, StyleSheet, TouchableOpacity, StatusBar } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  TouchableOpacity,
+  StatusBar,
+} from "react-native";
 import {
   Container,
   Text,
@@ -14,7 +19,6 @@ import {
   Header,
   Icon,
   Button,
-
 } from "native-base";
 
 import { Avatar, Title, Caption, TouchableRipple } from "react-native-paper";
@@ -23,8 +27,9 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/actions";
 import { useLayoutEffect } from "react";
+import QRCode from "react-native-qrcode-svg";
 
-function MedicalIdScreen({ navigation, route}) {
+function MedicalIdScreen({ navigation, route }) {
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {
@@ -38,43 +43,77 @@ function MedicalIdScreen({ navigation, route}) {
 
   const currentUser = useSelector((state) => state.userState.currentUser);
 
-  
   if (currentUser == undefined) return <View></View>;
 
-//for birthdate
-// console.log(currentUser.Birthdate)
+  //for birthdate
+  // console.log(currentUser.Birthdate)
+
+  //---------------------------------QRCODE--------------------------------------------------------
+  let Bdate = currentUser.Birthdate.toDate().toString();
+  Bdate = Bdate.slice(4, 16);
+  let qr;
+  //This code be written in jason
+  qr =
+    "Patient Name : " +
+    currentUser.FirstName +
+    " " +
+    currentUser.LastName +
+    "\n Gender : " +
+    currentUser.Gender +
+    "\n Birthdate(Month/Day/Year) : " +
+    Bdate +
+    "\n Blood Type: " +
+    currentUser.MedicalID.BloodType +
+    "\n - Allergies : " +
+    currentUser.MedicalID.Allergies +
+    "\n Medical Conditions : " +
+    currentUser.MedicalID.MedicalConditions +
+    "\n Medications : " +
+    currentUser.MedicalID.Medications +
+    "\n Height : " +
+    currentUser.MedicalID.Height +
+    "\n Weight : " +
+    currentUser.MedicalID.Weight;
+  //======================================================================================
 
   return (
-
-  
     <Container style={styles.container}>
-      <StatusBar backgroundColor="white"
-     barStyle="dark-content"/>
-      
-      
-      <Header  androidStatusBarColor="gray"	 style={{ borderBottomWidth:2,borderBottomColor:'#f6f6f6', backgroundColor:"white", justifyContent: "center", alignItems:'center' }}>
-        
+      <StatusBar backgroundColor="white" barStyle="dark-content" />
+
+      <Header
+        androidStatusBarColor="gray"
+        style={{
+          borderBottomWidth: 2,
+          borderBottomColor: "#f6f6f6",
+          backgroundColor: "white",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <Left>
-          <TouchableOpacity   onPress={() => {
-            // navigation.navigate("Home")
-             navigation.popToTop()
-             }}>
-            <Icon style={{color:'black'}} name="arrow-back" />
+          <TouchableOpacity
+            onPress={() => {
+              // navigation.navigate("Home")
+              navigation.popToTop();
+            }}
+          >
+            <Icon style={{ color: "black" }} name="arrow-back" />
           </TouchableOpacity>
         </Left>
-        <Body >
-        
-          <Title style={{ color: "black", textAlign: "center" }}>Medical ID</Title>
+        <Body>
+          <Title style={{ color: "black", textAlign: "center" }}>
+            Medical ID
+          </Title>
         </Body>
         <Right>
           <Button
             transparent
             onPress={() => {
               // console.log("medicalid user\n",currentUser.uid)
-              navigation.navigate("EditProfile", { currentUser })
-            }
-            }>
-            <Text style={{color:'black'}}>Edit</Text>
+              navigation.navigate("EditProfile", { currentUser });
+            }}
+          >
+            <Text style={{ color: "black" }}>Edit</Text>
           </Button>
         </Right>
       </Header>
@@ -132,20 +171,24 @@ function MedicalIdScreen({ navigation, route}) {
 
         <View>
           <Text style={styles.medicalIDItem}>MEDICAL CONDITIONS</Text>
-          <Text style={styles.medicalIdData}>{currentUser.MedicalID.MedicalConditions}</Text>
+          <Text style={styles.medicalIdData}>
+            {currentUser.MedicalID.MedicalConditions}
+          </Text>
           <Text style={styles.medicalIDItem}>ALLERGIES</Text>
-          <Text style={styles.medicalIdData}>{currentUser.MedicalID.Allergies}</Text>
+          <Text style={styles.medicalIdData}>
+            {currentUser.MedicalID.Allergies}
+          </Text>
           <Text style={styles.medicalIDItem}>MEDICATIONS</Text>
-          <Text style={styles.medicalIdData}>{currentUser.MedicalID.Medications}</Text>
+          <Text style={styles.medicalIdData}>
+            {currentUser.MedicalID.Medications}
+          </Text>
         </View>
 
-        <View style={{ marginLeft: "auto", marginRight: "auto" }}>
+        <View
+          style={{ marginLeft: "auto", marginRight: "auto", marginBottom: 20 }}
+        >
           <Text style={styles.medicalIDItem}>QR Code</Text>
-          <Thumbnail
-            resizeMode="contain"
-            style={{ width: 200, height: 200 }}
-            source={require("../assets/QRCode.jpg")}
-          />
+          <QRCode value={qr} size={200} />
         </View>
       </Content>
     </Container>
