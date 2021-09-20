@@ -35,6 +35,7 @@ import GlobalStyles from "../GlobalStyles";
 import firebase from "firebase";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
+import { DailyTipsAlert } from "../HomeNavigation/tabs";
 
 //====================================================================//
 // Notif. Token Registeration function
@@ -166,6 +167,7 @@ function RegistrationScreen({ navigation }) {
           EmergencyContacts,
           location,
           ExpoToken: expoPushToken,
+          DailyTips: false,
         });
 
         console.log(result);
@@ -501,7 +503,10 @@ function RegistrationScreen({ navigation }) {
           primary
           iconRight
           rounded
-          onPress={onSignUp}
+          onPress={async () => {
+            onSignUp();
+            await DailyTipsAlert();
+          }}
           block
         >
           <Text>Register</Text>

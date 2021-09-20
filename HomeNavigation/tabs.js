@@ -9,7 +9,7 @@ import {
 } from "@react-navigation/native";
 
 import { useRoute } from "@react-navigation/native";
-import { StyleSheet, Image, StatusBar } from "react-native";
+import { StyleSheet, Image, StatusBar, Alert } from "react-native";
 import { Avatar, Badge, withBadge } from "react-native-elements";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
@@ -129,6 +129,70 @@ Notifications.setNotificationHandler({
 });
 //=============================================================================
 
+//--------------------------DailyTips Notifications-----------------------------
+export async function DailyTipsAlert() {
+  console.log("Alert Entered");
+  Alert.alert(
+    "🚨RESCU-Daily Tips",
+    "Daily Tips helps you rescue yourself or others in difficult times.\n\nWould you like us to send you Daily Tips?",
+    [
+      {
+        text: "Yes",
+        onPress: async () => {
+          console.log("Yes Pressed");
+          await enableDailyTips();
+          await schedulePushNotification();
+        },
+      },
+      {
+        text: "No",
+        onPress: () => {
+          console.log("No Pressed");
+          disableDailyTips();
+        },
+        style: "cancel",
+      },
+    ],
+    { cancelable: false }
+  );
+}
+//Schedule message
+async function schedulePushNotification() {
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "🚨RESCU-Daily Tips",
+      body: "**Today's daily tip**",
+      data: { data: "goes here" },
+    },
+    //change to 86400 seconds for a day , and repeat to true
+    trigger: { seconds: 30, repeats: false },
+  });
+}
+// -enabling DailyTips
+//THIS FUNCTION HAS NOT BEEN USED YET , THIS WILL BE NEEDED FOR DISABLING DAILY TIPS FROM SETTING LATER
+//WE WILL NEED TO CANCEL ALLSCHEDULED ASYNC ONLY IN THE FUNCTION WHICH WILL BE IMPLEMENTED IN SETTING
+// if daily tips true we will enable the toggle check and viceversa
+async function enableDailyTips() {
+  await firebase
+    .firestore()
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid)
+    .update({
+      DailyTips: true,
+    });
+}
+
+async function disableDailyTips() {
+  await firebase
+    .firestore()
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid)
+    .update({
+      DailyTips: false,
+    });
+}
+
+//-------------------------------------------------------------------------------
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
 const DoctorRequestsStack = createStackNavigator();
