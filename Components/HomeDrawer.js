@@ -13,6 +13,7 @@ import { Content, Button, Text, View } from "native-base";
 import Settings from "../Screens/Settings Screens/Settings";
 import AccountSettings from "../Screens/Settings Screens/AccountSettings";
 import LocationSettings from "../Screens/Settings Screens/LocationSettings";
+import NotificationSettings from "../Screens/Settings Screens/NotificationSettings";
 import AccidentsList from "../Screens/AccidentsListScreen";
 import Search from "../Screens/SOS/SearchScreen";
 import temp from "../Screens/temp";
@@ -21,13 +22,9 @@ import temp from "../Screens/temp";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect, useRef } from "react";
 
-
-
 const Drawer = createDrawerNavigator();
 
-const HomeDrawer = ({ navigation  }) => {
-  
-
+const HomeDrawer = ({ navigation }) => {
   // -------------------------this is all for first signup trial-----------------
   // const [isFirstSignup, setisFirstSignup] = useState(null);
   // useEffect(() => {
@@ -114,6 +111,11 @@ const SettingsStackScreen = ({ navigation }) => (
       name="LocationSettings"
       component={LocationSettings}
       options={{ title: "Location Service" }}
+    />
+    <SettingsStack.Screen
+      name="NotificationSettings"
+      component={NotificationSettings}
+      options={{ title: "Notifications Settings" }}
     />
   </SettingsStack.Navigator>
 );

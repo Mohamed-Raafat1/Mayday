@@ -145,8 +145,11 @@ export async function DailyTipsAlert() {
         },
       },
       {
-        text: "May be later",
-        onPress: () => console.log("Maybe Pressed"),
+        text: "No",
+        onPress: () => {
+          console.log("No Pressed");
+          disableDailyTips();
+        },
         style: "cancel",
       },
     ],
@@ -178,6 +181,17 @@ async function enableDailyTips() {
       DailyTips: true,
     });
 }
+
+async function disableDailyTips() {
+  await firebase
+    .firestore()
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid)
+    .update({
+      DailyTips: false,
+    });
+}
+
 //-------------------------------------------------------------------------------
 const HomeStack = createStackNavigator();
 const FirstAidStack = createStackNavigator();
