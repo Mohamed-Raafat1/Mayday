@@ -5,8 +5,7 @@ import { Text, View, Button, Platform } from "react-native";
 import firebase from "firebase";
 import { BottomNavigation } from "react-native-paper";
 
-
-//SOUND is only available through IOS /ANDROID --> NO SOUND 
+//SOUND is only available through IOS /ANDROID --> NO SOUND
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -16,6 +15,22 @@ Notifications.setNotificationHandler({
 });
 
 export default function MyNotifications() {
+  function DailyTipsAlert() {
+    Alert.alert(
+      "🚨RESCU-Daily Tips",
+      "Daily Tips helps you rescue yourself or others in difficult times.\n\nWould you like us to send you Daily Tips?",
+      [
+        { text: "Yes", onPress: () => console.log("Yes Pressed") },
+        {
+          text: "May be later",
+          onPress: () => console.log("Maybe Pressed"),
+          style: "cancel",
+        },
+      ],
+      { cancelable: false }
+    );
+  }
+
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
 
@@ -29,7 +44,6 @@ export default function MyNotifications() {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
-        
       });
 
     // This listener is fired whenever a user taps on or interacts with a notification
@@ -37,7 +51,6 @@ export default function MyNotifications() {
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         console.log(response);
-        
       });
 
     // freeing Handlers
@@ -82,36 +95,36 @@ export default function MyNotifications() {
   // Setup for Notification , getting Permissions and Token
 
   async function registerForPushNotificationsAsync() {
-  let token;
-  if (Constants.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync(); //PERMISSIONS REQUEST
-    let finalStatus = existingStatus;
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
+    let token;
+    if (Constants.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync(); //PERMISSIONS REQUEST
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data; //GETTING TOKEN HERE
+      console.log(token);
+    } else {
+      alert("Must use physical device for Push Notifications");
     }
-    if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
-      return;
+    //===================================================================================//
+    if (Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
     }
-    token = (await Notifications.getExpoPushTokenAsync()).data; //GETTING TOKEN HERE
-    console.log(token);
-  } else {
-    alert("Must use physical device for Push Notifications");
-  }
-  //===================================================================================//
-  if (Platform.OS === "android") {
-    Notifications.setNotificationChannelAsync("default", {
-      name: "default",
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: "#FF231F7C",
-    });
-  }
 
-  return token;
-}
+    return token;
+  }
   //Save myToken to firestore
   async function SaveToken() {
     let token = await registerForPushNotificationsAsync();
@@ -132,31 +145,28 @@ export default function MyNotifications() {
   }
   //===================================================================================//
 
-// Message Push Notification
-// Can use Expo's Push Notification Tool-> https://expo.dev/notifications
+  // Message Push Notification
+  // Can use Expo's Push Notification Tool-> https://expo.dev/notifications
 
-async function sendPushNotification(expoPushToken) {
-  const message = {
-    to: expoPushToken,
-    sound: "default",
-    title: "RESCU",
-    body: "Emergency Contact Location ",
-    data: { someData: "goes here", Location: "" },
-  };
+  async function sendPushNotification(expoPushToken) {
+    const message = {
+      to: expoPushToken,
+      sound: "default",
+      title: "RESCU",
+      body: "Emergency Contact Location ",
+      data: { someData: "goes here", Location: "" },
+    };
 
-  await fetch("https://exp.host/--/api/v2/push/send", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Accept-encoding": "gzip, deflate",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(message),
-  });
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+  }
+
+  //===================================================================================//
 }
-
-//===================================================================================//
-}
-
-
-

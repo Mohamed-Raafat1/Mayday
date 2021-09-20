@@ -12,6 +12,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/actions/index";
 import { Button } from "native-base";
+import * as Notifications from "expo-notifications";
 
 export function DrawerContent(props) {
   const dispatch = useDispatch();
@@ -20,6 +21,14 @@ export function DrawerContent(props) {
   }, []);
 
   const onSignout = () => {
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        ExpoToken: "",
+      });
+    Notifications.cancelAllScheduledNotificationsAsync();
     firebase.auth().signOut();
   };
   const currentUser = useSelector((state) => state.userState.currentUser);

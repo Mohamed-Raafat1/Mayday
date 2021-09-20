@@ -4,7 +4,6 @@
     "slug": "mayday",
     "version": "1.0.0",
     "orientation": "portrait",
-  
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/LOGO.jpeg",
@@ -39,6 +38,10 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "notification":{
+      "icon":"./assets/logo.png",
+      "color":"#FFFFFF"
     }
   }
 }

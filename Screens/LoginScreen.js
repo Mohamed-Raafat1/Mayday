@@ -23,6 +23,7 @@ import GlobalStyles from "../GlobalStyles";
 import { Feather } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
+
 //====================================================================//
 
 // Notif. Token Registeration function

@@ -43,7 +43,7 @@ const HomeScreen = ({ navigation, route }) => {
   useEffect(() => {
     if (currentUser) {
       ECs = currentUser.EmergencyContacts;
-      message = "SOS Recieved from " + currentUser.FirstName;
+      message = "🆘 " + currentUser.FirstName + "is sending you for help";
     }
   }, [currentUser]);
 
@@ -60,7 +60,7 @@ const HomeScreen = ({ navigation, route }) => {
         //put here the uids of the emergency contacts[i].uid
         ECs[i].uid,
         message,
-        "RESCU",
+        "🚨RESCU",
         false,
         "SOS"
       );
@@ -68,7 +68,6 @@ const HomeScreen = ({ navigation, route }) => {
     }
   };
 
-  
   const helpOthers = () =>
     navigation.navigate("EmergencyTab", { screen: "Diagnosis" });
 
