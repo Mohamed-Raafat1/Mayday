@@ -52,20 +52,22 @@ const HomeScreen = ({ navigation, route }) => {
   }, []);
   //-------------------------------------------------------------------------
 
+  // THE BIG RED BUTTON
+
   const requestSOS = () => {
     navigation.navigate("EmergencyTab");
 
+    // Sending SOS notificition to Emergency Contacts
     for (var i = 0; i < ECs.length; i++) {
-      addNotification(
-        //put here the uids of the emergency contacts[i].uid
-        ECs[i].uid,
-        message,
-        "🚨RESCU",
-        false,
-        "SOS"
-      );
-      sendPushNotification(ECs[i].ExpoToken, "RESCU", message);
+      addNotification(ECs[i].uid, message, "🚨RESCU", false, "SOS");
+      sendPushNotification(ECs[i].ExpoToken, "🚨RESCU", message);
     }
+    // Sending SOS notificition to nearby users
+    // GET the nearby users in an array and replace the ECs with the array of nearby users
+    // for (var i = 0; i < ECs.length; i++) {
+    //   addNotification(ECs[i].uid, message, "🚨RESCU", false, "SOS");
+    //   sendPushNotification(ECs[i].ExpoToken, "🚨RESCU", message);
+    // }
   };
 
   const helpOthers = () =>
