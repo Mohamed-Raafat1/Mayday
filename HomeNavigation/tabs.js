@@ -157,6 +157,12 @@ export async function DailyTipsAlert() {
   );
 }
 //Schedule message
+// we may use a timout or set interval in which we change the content of the body
+// and put the schedulePushNotification() in a for loop with a parameter of the changing body
+// we may never use the schedulepushnotification and instead use the original sendpushnotification
+// but this is better as it dont need an expotoken and doesnt fetch to a website
+//check also DailyNotificationTrigger and CalendarNotificationTrigger
+
 async function schedulePushNotification() {
   await Notifications.scheduleNotificationAsync({
     content: {
@@ -169,9 +175,6 @@ async function schedulePushNotification() {
   });
 }
 // -enabling DailyTips
-//THIS FUNCTION HAS NOT BEEN USED YET , THIS WILL BE NEEDED FOR DISABLING DAILY TIPS FROM SETTING LATER
-//WE WILL NEED TO CANCEL ALLSCHEDULED ASYNC ONLY IN THE FUNCTION WHICH WILL BE IMPLEMENTED IN SETTING
-// if daily tips true we will enable the toggle check and viceversa
 async function enableDailyTips() {
   await firebase
     .firestore()
