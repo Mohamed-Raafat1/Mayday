@@ -64,6 +64,8 @@ export function fetchNotifications() {
 //===========================================================
 
 export function fetchRequest(id) {
+  console.log("i am hre");
+  console.log("this is the id", id);
   return (dispatch) => {
     firebase
       .firestore()
@@ -72,7 +74,7 @@ export function fetchRequest(id) {
       .onSnapshot((snapshot) => {
         if (snapshot) {
           let data = snapshot.data();
-
+          console.log("this is the request data", data);
           dispatch({
             type: REQUEST_STATE_CHANGE,
             currentRequest: {
@@ -91,8 +93,7 @@ export function fetchRequest(id) {
 // this needs to happen even when the medical professional is on the move
 // so create a background task for the app that keeps updating the requests, based on the current location
 
-export function fetchRequests(lat, lng, distance) {
-  console.log("i am here");
+export function fetchStaticRequests(lat, lng, distance) {
   return async (dispatch) => {
     await Geofirestore.collection("requests")
       .near({

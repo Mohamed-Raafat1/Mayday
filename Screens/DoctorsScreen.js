@@ -8,7 +8,7 @@ import { StyleSheet, Dimensions, Image } from "react-native";
 const geofire = require("geofire-common");
 import { Marker } from "react-native-maps";
 
-const RESCU_TRACKING = "background-location-task";
+const RESCU_TRACKING = "background-location-doctor-screen-task";
 import {
   Container,
   Header,
@@ -89,7 +89,7 @@ function DoctorsScreen() {
   const currentRequest = useSelector(
     (state) => state.requestState.currentRequest
   );
-
+  console.log("this is the current request", currentRequest);
   const dispatch = useDispatch();
 
   //----------------------constants for mapview
@@ -239,6 +239,14 @@ function DoctorsScreen() {
       })
       .then((result) => {
         Requestid = result.id;
+        console.log("in create reqyest", Requestid);
+        setRequestID(Requestid);
+
+        setisRequested(true);
+
+        setIsLoading(true);
+
+        dispatch(fetchRequest(result.id));
       })
       .catch((error) => {
         Toast.show({
@@ -248,24 +256,19 @@ function DoctorsScreen() {
         console.log(error);
       });
 
-    await setRequestID(Requestid);
-
-    setisRequested(true);
-
-    setIsLoading(true);
-
     //this part is just for testing until we can receive requests
-    setTimeout(() => {
-      setIsLoading(false);
-      SendNotification();
-    }, 2000);
-    await dispatch(fetchRequest(Requestid));
+    /*     setTimeout(() => {
+     
+    }, 2000); */
   }
 
   //=====================================  USE EFFECTS  ========================================
   const getNearByUsers = async () => {
     const query = await Geofirestore.collection("users").near({
-      center: new firebase.firestore.GeoPoint(30.1117513, 31.3351607),
+      center: new firebase.firestore.GeoPoint(
+        currentUser.coordinates.latitude,
+        currentUser.coordinates.longitude
+      ),
       radius: 1000,
     });
 
@@ -331,6 +334,13 @@ function DoctorsScreen() {
       };
     }, [])
   );
+  useEffect(() => {
+    console.log("i am here", currentRequest);
+    if (currentRequest && currentRequest.State == "Accepted") {
+      setIsLoading(false);
+      SendNotification();
+    }
+  }, [currentRequest]);
   let screen;
   if (!currentUser) {
     screen = (
@@ -346,84 +356,119 @@ function DoctorsScreen() {
         </View>
       );
     } else if (isRequested) {
-      if (location.latitude === 0 && location.longitude === 0) {
-        screen = (
-          <View>
-            <Spinner color="red" />
-          </View>
-        );
-        console.log("in settimeout now");
-        setTimeout(() => {
-          setlocation(currentUser.location);
-        }, 500);
-      } else {
-        screen = (
-          <View style={{ flex: 1, width: "100%" }}>
-            <MapView
-              initialRegion={{
-                latitude: location.latitude,
-                longitude: location.longitude,
-                latitudeDelta: LATITUDE_DELTA,
-                longitudeDelta: LONGITUDE_DELTA,
-              }}
-              provider="google"
-              showsUserLocation={true}
-              userLocationUpdateInterval={5000}
-              followsUserLocation={true}
-              showsCompass={true}
-              // showsMyLocationButton={true}
-              showsPointsOfInterest={true}
-              loadingEnabled={true}
-              loadingIndicatorColor="red"
-              onMapReady={() => {
-                if (themargin === 0) setthemargin(1);
-                else setthemargin(0);
-              }}
-              style={{
-                width: "100%",
-                flex: 1,
-                marginTop: themargin,
-                alignSelf: "center",
-              }}
-            >
-              {users.length > 0 &&
-                users.map((marker) => (
+      if (currentRequest) {
+        if (location.latitude === 0 && location.longitude === 0) {
+          screen = (
+            <View>
+              <Spinner color="red" />
+            </View>
+          );
+          console.log("in settimeout now");
+          setTimeout(() => {
+            setlocation(currentUser.location);
+          }, 500);
+        } else {
+          screen = (
+            <View style={{ flex: 1, width: "100%" }}>
+              <MapView
+                initialRegion={{
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                  latitudeDelta: LATITUDE_DELTA,
+                  longitudeDelta: LONGITUDE_DELTA,
+                }}
+                provider="google"
+                showsUserLocation={true}
+                userLocationUpdateInterval={5000}
+                followsUserLocation={true}
+                showsCompass={true}
+                // showsMyLocationButton={true}
+                showsPointsOfInterest={true}
+                loadingEnabled={true}
+                loadingIndicatorColor="red"
+                onMapReady={() => {
+                  if (themargin === 0) setthemargin(1);
+                  else setthemargin(0);
+                }}
+                style={{
+                  width: "100%",
+                  flex: 1,
+                  marginTop: themargin,
+                  alignSelf: "center",
+                }}
+              >
+                {currentRequest.State == "Pending" &&
+                  users.length > 0 &&
+                  users.map((marker) => (
+                    <Marker
+                      onPress={() => {
+                        console.log(
+                          marker.g.geopoint.latitude,
+                          marker.g.geopoint.longitude
+                        );
+                      }}
+                      key={marker.id}
+                      coordinate={{
+                        latitude: marker.g.geopoint.latitude,
+                        longitude: marker.g.geopoint.longitude,
+                      }}
+                      title={marker.FirstName}
+                      description={marker.LastName}
+                    >
+                      <Image
+                        source={require("../assets/doctor.png")}
+                        style={{ height: 35, width: 35 }}
+                      ></Image>
+                    </Marker>
+                  ))}
+                {currentRequest.State == "Accepted" && (
                   <Marker
-                    onPress={() => {
-                      console.log(
-                        marker.g.geopoint.latitude,
-                        marker.g.geopoint.longitude
-                      );
-                    }}
-                    key={marker.id}
                     coordinate={{
-                      latitude: marker.g.geopoint.latitude,
-                      longitude: marker.g.geopoint.longitude,
+                      latitude: currentRequest.DoctorCoordinates.latitude,
+                      longitude: currentRequest.DoctorCoordinates.longitude,
                     }}
-                    title={marker.FirstName}
-                    description={marker.LastName}
-                  >
-                    <Image
-                      source={require("../assets/doctor.png")}
-                      style={{ height: 35, width: 35 }}
-                    ></Image>
-                  </Marker>
-                ))}
-            </MapView>
-            <Button
-              style={[styles.button, { alignSelf: "center" }]}
-              onPress={() => {
-                console.log("------------------pressed-------------");
-                //       // await terminationFn.remove()
-                //       // fcn()
-                StopTracking();
-                setPermissionGranted(null);
-              }}
-            >
-              <Text>Stop Tracking</Text>
-            </Button>
-          </View>
-        );
+                    title="batee5"
+                  ></Marker>
+                )}
+                {/* {users.length > 0 &&
+                    users.map((marker) => (
+                      <Marker
+                        onPress={() => {
+                          console.log(
+                            marker.g.geopoint.latitude,
+                            marker.g.geopoint.longitude
+                          );
+                        }}
+                        key={marker.id}
+                        coordinate={{
+                          latitude: marker.g.geopoint.latitude,
+                          longitude: marker.g.geopoint.longitude,
+                        }}
+                        title={marker.FirstName}
+                        description={marker.LastName}
+                      >
+                        <Image
+                          source={require("../assets/doctor.png")}
+                          style={{ height: 35, width: 35 }}
+                        ></Image>
+                      </Marker>
+                    ))} */}
+              </MapView>
+              <Button
+                style={[styles.button, { alignSelf: "center" }]}
+                onPress={() => {
+                  console.log("------------------pressed-------------");
+                  //       // await terminationFn.remove()
+                  //       // fcn()
+                  StopTracking();
+                  setPermissionGranted(null);
+                }}
+              >
+                <Text>Stop Tracking</Text>
+              </Button>
+            </View>
+          );
+        }
       }
     } else {
       screen = (

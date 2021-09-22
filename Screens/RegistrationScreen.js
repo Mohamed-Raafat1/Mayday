@@ -125,7 +125,7 @@ function RegistrationScreen({ navigation }) {
   };
   //====================================================================//
 
-  const onSignUp = () => {
+  const onSignUp = async () => {
     //Gathering MedicalID
     let MedicalID = {
       Height: height,
@@ -144,7 +144,7 @@ function RegistrationScreen({ navigation }) {
       if (radio.selected == true) gender = radio.value;
     });
 
-    firebase
+    await firebase
       .auth()
       .createUserWithEmailAndPassword(Email, Password)
       .then((result) => {
@@ -153,25 +153,34 @@ function RegistrationScreen({ navigation }) {
           latitude: 0,
           longitude: 0,
         };
-        firebase.firestore().collection("users").doc(uid).set({
-          uid,
-          Email,
-          FirstName,
-          LastName,
-          Gender: gender,
-          Birthdate: date,
-          NationalID,
-          PhoneNumber,
-          medicalProfessional,
-          MedicalID,
-          EmergencyContacts,
-          location,
-          ExpoToken: expoPushToken,
-          DailyTips: false,
-        });
+        firebase
+          .firestore()
+          .collection("users")
+          .doc(uid)
+          .set({
+            uid,
+            Email,
+            FirstName,
+            LastName,
+            Gender: gender,
+            Birthdate: date,
+            NationalID,
+            PhoneNumber,
+            medicalProfessional,
+            MedicalID,
+            EmergencyContacts,
+            location,
+            ExpoToken: expoPushToken,
+            DailyTips: false,
+            g: {
+              geohash: "",
+              geopoint: new firebase.firestore.GeoPoint(0, 0),
+            },
+          });
 
         console.log(result);
       })
+      .then((result) => console.log(result))
       .catch((error) => {
         Toast.show({
           text: error.message,

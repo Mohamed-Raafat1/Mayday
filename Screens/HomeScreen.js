@@ -11,6 +11,7 @@ import LottieView from "lottie-react-native";
 
 import Icon from "react-native-vector-icons/Ionicons";
 import { addNotification, sendPushNotification } from "../HomeNavigation/tabs";
+import firebase from "firebase";
 
 //-------------------------------redux------------------------------------------
 import { useDispatch, useSelector } from "react-redux";
@@ -149,6 +150,21 @@ const HomeScreen = ({ navigation, route }) => {
               Help Others
             </Text>
           </Button>
+          {/* <Button
+            onPress={() => {
+              firebase
+                .firestore()
+                .collection("users")
+                .doc(firebase.auth().currentUser.uid)
+                .update({
+                  ExpoToken: "",
+                });
+              // Notifications.cancelAllScheduledNotificationsAsync();
+              firebase.auth().signOut();
+            }}
+          >
+            <Text>signout</Text>
+          </Button> */}
         </View>
       </View>
 

@@ -67,6 +67,7 @@ import firebase from "firebase";
 import * as Notifications from "expo-notifications";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchNotifications, fetchUser } from "../redux/actions/index";
+import RequestAcceptedScreen from "../Screens/Doctor Only Screens/RequestAcceptedScreen";
 // Function to send notifications given token and and message
 export async function sendPushNotification(expoPushToken, Title, Body) {
   const message = {
@@ -563,6 +564,11 @@ const DoctorRequestsStackScreen = () => (
       name="DoctorRequests"
       component={DoctorRequests}
       options={{ title: "Requests" }}
+    />
+    <DoctorRequestsStack.Screen
+      name="CurrentRequest"
+      component={RequestAcceptedScreen}
+      options={{ title: "Current Request" }}
     />
     <DoctorRequestsStack.Screen
       name="DoctorChat"

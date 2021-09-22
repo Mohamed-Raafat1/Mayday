@@ -6,6 +6,7 @@ import {
   StatusBar,
   Alert,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   Text,
   Container,
@@ -22,10 +23,16 @@ import {
   Item,
 } from "native-base";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchRequest, fetchUser, fetchRequests } from "../../redux/actions";
+import RequestAcceptedScreen from "./RequestAcceptedScreen";
+import {
+  fetchRequest,
+  fetchUser,
+  fetchStaticRequests,
+} from "../../redux/actions";
 
 import firebase from "firebase";
 import * as geofirestore from "geofirestore";
+
 let Requests = [];
 
 const DoctorRequests = ({ navigation }) => {
@@ -40,40 +47,45 @@ const DoctorRequests = ({ navigation }) => {
   const currentUser = useSelector((state) => state.userState.currentUser);
   Requests = useSelector((state) => state.userState.Requests);
   const dispatch = useDispatch();
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(
+        fetchStaticRequests(
+          currentUser.g.geopoint.latitude,
+          currentUser.g.geopoint.longitude,
+          1000
+        )
+      );
+
+      return () => {};
+    }, [])
+  );
   useEffect(() => {
     dispatch(fetchUser());
-    dispatch(
-      fetchRequests(
-        currentUser.g.geopoint.latitude,
-        currentUser.g.geopoint.longitude,
-        1000
-      )
-    );
 
     return () => {};
   }, []);
-  const AcceptRequest = async (Requestid) => {
-    let request;
-    await firebase.firestore().collection("requests").doc(Requestid).update({
-      State: "Pending",
-      DoctorID: currentUser.uid,
-      DoctorGeoHash: currentUser.geohash,
-    });
+  const AcceptRequest = async (request) => {
     await firebase
       .firestore()
       .collection("requests")
-      .doc(Requestid)
-      .get()
-      .then((result) => {
-        request = result.data();
+      .doc(request.Requestid)
+      .update({
+        State: "Accepted",
+        DoctorID: currentUser.uid,
+        DoctorGeoHash: currentUser.geohash,
+        DoctorCoordinates: currentUser.coordinates,
       });
-    firebase
+
+    await firebase
       .firestore()
       .collection("users")
       .doc(currentUser.uid)
       .collection("requests")
-      .doc(Requestid)
+      .doc(request.Requestid)
       .set({ ...request, State: "Accepted" });
+
+    navigation.navigate("CurrentRequest", { requestid: request.Requestid });
     //need to notify other user that their request has been accepted
   };
 
@@ -102,7 +114,9 @@ const DoctorRequests = ({ navigation }) => {
                 <Text>Location</Text>
               </Button>
               <Button
-                onPress={() => AcceptRequest(request.Requestid)}
+                onPress={() => {
+                  AcceptRequest(request);
+                }}
                 transparent
               >
                 <Text>Accept</Text>
