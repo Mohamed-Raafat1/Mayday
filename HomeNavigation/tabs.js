@@ -68,12 +68,18 @@ import * as Notifications from "expo-notifications";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchNotifications, fetchUser } from "../redux/actions/index";
 // Function to send notifications given token and and message
-export async function sendPushNotification(expoPushToken, Title, Body) {
+export async function sendPushNotification(
+  expoPushToken,
+  Title,
+  Body,
+  Category
+) {
   const message = {
     to: expoPushToken,
     sound: "default",
     title: Title,
     body: Body,
+    data: { category: Category },
   };
 
   await fetch("https://exp.host/--/api/v2/push/send", {
@@ -168,7 +174,7 @@ async function schedulePushNotification() {
     content: {
       title: "🚨RESCU-Daily Tips",
       body: "**Today's daily tip**",
-      data: { data: "goes here" },
+      data: { category: "DailyTip" },
     },
     //change to 86400 seconds for a day , and repeat to true
     trigger: { seconds: 30, repeats: false },
@@ -288,7 +294,12 @@ function Tabs({ navigation }) {
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         console.log(response);
-        navigation.navigate("Notifications");
+        if (response.notification.request.content.data.category === "SOS")
+          navigation.navigate("Notifications");
+        else if (
+          response.notification.request.content.data.category === "DailyTip"
+        )
+          navigation.navigate("First Aid");
       });
 
     // freeing Handlers
@@ -310,7 +321,8 @@ function Tabs({ navigation }) {
             sendPushNotification(
               currentUser.ExpoToken,
               currentNotifications[i].data.title,
-              currentNotifications[i].data.body
+              currentNotifications[i].data.body,
+              currentNotifications[i].data.category
             );
             setNotificationDelivered(currentNotifications[i].id);
           }

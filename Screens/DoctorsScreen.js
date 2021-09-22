@@ -8,7 +8,7 @@ import { StyleSheet, Dimensions, Image } from "react-native";
 const geofire = require("geofire-common");
 import { Marker } from "react-native-maps";
 
-const RESCU_TRACKING = "background-location-task";
+const RESCU_TRACKING = "background-location-DoctorsScreentask";
 import {
   Container,
   Header,
@@ -265,7 +265,10 @@ function DoctorsScreen() {
   //=====================================  USE EFFECTS  ========================================
   const getNearByUsers = async () => {
     const query = await Geofirestore.collection("users").near({
-      center: new firebase.firestore.GeoPoint(30.1117513, 31.3351607),
+      center: new firebase.firestore.GeoPoint(
+        currentUser.coordinates.latitude,
+        currentUser.coordinates.longitude
+      ),
       radius: 1000,
     });
 
