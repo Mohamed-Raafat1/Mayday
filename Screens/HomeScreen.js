@@ -13,6 +13,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { addNotification, sendPushNotification } from "../HomeNavigation/tabs";
 import { Geofirestore } from "../App";
 import firebase from "firebase";
+import { fetchAcceptedRequest } from "../redux/actions/index";
 //-------------------------------redux------------------------------------------
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser, fetchConversations } from "../redux/actions/index";
@@ -39,11 +40,14 @@ const HomeScreen = ({ navigation, route }) => {
   //-------------------------------redux------------------------------------------
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.userState.currentUser);
-  let users = [];
+  const currentAcceptedRequest = useSelector(
+    (state) => state.userState.AcceptedRequest
+  );
   let ECs;
   let message;
   let messageNearby;
   let NUs;
+  let users = [];
 
   useEffect(() => {
     if (currentUser) {
@@ -69,7 +73,7 @@ const HomeScreen = ({ navigation, route }) => {
         currentUser.coordinates.latitude,
         currentUser.coordinates.longitude
       ),
-      radius: 1000,
+      radius: 5,
     });
 
     await query
@@ -133,6 +137,18 @@ const HomeScreen = ({ navigation, route }) => {
 
       <View style={styles.bottomSheet}>
         <View style={styles.buttons}>
+          {currentAcceptedRequest && (
+            <Button
+              onPress={() => {
+                navigation.navigate("CurrentRequest", {
+                  requestid: currentAcceptedRequest.Requestid,
+                  chatid: currentAcceptedRequest.chatid,
+                });
+              }}
+            >
+              <Text>get me to accepted Request</Text>
+            </Button>
+          )}
           <Button
             style={styles.button}
             bordered
@@ -189,6 +205,21 @@ const HomeScreen = ({ navigation, route }) => {
               Help Others
             </Text>
           </Button>
+          {/* <Button
+            onPress={() => {
+              firebase
+                .firestore()
+                .collection("users")
+                .doc(firebase.auth().currentUser.uid)
+                .update({
+                  ExpoToken: "",
+                });
+              // Notifications.cancelAllScheduledNotificationsAsync();
+              firebase.auth().signOut();
+            }}
+          >
+            <Text>signout</Text>
+          </Button> */}
         </View>
       </View>
 

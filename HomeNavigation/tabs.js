@@ -43,7 +43,6 @@ import {
 import ChatListStackScreen from "../Screens/ChatList";
 import NotificationScreen from "../Screens/NotificationScreen";
 import Chat from "../Screens/Chat";
-
 //Stacks Navigation
 //First-Aid Screens
 import Hypothermia from "../Screens/First-Aid Screens/Hypothermia";
@@ -67,7 +66,8 @@ import firebase from "firebase";
 import * as Notifications from "expo-notifications";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchNotifications, fetchUser } from "../redux/actions/index";
-// Function to send notifications given token and and message
+import RequestAcceptedScreen from "../Screens/Doctor Only Screens/RequestAcceptedScreen";
+// Function to send notifications given token and message
 export async function sendPushNotification(
   expoPushToken,
   Title,
@@ -266,13 +266,18 @@ function Mytabs() {
   );
 }
 
+let currentAcceptedRequest;
 function Tabs({ navigation }) {
+  console.log(currentAcceptedRequest);
   //-----------------------Push Notifications------------------------------------
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.userState.currentUser);
+  currentAcceptedRequest = useSelector(
+    (state) => state.userState.AcceptedRequest
+  );
   const currentNotifications = useSelector(
     (state) => state.notificationState.currentNotifications
   );
@@ -572,10 +577,17 @@ const HomeStackScreen = ({ navigation }) => (
 const DoctorRequestsStackScreen = () => (
   <DoctorRequestsStack.Navigator>
     <DoctorRequestsStack.Screen
+      name="CurrentRequest"
+      component={RequestAcceptedScreen}
+      options={{ title: "Current Request" }}
+    />
+
+    <DoctorRequestsStack.Screen
       name="DoctorRequests"
       component={DoctorRequests}
       options={{ title: "Requests" }}
     />
+
     <DoctorRequestsStack.Screen
       name="DoctorChat"
       component={Chat}

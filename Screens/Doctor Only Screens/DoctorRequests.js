@@ -6,6 +6,7 @@ import {
   StatusBar,
   Alert,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   Text,
   Container,
@@ -22,10 +23,18 @@ import {
   Item,
 } from "native-base";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchRequest, fetchUser, fetchRequests } from "../../redux/actions";
+import RequestAcceptedScreen from "./RequestAcceptedScreen";
+import {
+  fetchRequest,
+  fetchUser,
+  fetchStaticRequests,
+  fetchAcceptedRequest,
+} from "../../redux/actions";
+let sharedChatid;
 
 import firebase from "firebase";
 import * as geofirestore from "geofirestore";
+
 let Requests = [];
 
 const DoctorRequests = ({ navigation }) => {
@@ -40,43 +49,192 @@ const DoctorRequests = ({ navigation }) => {
   const currentUser = useSelector((state) => state.userState.currentUser);
   Requests = useSelector((state) => state.userState.Requests);
   const dispatch = useDispatch();
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(
+        fetchStaticRequests(
+          currentUser.g.geopoint.latitude,
+          currentUser.g.geopoint.longitude,
+          1000
+        )
+      );
+
+      return () => {};
+    }, [])
+  );
   useEffect(() => {
     dispatch(fetchUser());
-    dispatch(
-      fetchRequests(
-        currentUser.g.geopoint.latitude,
-        currentUser.g.geopoint.longitude,
-        1000
-      )
-    );
 
     return () => {};
   }, []);
-  const AcceptRequest = async (Requestid) => {
-    let request;
-    await firebase.firestore().collection("requests").doc(Requestid).update({
-      State: "Pending",
-      DoctorID: currentUser.uid,
-      DoctorGeoHash: currentUser.geohash,
-    });
+  const AcceptRequest = async (request) => {
     await firebase
       .firestore()
       .collection("requests")
-      .doc(Requestid)
-      .get()
-      .then((result) => {
-        request = result.data();
+      .doc(request.Requestid)
+      .update({
+        State: "Accepted",
+        DoctorID: currentUser.uid,
+        DoctorGeoHash: currentUser.geohash,
+        DoctorCoordinates: currentUser.coordinates,
+        chatid: sharedChatid,
       });
-    firebase
+    await firebase.firestore().collection("users").doc(currentUser.uid).update({
+      currentRequest: request,
+    });
+    await firebase
       .firestore()
       .collection("users")
       .doc(currentUser.uid)
       .collection("requests")
-      .doc(Requestid)
-      .set({ ...request, State: "Accepted" });
+      .doc(request.Requestid)
+      .set({ ...request, State: "Accepted", current: true });
+    await dispatch(fetchAcceptedRequest(request.Requestid));
+    navigation.navigate("CurrentRequest", {
+      requestid: request.Requestid,
+      chatid: sharedChatid,
+    });
+
     //need to notify other user that their request has been accepted
   };
+  async function createChat(uid) {
+    let chatAvailable = false;
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(uid)
+      .collection("conversations")
+      .where("userid", "==", currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (!snapshot.empty) {
+          chatAvailable = true;
+          snapshot.docs.map((chat) => {
+            sharedChatid = chat.id;
+          });
+        }
+      });
 
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid)
+      .collection("conversations")
+      .where("userid", "==", uid)
+      .get()
+      .then((snapshot) => {
+        if (!snapshot.empty) {
+          chatAvailable = true;
+          snapshot.docs.map((chat) => {
+            sharedChatid = chat.id;
+          });
+        }
+      });
+    //if there is no chat already created create one
+    if (!chatAvailable) {
+      let user = [];
+      let chatid;
+      await firebase
+        .firestore()
+        .collection("users")
+        .doc(uid)
+        .get()
+        .then((snapshot) => {
+          if (snapshot.exists) {
+            user = snapshot.data();
+          } else {
+            console.log("does not exist");
+          }
+        });
+      await firebase
+        .firestore()
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid)
+        .collection("conversations")
+        .add({
+          talkingto: user.FirstName + " " + user.LastName,
+          userid: uid,
+          timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+          userOne: {
+            firsName: currentUser.FirstName,
+            lastName: currentUser.LastName,
+            email: currentUser.Email,
+          },
+          userTwo: {
+            firsName: user.FirstName,
+            lastName: user.LastName,
+            email: user.Email,
+          },
+          latestMessage: {
+            _id: "",
+            createdAt: "",
+            text: "",
+            timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+            chatid: "",
+            user: "",
+            chatRecepient: "",
+            uid: "",
+          },
+        })
+        .then((snapshot) => {
+          chatid = snapshot.id;
+          sharedChatid = snapshot.id;
+        });
+      await firebase
+        .firestore()
+        .collection("users")
+        .doc(uid)
+        .collection("conversations")
+        .doc(chatid)
+        .set({
+          talkingto: currentUser.FirstName + " " + currentUser.LastName,
+          userid: firebase.auth().currentUser.uid,
+          timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+          userOne: {
+            firsName: currentUser.FirstName,
+            lastName: currentUser.LastName,
+            email: currentUser.Email,
+          },
+          userTwo: {
+            firsName: user.FirstName,
+            lastName: user.LastName,
+            email: user.Email,
+          },
+          latestMessage: {
+            _id: "",
+            createdAt: "",
+            text: "",
+            timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+            chatid: "",
+            user: "",
+            chatRecepient: "",
+            uid: "",
+          },
+        });
+      await firebase
+        .firestore()
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid)
+        .update(
+          "chats",
+          firebase.firestore.FieldValue.arrayUnion({
+            chatid: chatid,
+            Recepient: uid,
+          })
+        );
+      await firebase
+        .firestore()
+        .collection("users")
+        .doc(uid)
+        .update(
+          "chats",
+          firebase.firestore.FieldValue.arrayUnion({
+            chatid: chatid,
+            Recepient: firebase.auth().currentUser.uid,
+          })
+        );
+    }
+  }
   const RequestsList = () => {
     return Requests.map((request) => {
       return (
@@ -102,7 +260,10 @@ const DoctorRequests = ({ navigation }) => {
                 <Text>Location</Text>
               </Button>
               <Button
-                onPress={() => AcceptRequest(request.Requestid)}
+                onPress={async () => {
+                  await createChat(request.PatientID);
+                  AcceptRequest(request);
+                }}
                 transparent
               >
                 <Text>Accept</Text>
@@ -138,103 +299,6 @@ const DoctorRequests = ({ navigation }) => {
       </Container>
     );
   }
-  // <Container>
-  //   <Content>
-  //     <List>
-  //       <ListItem itemHeader first style={{ marginBottom: -30 }}>
-  //         <Text>Nearby Location Requests</Text>
-  //       </ListItem>
-  //       <ListItem thumbnail>
-  //   <Left>
-  //     <Thumbnail
-  //       source={{
-  //         uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
-  //       }}
-  //     />
-  //   </Left>
-  //   <Body style={{ flexDirection: "column" }}>
-  //     <Text style={{ fontWeight: "bold" }}>Sherif Mohamed</Text>
-  //     <Text>Distance: 2 km</Text>
-  //     <Text note numberOfLines={1}>
-  //       Accident Type: Bleeding case
-  //     </Text>
-  //     <View
-  //       style={{ flexDirection: "row", justifyContent: "flex-end" }}
-  //     >
-  //       <Button transparent>
-  //         <Icon style={{ marginRight: -10 }} active name="location" />
-  //         <Text>Location</Text>
-  //       </Button>
-  //       <Button transparent>
-  //         <Text>Accept</Text>
-  //       </Button>
-  //       <Button transparent>
-  //         <Text style={{ color: "red" }}>Decline</Text>
-  //       </Button>
-  //     </View>
-  //   </Body>
-  // </ListItem>
-
-  //       <ListItem itemHeader first style={{ marginBottom: -30 }}>
-  //         <Text>Contact Requests</Text>
-  //       </ListItem>
-
-  //       <ListItem thumbnail>
-  //         <Left>
-  //           <Thumbnail
-  //             source={{
-  //               uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
-  //             }}
-  //           />
-  //         </Left>
-  //         <Body style={{ flexDirection: "column" }}>
-  //           <Text style={{ fontWeight: "bold" }}>Ahmed Mohamed</Text>
-  //           <Text note numberOfLines={2}>
-  //             Accident Type: Burn case
-  //           </Text>
-  //           <Item>
-  //             <Button
-  //               transparent
-  //               onPress={() => navigation.navigate("DoctorChat")}
-  //             >
-  //               <Text>Accept</Text>
-  //             </Button>
-  //             <Button transparent>
-  //               <Text style={{ color: "red" }}>Decline</Text>
-  //             </Button>
-  //           </Item>
-  //         </Body>
-  //       </ListItem>
-
-  //       <ListItem thumbnail>
-  //         <Left>
-  //           <Thumbnail
-  //             source={{
-  //               uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
-  //             }}
-  //           />
-  //         </Left>
-  //         <Body style={{ flexDirection: "column" }}>
-  //           <Text style={{ fontWeight: "bold" }}>Abdullah Ahmed</Text>
-  //           <Text note numberOfLines={2}>
-  //             Accident Type: Cut case
-  //           </Text>
-  //           <Item>
-  //             <Button
-  //               transparent
-  //               onPress={() => navigation.navigate("DoctorChat")}
-  //             >
-  //               <Text>Accept</Text>
-  //             </Button>
-  //             <Button transparent>
-  //               <Text style={{ color: "red" }}>Decline</Text>
-  //             </Button>
-  //           </Item>
-  //         </Body>
-  //       </ListItem>
-  //     </List>
-  //   </Content>
-  // </Container>
 };
 
 export default DoctorRequests;

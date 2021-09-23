@@ -11,6 +11,7 @@ import {
   USER_NOTIFICATIONS_CHANGE,
   REQUEST_STATE_CHANGE,
   DOCTOR_REQUEST_CHANGE,
+  ACCEPTED_REQUEST_CHANGE,
 } from "../constants";
 
 export function fetchUser() {
@@ -63,6 +64,35 @@ export function fetchNotifications() {
 }
 //===========================================================
 
+export function fetchAcceptedRequest(requestid) {
+  return async (dispatch) => {
+    let done = false;
+    let query = firebase
+      .firestore()
+      .collection("requests")
+      .doc(requestid)
+      .onSnapshot((snapshot) => {
+        if (snapshot) {
+          let data = snapshot.data();
+          data = { ...data };
+          let id = snapshot.id;
+
+          if (data.State == "Done") done = true;
+
+          dispatch({
+            type: ACCEPTED_REQUEST_CHANGE,
+            AcceptedRequest: {
+              ...data,
+              id,
+            },
+          });
+        } else {
+          console.log("does not exist");
+        }
+      });
+    if (done) return query;
+  };
+}
 export function fetchRequest(id) {
   return (dispatch) => {
     firebase
@@ -91,8 +121,7 @@ export function fetchRequest(id) {
 // this needs to happen even when the medical professional is on the move
 // so create a background task for the app that keeps updating the requests, based on the current location
 
-export function fetchRequests(lat, lng, distance) {
-  console.log("i am here");
+export function fetchStaticRequests(lat, lng, distance) {
   return async (dispatch) => {
     await Geofirestore.collection("requests")
       .near({
