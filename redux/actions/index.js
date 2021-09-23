@@ -11,6 +11,7 @@ import {
   USER_NOTIFICATIONS_CHANGE,
   REQUEST_STATE_CHANGE,
   DOCTOR_REQUEST_CHANGE,
+  ACCEPTED_REQUEST_CHANGE,
 } from "../constants";
 
 export function fetchUser() {
@@ -63,9 +64,36 @@ export function fetchNotifications() {
 }
 //===========================================================
 
+export function fetchAcceptedRequest(requestid) {
+  return async (dispatch) => {
+    let done = false;
+    let query = firebase
+      .firestore()
+      .collection("requests")
+      .doc(requestid)
+      .onSnapshot((snapshot) => {
+        if (snapshot) {
+          let data = snapshot.data();
+          data = { ...data };
+          let id = snapshot.id;
+
+          if (data.State == "Done") done = true;
+
+          dispatch({
+            type: ACCEPTED_REQUEST_CHANGE,
+            AcceptedRequest: {
+              ...data,
+              id,
+            },
+          });
+        } else {
+          console.log("does not exist");
+        }
+      });
+    if (done) return query;
+  };
+}
 export function fetchRequest(id) {
-  console.log("i am hre");
-  console.log("this is the id", id);
   return (dispatch) => {
     firebase
       .firestore()
@@ -74,7 +102,7 @@ export function fetchRequest(id) {
       .onSnapshot((snapshot) => {
         if (snapshot) {
           let data = snapshot.data();
-          console.log("this is the request data", data);
+
           dispatch({
             type: REQUEST_STATE_CHANGE,
             currentRequest: {

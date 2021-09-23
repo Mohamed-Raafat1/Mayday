@@ -1,44 +1,176 @@
 import React, { useState, useEffect } from "react";
-import { Button, Text, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import firebase from "firebase";
-import { Spinner } from "native-base";
+import { Spinner, Button } from "native-base";
 import MapView, { Marker } from "react-native-maps";
 import { Dimensions } from "react-native";
-import { fetchUser } from "../../redux/actions";
+import {
+  fetchRequest,
+  fetchUser,
+  fetchAcceptedRequest,
+} from "../../redux/actions";
 import { Polyline } from "react-native-maps";
 import { useDispatch, useSelector } from "react-redux";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { Alert } from "react-native";
+
 function RequestAcceptedScreen({ route, navigation }) {
+  const [text, setText] = React.useState("");
+  const hasUnsavedChanges = true;
+
+  React.useEffect(
+    () =>
+      navigation.addListener("beforeRemove", (e) => {
+        if (!hasUnsavedChanges) {
+          // If we don't have unsaved changes, then we don't need to do anything
+          return;
+        }
+
+        // Prevent default behavior of leaving the screen
+        e.preventDefault();
+
+        // Prompt the user before leaving the screen
+        Alert.alert(
+          "Discard changes?",
+          "You have unsaved changes. Are you sure to discard them and leave the screen?",
+          [
+            { text: "Don't leave", style: "cancel", onPress: () => {} },
+            {
+              text: "Discard",
+              style: "destructive",
+              // If the user confirmed, then we dispatch the action we blocked earlier
+              // This will continue the action that had triggered the removal of the screen
+              onPress: () => navigation.dispatch(e.data.action),
+            },
+          ]
+        );
+      }),
+    [navigation, hasUnsavedChanges]
+  );
   const [location, setlocation] = useState({
     longitude: 0,
     latitude: 0,
   });
+
   const { height: HEIGHT, width: WIDTH } = Dimensions.get("window");
   const LATITUDE_DELTA = 0.02; //This controls default zoom
   const LONGITUDE_DELTA = LATITUDE_DELTA * (WIDTH / HEIGHT);
   const [themargin, setthemargin] = useState(0);
-  const [count, setcount] = useState(0); //this is just for a workaround to mapview issue
-  const [CurrentRequest, setCurrentRequest] = useState(null);
+
   const dispatch = useDispatch();
+  const currentAcceptedRequest = useSelector(
+    (state) => state.userState.AcceptedRequest
+  );
   const currentUser = useSelector((state) => state.userState.currentUser);
+  console.log("--------------------------------", currentAcceptedRequest);
+
+  //custom map style to simplify
+  let customstyle = [
+    {
+      featureType: "poi.medical",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "administrative",
+      elementType: "geometry",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "poi.attraction",
+      stylers: [
+        {
+          visibility: "on",
+        },
+      ],
+    },
+    {
+      featureType: "poi.business",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "poi.government",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "poi.park",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "poi.place_of_worship",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "poi.school",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "poi.sports_complex",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "road",
+      elementType: "labels.icon",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "transit",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+  ];
+  const gotoChat = (uid, chatid) => {
+    navigation.navigate("DoctorChat", {
+      userid: uid,
+      chatid: chatid,
+    });
+  };
   useEffect(() => {
-    firebase
-      .firestore()
-      .collection("requests")
-      .doc(route.params.requestid)
-      .onSnapshot((snapshot) => {
-        if (snapshot.exists) {
-          let data = snapshot.data();
-          let id = snapshot.id;
-          setCurrentRequest({ id, ...data });
-        }
-      });
     dispatch(fetchUser());
     return () => {};
   }, [route]);
   let screen;
   if (
     (location.latitude === 0 && location.longitude === 0) ||
-    CurrentRequest == null
+    currentAcceptedRequest == null
   ) {
     screen = (
       <View>
@@ -59,12 +191,13 @@ function RequestAcceptedScreen({ route, navigation }) {
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
           }}
+          customMapStyle={customstyle}
           provider="google"
           showsUserLocation={true}
           userLocationUpdateInterval={5000}
           followsUserLocation={true}
           showsCompass={true}
-          // showsMyLocationButton={true}s
+          showsMyLocationButton={true}
           showsPointsOfInterest={true}
           loadingEnabled={true}
           loadingIndicatorColor="red"
@@ -81,52 +214,46 @@ function RequestAcceptedScreen({ route, navigation }) {
         >
           <Marker
             coordinate={{
-              latitude: CurrentRequest.coordinates.latitude,
-              longitude: CurrentRequest.coordinates.longitude,
+              latitude: currentAcceptedRequest.coordinates.latitude,
+              longitude: currentAcceptedRequest.coordinates.longitude,
             }}
-            title={CurrentRequest.PatientFirstName}
-            description={CurrentRequest.PatientFirstName}
-          ></Marker>
-          {/* {users.length > 0 &&
-              users.map((marker) => (
-                <Marker
-                  onPress={() => {
-                    console.log(
-                      marker.g.geopoint.latitude,
-                      marker.g.geopoint.longitude
-                    );
-                  }}
-                  key={marker.id}
-                  coordinate={{
-                    latitude: marker.g.geopoint.latitude,
-                    longitude: marker.g.geopoint.longitude,
-                  }}
-                  title={marker.FirstName}
-                  description={marker.LastName}
-                >
-                  <Image
-                    source={require("../assets/doctor.png")}
-                    style={{ height: 35, width: 35 }}
-                  ></Image>
-                </Marker>
-              ))} */}
-        </MapView>
-        {/* <Button
-            style={[styles.button, { alignSelf: "center" }]}
-            onPress={() => {
-              console.log("------------------pressed-------------");
-              //       // await terminationFn.remove()
-              //       // fcn()
-              StopTracking();
-              setPermissionGranted(null);
-            }}
+            title={currentAcceptedRequest.PatientFirstName}
+            description={currentAcceptedRequest.PatientFirstName}
           >
-            <Text>Stop Tracking</Text>
-          </Button> */}
+            <Image
+              source={require("../../assets/PatientMarker.png")}
+              style={{ height: 35, width: 35 }}
+            ></Image>
+          </Marker>
+        </MapView>
+        <TouchableOpacity
+          onPress={() => {
+            gotoChat(
+              currentAcceptedRequest.PatientID,
+              currentAcceptedRequest.chatid
+            );
+          }}
+          style={{
+            borderColor: "black",
+            borderWidth: 1,
+            borderRadius: 5,
+            padding: 5,
+            position: "absolute",
+            top: 70,
+            right: 13,
+            backgroundColor: "rgba(225, 225, 225, 0.8)",
+          }}
+        >
+          <MaterialCommunityIcons
+            name="message-text-outline"
+            size={24}
+            color="red"
+          />
+        </TouchableOpacity>
       </View>
     );
   }
-  if (!CurrentRequest)
+  if (!currentAcceptedRequest)
     return (
       <View>
         <Text> done</Text>

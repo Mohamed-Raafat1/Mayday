@@ -5,6 +5,7 @@ import {
   USER_CHATLIST_CHANGE,
   EMERGENCY_CONTACTS_CHANGE,
   DOCTOR_REQUEST_CHANGE,
+  ACCEPTED_REQUEST_CHANGE,
 } from "../constants";
 
 const initialState = {
@@ -14,6 +15,7 @@ const initialState = {
   medicalID: [],
   emergencyContacts: [],
   Requests: [],
+  AcceptedRequest: null,
 };
 
 export const user = (state = initialState, action) => {
@@ -41,6 +43,11 @@ export const user = (state = initialState, action) => {
       return {
         ...state,
         Requests: action.Requests,
+      };
+    case ACCEPTED_REQUEST_CHANGE:
+      return {
+        ...state,
+        AcceptedRequest: action.AcceptedRequest,
       };
     // case EMERGENCY_CONTACTS_CHANGE:
     // return {

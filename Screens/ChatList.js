@@ -53,8 +53,7 @@ const ChatList = ({ navigation, previous }) => {
 
   console.log(conversations);
 
-  async function createChat() {
-    let uid = "PpWJaaNfNhaCa1hlIGoZYfsKWGU2";
+  async function createChat(uid) {
     let user = [];
     let chatid;
     await firebase
