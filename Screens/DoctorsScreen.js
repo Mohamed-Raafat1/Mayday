@@ -28,12 +28,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUser, fetchRequest } from "../redux/actions";
 import { Geofirestore } from "../App";
 let RequestCreated = false;
-let Requestid;
+let Requestid = null;
 let users = [];
 // To DO: apply the fix from ViewNearestHospital
 
 ////////////////////////  TASK MANAGER  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
+TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
   console.log("im in taskmanager");
   if (error) {
     console.log(error);
@@ -48,7 +48,7 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
     let longitude = locations[0].coords.longitude;
     const hash = geofire.geohashForLocation([latitude, longitude]);
     let location = { latitude, longitude };
-    Geofirestore.collection("users")
+    await Geofirestore.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .update({
         coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
@@ -59,9 +59,10 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
           error
         );
       });
-    console.log(Requestid);
+    console.log("this is the request id", Requestid);
+
     if (Requestid) {
-      Geofirestore.collection("requests")
+      await Geofirestore.collection("requests")
         .doc(Requestid)
         .update({
           coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
@@ -89,7 +90,7 @@ function DoctorsScreen() {
   const currentRequest = useSelector(
     (state) => state.requestState.currentRequest
   );
-  console.log("this is the current request", currentRequest);
+  // console.log("this is the current request", currentUser.uid, currentRequest);
   const dispatch = useDispatch();
 
   //----------------------constants for mapview
@@ -239,7 +240,7 @@ function DoctorsScreen() {
       })
       .then((result) => {
         Requestid = result.id;
-        console.log("in create reqyest", Requestid);
+
         setRequestID(Requestid);
 
         setisRequested(true);
@@ -294,7 +295,7 @@ function DoctorsScreen() {
     setcount(count + 1);
 
     users = users.filter((user) => user.id != currentUser.uid);
-    console.log(users);
+
     return users;
   };
 

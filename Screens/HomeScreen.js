@@ -12,7 +12,7 @@ import LottieView from "lottie-react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { addNotification, sendPushNotification } from "../HomeNavigation/tabs";
 import firebase from "firebase";
-
+import { fetchAcceptedRequest } from "../redux/actions/index";
 //-------------------------------redux------------------------------------------
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser, fetchConversations } from "../redux/actions/index";
@@ -39,6 +39,9 @@ const HomeScreen = ({ navigation, route }) => {
   //-------------------------------redux------------------------------------------
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.userState.currentUser);
+  const currentAcceptedRequest = useSelector(
+    (state) => state.userState.AcceptedRequest
+  );
   let ECs;
   let message;
   useEffect(() => {
@@ -94,6 +97,18 @@ const HomeScreen = ({ navigation, route }) => {
 
       <View style={styles.bottomSheet}>
         <View style={styles.buttons}>
+          {currentAcceptedRequest && (
+            <Button
+              onPress={() => {
+                navigation.navigate("CurrentRequest", {
+                  requestid: currentAcceptedRequest.Requestid,
+                  chatid: currentAcceptedRequest.chatid,
+                });
+              }}
+            >
+              <Text>get me to accepted Request</Text>
+            </Button>
+          )}
           <Button
             style={styles.button}
             bordered
