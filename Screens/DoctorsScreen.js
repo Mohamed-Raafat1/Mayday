@@ -270,7 +270,7 @@ function DoctorsScreen() {
         currentUser.coordinates.latitude,
         currentUser.coordinates.longitude
       ),
-      radius: 1000,
+      radius: 15,
     });
 
     await query

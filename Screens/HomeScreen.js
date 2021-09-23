@@ -11,6 +11,7 @@ import LottieView from "lottie-react-native";
 
 import Icon from "react-native-vector-icons/Ionicons";
 import { addNotification, sendPushNotification } from "../HomeNavigation/tabs";
+import { Geofirestore } from "../App";
 import firebase from "firebase";
 import { fetchAcceptedRequest } from "../redux/actions/index";
 //-------------------------------redux------------------------------------------
@@ -44,34 +45,73 @@ const HomeScreen = ({ navigation, route }) => {
   );
   let ECs;
   let message;
+  let messageNearby;
+  let NUs;
+  let users = [];
+
   useEffect(() => {
     if (currentUser) {
       ECs = currentUser.EmergencyContacts;
-      message = "🆘 " + currentUser.FirstName + "is sending you for help";
+      getNearBySOSUsers().then((result) => {
+        NUs = result;
+      });
+      message = "🆘 " + currentUser.FirstName + " is sending you for help";
+      messageNearby =
+        "🆘 " +
+        currentUser.FirstName +
+        " is Nearby you,Please help him if possible";
     }
   }, [currentUser]);
 
   useLayoutEffect(() => {
     dispatch(fetchUser());
   }, []);
-  //-------------------------------------------------------------------------
+  //------------------------------getting nearby Users-------------------------------------------
+  const getNearBySOSUsers = async () => {
+    const query = await Geofirestore.collection("users").near({
+      center: new firebase.firestore.GeoPoint(
+        currentUser.coordinates.latitude,
+        currentUser.coordinates.longitude
+      ),
+      radius: 5,
+    });
 
+    await query
+      .get()
+      .then((snapshot) => {
+        users = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          return {
+            ...data,
+            id,
+          };
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // users = users.filter((x) => x.uid != firebase.auth().currentUser.uid);
+
+    users = users.filter((user) => user.id != currentUser.uid);
+    // console.log(users);
+    return users;
+  };
+  //-------------------------------------------------------------------------
   // THE BIG RED BUTTON
 
   const requestSOS = () => {
     navigation.navigate("EmergencyTab");
-
     // Sending SOS notificition to Emergency Contacts
     for (var i = 0; i < ECs.length; i++) {
       addNotification(ECs[i].uid, message, "🚨RESCU", false, "SOS");
-      sendPushNotification(ECs[i].ExpoToken, "🚨RESCU", message);
+      sendPushNotification(ECs[i].ExpoToken, "🚨RESCU", message, "SOS");
     }
-    // Sending SOS notificition to nearby users
-    // GET the nearby users in an array and replace the ECs with the array of nearby users
-    // for (var i = 0; i < ECs.length; i++) {
-    //   addNotification(ECs[i].uid, message, "🚨RESCU", false, "SOS");
-    //   sendPushNotification(ECs[i].ExpoToken, "🚨RESCU", message);
-    // }
+    // Sending SOS notificition to Nearby Users
+    for (var i = 0; i < NUs.length; i++) {
+      addNotification(NUs[i].uid, messageNearby, "🚨RESCU", false, "SOS");
+      sendPushNotification(NUs[i].ExpoToken, "🚨RESCU", messageNearby, "SOS");
+    }
   };
 
   const helpOthers = () =>
