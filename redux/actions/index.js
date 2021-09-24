@@ -146,8 +146,6 @@ export function fetchStaticRequests(lat, lng, distance) {
   };
 }
 
-// Badawi woooork
-
 // export function fetchEmergencyContacts(){
 //   return (dispatch) => {
 //     firebase

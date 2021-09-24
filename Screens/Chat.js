@@ -25,6 +25,26 @@ import { SafeAreaView } from "react-native";
 import GlobalStyles from "../GlobalStyles";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMessages, fetchUser, updateMessages } from "../redux/actions";
+import { addNotification, sendPushNotification } from "../HomeNavigation/tabs";
+
+//-------------------------getExpoToken by UserID----------------------
+
+async function getExpoTokenById(id) {
+  let userToken;
+  await firebase
+    .firestore()
+    .collection("users")
+    .doc(id)
+    .get()
+    .then((result) => {
+      userToken = result.data().ExpoToken;
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+  return userToken;
+}
+//---------------------------------------------------------------------
 
 function Chat({ route, navigation }) {
   const userid = firebase.auth().currentUser.uid;
@@ -41,33 +61,49 @@ function Chat({ route, navigation }) {
     dispatch(fetchUser());
 
     setinitialmessages(fetchedmessages);
-    console.log(
-      "mounting-------------------------------------------------\n",
-      fetchedmessages
-    );
+
+    // console.log(
+    //   "mounting-------------------------------------------------\n",
+    //   fetchedmessages
+    // );
     return () => {
-      console.log(
-        "unmouting-----------------------------------------------------\n",
-        fetchedmessages
-      );
+      // console.log(
+      //   "unmouting-----------------------------------------------------\n",
+      //   fetchedmessages
+      // );
     };
   }, [route]);
 
   const currentUser = useSelector((state) => state.userState.currentUser);
 
   const chatRecepient = route.params.userid;
-  console.log(route.params);
+  // console.log(route.params);
 
   useEffect(
     () => navigation.addListener("beforeRemove", (e) => {}),
     [navigation]
   );
 
+  // useEffect(() => {
+  //   console.log("Testing Notification inprogress");
+  //   if (getExpoTokenById(chatRecepient)) {
+
+  //   }
+  // }, [currentUser]);
   // useEffect(() => {}, [initialmessages.length]);
 
   const onSend = useCallback((Messages = []) => {
     let message = Messages[0];
     dispatch(updateMessages(message, userid, chatRecepient, chatid));
+    //--------------------------send Notifications---------------
+    let userToken;
+    let chatMessage =
+      currentUser.FirstName + " " + currentUser.LastName + " : " + message.text;
+    getExpoTokenById(chatRecepient).then((result) => {
+      userToken = result;
+    });
+    sendPushNotification(userToken, "🚨RESCU", chatMessage, "chatMsg");
+    addNotification(chatRecepient, chatMessage, "🚨RESCU", false, "chatMsg");
     // setinitialmessages((previousMessages) =>
     //   GiftedChat.append(previousMessages, Messages)
     // );
