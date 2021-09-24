@@ -41,16 +41,8 @@ function Chat({ route, navigation }) {
     dispatch(fetchUser());
 
     setinitialmessages(fetchedmessages);
-    console.log(
-      "mounting-------------------------------------------------\n",
-      fetchedmessages
-    );
-    return () => {
-      console.log(
-        "unmouting-----------------------------------------------------\n",
-        fetchedmessages
-      );
-    };
+
+    return () => {};
   }, [route]);
 
   const currentUser = useSelector((state) => state.userState.currentUser);
@@ -68,6 +60,7 @@ function Chat({ route, navigation }) {
   const onSend = useCallback((Messages = []) => {
     let message = Messages[0];
     dispatch(updateMessages(message, userid, chatRecepient, chatid));
+    GiftedChat.append(fetchMessages, Messages);
     // setinitialmessages((previousMessages) =>
     //   GiftedChat.append(previousMessages, Messages)
     // );
@@ -117,7 +110,7 @@ function Chat({ route, navigation }) {
     return (
       <GiftedChat
         scrollToBottom={true}
-        renderS
+        inverted={true}
         messages={fetchedmessages}
         onSend={(messages) => onSend(messages)}
         user={{
