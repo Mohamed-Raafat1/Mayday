@@ -4,7 +4,7 @@ import { ScrollableTab } from "native-base";
 import React, { useLayoutEffect } from "react";
 import { Alert, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { CancelCurrentRequest, fetchUser } from "../redux/actions";
+import { fetchUser } from "../redux/actions";
 import CurrentReport from "../Screens/CurrentReport";
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
@@ -50,7 +50,7 @@ export default function EmergencyTab({ navigation }) {
               // If the user confirmed, then we dispatch the action we blocked earlier
               // This will continue the action that had triggered the removal of the screen
               onPress: async () => {
-                dispatch(CancelCurrentRequest());
+                
                 await TaskManager.unregisterAllTasksAsync();
                 navigation.dispatch(e.data.action);
               },

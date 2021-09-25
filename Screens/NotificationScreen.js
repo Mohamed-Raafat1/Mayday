@@ -22,10 +22,10 @@ const NotificationScreen = () => {
   );
 
   useLayoutEffect(() => {
-    const Unsubscribe = dispatch(fetchNotifications());
+    dispatch(fetchNotifications());
 
     return () => {
-      Unsubscribe();
+      
     };
   }, []);
   //------------------------------------------------------------------------------------

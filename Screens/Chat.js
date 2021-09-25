@@ -1,33 +1,17 @@
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import firebase from "firebase";
 import {
-  Container,
-  Thumbnail,
-  Button,
-  View,
-  Text,
-  Input,
-  Item,
-  Icon,
-  Label,
-  Form,
+  View
 } from "native-base";
-import { AntDesign } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React, {
-  useState,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
+  useCallback, useLayoutEffect
 } from "react";
 import { Bubble, GiftedChat, Send } from "react-native-gifted-chat";
-import firebase from "firebase";
-import { SafeAreaView } from "react-native";
-import GlobalStyles from "../GlobalStyles";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMessages, fetchUser, updateMessages } from "../redux/actions";
-import { addNotification, sendPushNotification } from "../HomeNavigation/tabs";
-
 import { getExpoTokenById } from "../Components/functions/functions";
+import { addNotification, sendPushNotification } from "../HomeNavigation/tabs";
+import { fetchMessages, fetchUser, updateMessages } from "../redux/actions";
+
 
 function Chat({ route, navigation }) {
   //constants

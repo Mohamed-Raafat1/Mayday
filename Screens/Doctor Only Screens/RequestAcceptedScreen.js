@@ -54,7 +54,7 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
         .collection("requests")
         .doc(AcceptedRequest.id)
         .update({
-          Doctorcoordinates: new firebase.firestore.GeoPoint(
+          DoctorCoordinates: new firebase.firestore.GeoPoint(
             latitude,
             longitude
           ),
@@ -307,9 +307,8 @@ function RequestAcceptedScreen({ route, navigation }) {
         <Spinner color="red" />
       </View>
     );
-    // console.log("in settimeout now");
     setTimeout(() => {
-      setlocation(currentUser.location);
+      setlocation(currentUser.coordinates);
     }, 500);
   } else {
     screen = (
@@ -329,8 +328,7 @@ function RequestAcceptedScreen({ route, navigation }) {
           showsCompass={true}
           showsMyLocationButton={true}
           showsPointsOfInterest={true}
-          // loadingEnabled={true}
-          // loadingIndicatorColor="red"
+          
           onMapReady={() => {
             if (themargin === 0) setthemargin(1);
             else setthemargin(0);

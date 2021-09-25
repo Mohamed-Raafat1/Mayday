@@ -26,7 +26,7 @@ import {
 import { Avatar, Title } from "react-native-paper";
 import firebase from "firebase";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUser, fetchRequest } from "../redux/actions";
+import { fetchUser, fetchRequest, CancelCurrentRequest } from "../redux/actions";
 import { Geofirestore } from "../App";
 const RESCU_TRACKING = "background-doctor-screen-location-task";
 const geofire = require("geofire-common");
@@ -259,10 +259,11 @@ function DoctorsScreen() {
   useLayoutEffect(() => {
     const UnsubscribeUser = dispatch(fetchUser());
 
-    return () => {
+    return async () => {
       UnsubscribeUser();
       UnsubscribeRequest();
       usersunsubsrcibe();
+      await dispatch(CancelCurrentRequest());
     };
   }, []);
 
@@ -272,10 +273,8 @@ function DoctorsScreen() {
       StopTracking();
     } else {
       if (PermissionGranted == true && TrackingStatus == false) {
-        // console.log("entering useeffect after permission granted");
         _getLocationAsync();
       } else if (PermissionGranted == false && TrackingStatus == true) {
-        // console.log("3: was tracking but permission now denied so stopping");
         StopTracking();
       }
     }

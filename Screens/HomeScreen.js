@@ -24,7 +24,7 @@ const HomeScreen = ({ navigation, route }) => {
   let users = [];
 
   //for unsubscribing to conversations
-  let UnsubscribeConversations = () => {};
+  let UnsubscribeConversations = () => { };
 
   useEffect(() => {
     if (currentUser) {
@@ -85,7 +85,6 @@ const HomeScreen = ({ navigation, route }) => {
       for (var i = 0; i < ECs.length; i++) {
         addNotification(ECs[i].uid, message, "🚨RESCU", false, "SOS");
         // to get the latest ExpoTokens of the Emergency contacts
-        console.log("ECSSSSS " + ECs[i].uid);
         getExpoTokenById(ECs[i].uid).then((result) => {
           sendPushNotification(result, "🚨RESCU", message, "SOS");
         });
