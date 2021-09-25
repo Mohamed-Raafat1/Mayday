@@ -8,11 +8,10 @@ import {
 } from "@react-navigation/stack";
 //-----------------------Push Notifications------------------------------------
 import * as Notifications from "expo-notifications";
-import * as TaskManager from "expo-task-manager";
 import firebase from "firebase";
 import { Button, Content, Text, View } from "native-base";
 import React, {
-  useCallback,
+  
   useEffect,
   useLayoutEffect,
   useRef,
@@ -65,7 +64,6 @@ export async function sendPushNotification(
   });
 }
 // ----------------------------adding Notifications to firestore--------------------------
-// let notificationId;
 export function addNotification(RecieverId, Body, Title, Delivered, Category) {
   firebase
     .firestore()
@@ -79,9 +77,6 @@ export function addNotification(RecieverId, Body, Title, Delivered, Category) {
       delivered: Delivered,
       category: Category,
     });
-  // .then((result) => {
-  //   notificationId = result.id;
-  // });
 }
 // ----------------------------setting Notifications to delivered--------------------------
 function setNotificationDelivered(id) {
@@ -197,19 +192,11 @@ function Tabs({ navigation }) {
     (state) => state.notificationState.currentNotifications
   );
 
-  //!!!!!!!!!!!!!REMOVE LATER!!!!!!!!!!!!!!!!!!!!
-  //!!!!!!!!!!!!!!!!!this is used to unregister all tasks which is used in onmount
-  //!!This is only used to help when testing cuz reloading app doesnt remove tasks
-  const unregisterTasks = useCallback(async () => {
-    await TaskManager.unregisterAllTasksAsync().catch((err) =>
-      console.log("ops! error unregistering alltasks", err)
-    );
-  }, []);
+  
 
   useLayoutEffect(() => {
     const userUnsubscribe = dispatch(fetchUser());
     dispatch(fetchNotifications());
-    unregisterTasks(); //!!!!!!!!!!!!!!!!!!!!REMOVE LATER!!!!!!!!!!!!!!
 
     return () => {
       userUnsubscribe();

@@ -55,8 +55,8 @@ export default function ViewNearestHospital({ navigation, route }) {
 
   //constants for mapview
   const [location, setlocation] = useState({
-    longitude: currentUser.location.longitude,
-    latitude: currentUser.location.latitude,
+    longitude: currentUser.coordinates.longitude,
+    latitude: currentUser.coordinates.latitude,
   });
   const { height: HEIGHT, width: WIDTH } = Dimensions.get("window");
   //This controls default zoom
@@ -66,6 +66,7 @@ export default function ViewNearestHospital({ navigation, route }) {
   const [themargin, setthemargin] = useState(0);
   const [MarkerName, setMarkerName] = useState();
   const [MarkerPosition, setMarkerPosition] = useState();
+  const [MarkerID, setMarkerID] = useState();
   //  Functions
   // fn to request permissions
   const requestPermissions = async () => {
@@ -242,8 +243,10 @@ export default function ViewNearestHospital({ navigation, route }) {
       <View style={{ flex: 1, width: "100%" }}>
         <MapView
           onPoiClick={(e) => {
+            console.log(e.nativeEvent)
             setMarkerName(e.nativeEvent.name);
             setMarkerPosition(e.nativeEvent.coordinate);
+            setMarkerID(e.nativeEvent.placeId)
           }}
           customMapStyle={customMapStyle}
           initialRegion={{
@@ -283,10 +286,8 @@ export default function ViewNearestHospital({ navigation, route }) {
           onPress={() => {
             console.log(MarkerPosition);
             Linking.openURL(
-              "https://www.google.com/maps/dir/?api=1&destination=" +
-                MarkerPosition.latitude +
-                "," +
-                MarkerPosition.longitude
+              "https://www.google.com/maps/dir/?api=1&destination=" + MarkerPosition
+              + "&destination_place_id=" + MarkerID
             );
           }}
         >
@@ -299,8 +300,11 @@ export default function ViewNearestHospital({ navigation, route }) {
       <View style={{ flex: 1, width: "100%" }}>
         <MapView
           onPoiClick={(e) => {
+            console.log(e.nativeEvent)
+
             setMarkerName(e.nativeEvent.name);
             setMarkerPosition(e.nativeEvent.coordinate);
+            setMarkerID(e.nativeEvent.placeId)
           }}
           customMapStyle={customMapStyle}
           initialRegion={{
