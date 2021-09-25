@@ -29,7 +29,7 @@ import { addNotification, sendPushNotification } from "../HomeNavigation/tabs";
 
 //-------------------------getExpoToken by UserID----------------------
 
-async function getExpoTokenById(id) {
+export async function getExpoTokenById(id) {
   let userToken;
   await firebase
     .firestore()
@@ -96,14 +96,14 @@ function Chat({ route, navigation }) {
     let message = Messages[0];
     dispatch(updateMessages(message, userid, chatRecepient, chatid));
     //--------------------------send Notifications---------------
-    let userToken;
+    let myuserToken;
     let chatMessage =
       currentUser.FirstName + " " + currentUser.LastName + " : " + message.text;
     getExpoTokenById(chatRecepient).then((result) => {
-      userToken = result;
+      sendPushNotification(result, "🚨RESCU", chatMessage, "chatMsg");
+      addNotification(chatRecepient, chatMessage, "🚨RESCU", false, "chatMsg");
     });
-    sendPushNotification(userToken, "🚨RESCU", chatMessage, "chatMsg");
-    addNotification(chatRecepient, chatMessage, "🚨RESCU", false, "chatMsg");
+
     // setinitialmessages((previousMessages) =>
     //   GiftedChat.append(previousMessages, Messages)
     // );

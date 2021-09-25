@@ -22,6 +22,7 @@ import { fetchUser, fetchConversations } from "../redux/actions/index";
 
 //for editprofilescreen
 import { useNavigationState } from "@react-navigation/native";
+import { getExpoTokenById } from "./Chat";
 
 const { width, height } = Dimensions.get("window");
 
@@ -52,6 +53,7 @@ const HomeScreen = ({ navigation, route }) => {
   useEffect(() => {
     if (currentUser) {
       ECs = currentUser.EmergencyContacts;
+
       getNearBySOSUsers().then((result) => {
         NUs = result;
       });
@@ -102,16 +104,24 @@ const HomeScreen = ({ navigation, route }) => {
 
   const requestSOS = () => {
     navigation.navigate("EmergencyTab");
+
     // Sending SOS notificition to Emergency Contacts
+    // let ECsTokens;
     for (var i = 0; i < ECs.length; i++) {
       addNotification(ECs[i].uid, message, "🚨RESCU", false, "SOS");
-      sendPushNotification(ECs[i].ExpoToken, "🚨RESCU", message, "SOS");
+      // to get the latest ExpoTokens of the Emergency contacts
+      console.log("ECSSSSS " + ECs[i].uid);
+      getExpoTokenById(ECs[i].uid).then((result) => {
+        console.log(result);
+        // ECsTokens[i] = result;
+        sendPushNotification(result, "🚨RESCU", message, "SOS");
+      });
     }
     // Sending SOS notificition to Nearby Users
-    for (var i = 0; i < NUs.length; i++) {
-      addNotification(NUs[i].uid, messageNearby, "🚨RESCU", false, "SOS");
-      sendPushNotification(NUs[i].ExpoToken, "🚨RESCU", messageNearby, "SOS");
-    }
+      for (var i = 0; i < NUs.length; i++) {
+        addNotification(NUs[i].uid, messageNearby, "🚨RESCU", false, "SOS");
+        sendPushNotification(NUs[i].ExpoToken, "🚨RESCU", messageNearby, "SOS");
+      }
   };
 
   const helpOthers = () =>

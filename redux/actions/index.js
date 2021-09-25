@@ -188,7 +188,7 @@ export function updateMessages(message, sender, reciever, chatid) {
       .then((snapshot) => {
         messageid = snapshot.id;
       });
-    await firebase
+    firebase
       .firestore()
       .collection("users")
       .doc(reciever)
@@ -204,7 +204,7 @@ export function updateMessages(message, sender, reciever, chatid) {
         chatRecepient: reciever,
         uid: reciever,
       });
-    await firebase
+    firebase
       .firestore()
       .collection("users")
       .doc(sender)
@@ -222,7 +222,7 @@ export function updateMessages(message, sender, reciever, chatid) {
           uid: sender,
         },
       });
-    await firebase
+    firebase
       .firestore()
       .collection("users")
       .doc(reciever)
@@ -257,43 +257,33 @@ export function fetchMessages(id, chatid) {
   return async (dispatch) => {
     var query = await firebase
       .firestore()
-      .collectionGroup("messages")
-      .where("uid", "==", id)
-      .orderBy("createdAt", "desc");
+      .collection("users")
+      .doc(id)
+      .collection("messages")
+      .where("chatid", "==", chatid)
+      .orderBy("timeStamp", "desc")
+      .onSnapshot((snapshot) => {
+        snapshot.docs.map((dummy) => {});
+        let messages = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          return {
+            _id: data._id,
+            text: data.text,
+            createdAt: data.createdAt,
+            user: {
+              _id: data.user._id,
+              name: data.user.name,
+            },
+          };
+          //shet
+        });
 
-    await query.where("chatid", "==", chatid).onSnapshot((snapshot) => {
-      snapshot.docs.map((dummy) => {});
-      let messages = snapshot.docs.map((doc) => {
-        const data = doc.data();
-        const id = doc.id;
-        return {
-          _id: data._id,
-          text: data.text,
-          createdAt: data.createdAt,
-          user: {
-            _id: data.user._id,
-            name: data.user.name,
-          },
-        };
-        //shet
+        dispatch({
+          type: USER_MESSAGES_CHANGE,
+          messages,
+        });
       });
-      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-
-      // console.log(messages);
-      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-      // console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-
-      dispatch({
-        type: USER_MESSAGES_CHANGE,
-        messages,
-      });
-    });
   };
 }
 // export function fetchMessages(id) {

@@ -3,11 +3,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../../redux/actions";
 import { useLayoutEffect } from "react";
-import Toast from "react-native-simple-toast";
-import { Ionicons } from "@expo/vector-icons";
+import { Toast } from "native-base";
+
 import Modal from "react-native-modal";
 import filter from "lodash.filter";
 import firebase from "firebase";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 require("firebase/firestore");
 require("firebase/firebase-storage");
 import {
@@ -29,8 +30,9 @@ import {
   Item,
 } from "native-base";
 import { Avatar, Title, Caption, TouchableRipple } from "react-native-paper";
-import { StyleSheet, View, TextInput } from "react-native";
+import { StyleSheet, View, TextInput, TouchableOpacity } from "react-native";
 import { update } from "lodash";
+let sharedChatid;
 
 const Stack = createStackNavigator();
 function SOS({ navigation, route }) {
@@ -160,9 +162,9 @@ function SOS({ navigation, route }) {
         // return;
       }
     }
-    Toast.show("User doesnt exist")
+    Toast.show("User doesnt exist");
   };
-  const onAdd=()=>{
+  const onAdd = () => {
     if (EmergencyContacts.length < 5) {
       console.log("------1--------");
       // adding current user as an Emergency contact handling
@@ -173,7 +175,9 @@ function SOS({ navigation, route }) {
       }
       // handling not entering the same contact two times
       for (var i = 0; i < EmergencyContacts.length; i++) {
-        if (searchText.toLowerCase() === EmergencyContacts[i].Email.toLowerCase()) {
+        if (
+          searchText.toLowerCase() === EmergencyContacts[i].Email.toLowerCase()
+        ) {
           console.log("------3--------");
           Toast.show("Contact is already added");
           return;
@@ -182,13 +186,154 @@ function SOS({ navigation, route }) {
       EmergencyContacts.push(contact);
       Toast.show("Contact is added Successfully");
       Update();
-      
     } else {
       Toast.show("Reached maximum number of contacts");
     }
     update();
+  };
+
+  async function createChat(uid) {
+    let chatAvailable = false;
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(uid)
+      .collection("conversations")
+      .where("userid", "==", currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (!snapshot.empty) {
+          chatAvailable = true;
+          snapshot.docs.map((chat) => {
+            sharedChatid = chat.id;
+          });
+        }
+      });
+
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid)
+      .collection("conversations")
+      .where("userid", "==", uid)
+      .get()
+      .then((snapshot) => {
+        if (!snapshot.empty) {
+          chatAvailable = true;
+          snapshot.docs.map((chat) => {
+            sharedChatid = chat.id;
+          });
+        }
+      });
+    //if there is no chat already created create one
+    if (!chatAvailable) {
+      let user = [];
+      let chatid;
+      await firebase
+        .firestore()
+        .collection("users")
+        .doc(uid)
+        .get()
+        .then((snapshot) => {
+          if (snapshot.exists) {
+            user = snapshot.data();
+          } else {
+            console.log("does not exist");
+          }
+        });
+      await firebase
+        .firestore()
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid)
+        .collection("conversations")
+        .add({
+          talkingto: user.FirstName + " " + user.LastName,
+          userid: uid,
+          timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+          userOne: {
+            firsName: currentUser.FirstName,
+            lastName: currentUser.LastName,
+            email: currentUser.Email,
+          },
+          userTwo: {
+            firsName: user.FirstName,
+            lastName: user.LastName,
+            email: user.Email,
+          },
+          latestMessage: {
+            _id: "",
+            createdAt: "",
+            text: "",
+            timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+            chatid: "",
+            user: "",
+            chatRecepient: "",
+            uid: "",
+          },
+        })
+        .then((snapshot) => {
+          chatid = snapshot.id;
+          sharedChatid = snapshot.id;
+        });
+      await firebase
+        .firestore()
+        .collection("users")
+        .doc(uid)
+        .collection("conversations")
+        .doc(chatid)
+        .set({
+          talkingto: currentUser.FirstName + " " + currentUser.LastName,
+          userid: firebase.auth().currentUser.uid,
+          timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+          userOne: {
+            firsName: currentUser.FirstName,
+            lastName: currentUser.LastName,
+            email: currentUser.Email,
+          },
+          userTwo: {
+            firsName: user.FirstName,
+            lastName: user.LastName,
+            email: user.Email,
+          },
+          latestMessage: {
+            _id: "",
+            createdAt: "",
+            text: "",
+            timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+            chatid: "",
+            user: "",
+            chatRecepient: "",
+            uid: "",
+          },
+        });
+      await firebase
+        .firestore()
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid)
+        .update(
+          "chats",
+          firebase.firestore.FieldValue.arrayUnion({
+            chatid: chatid,
+            Recepient: uid,
+          })
+        );
+      await firebase
+        .firestore()
+        .collection("users")
+        .doc(uid)
+        .update(
+          "chats",
+          firebase.firestore.FieldValue.arrayUnion({
+            chatid: chatid,
+            Recepient: firebase.auth().currentUser.uid,
+          })
+        );
+    }
+    navigation.navigate("Chat", {
+      userid: uid,
+      chatid: sharedChatid,
+    });
   }
-    
   //update Contacts
   // useEffect(() => {
 
@@ -229,17 +374,30 @@ function SOS({ navigation, route }) {
             </Text>
           </Body>
           <Right>
-            <Button
+            <TouchableOpacity
               onPress={() => {
                 onDelete(item);
               }}
-              style={styles.button}
               primary
               rounded
             >
-              <Icon active name="person" />
-              <Text style={{ marginLeft: -30 }}>Remove</Text>
-            </Button>
+              <AntDesign name="deleteuser" size={30} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                createChat(item.uid);
+                //chat
+              }}
+              primary
+              rounded
+            >
+              <Ionicons
+                name="chatbox-ellipses-outline"
+                size={30}
+                style={{ marginLeft: 10 }}
+                color="black"
+              />
+            </TouchableOpacity>
           </Right>
         </ListItem>
       );
@@ -268,11 +426,7 @@ function SOS({ navigation, route }) {
               <Title>{firstName + " " + lastName}</Title>
             </View>
             <View>
-              <Button
-                rounded
-                style={styles.button}
-                onPress={onAdd}
-              >
+              <Button rounded style={styles.button} onPress={onAdd}>
                 <Text>Add as an emergency contact</Text>
               </Button>
             </View>
