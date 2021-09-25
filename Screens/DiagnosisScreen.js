@@ -183,7 +183,7 @@ function DiagnosisScreen({navigation}) {
          <Button onPress={()=>navigation.navigate("CurrentReport")} 
          style={{width:"100%", height:"100%", display:'flex', justifyContent:"center", alignItems:"center" , backgroundColor:"rgb(250,91,90)"}}>
             <Text >
-              Send
+              Update
             </Text>
           </Button>
       </Footer>
@@ -198,6 +198,6 @@ export default DiagnosisScreen;
 
 const styles = StyleSheet.create({
   text: {
-    paddingRight:15,
+    paddingRight:20,
   },
 });

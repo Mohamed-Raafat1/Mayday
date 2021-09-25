@@ -18,9 +18,7 @@ import {
   
 
  function AccidentsList({navigation}){
-  
-   
-    
+ 
   
     return (
       <Container>
