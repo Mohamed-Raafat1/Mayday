@@ -14,6 +14,7 @@ import {
 } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -50,8 +51,6 @@ const ChatList = ({ navigation, previous }) => {
   const conversations = useSelector((state) => state.userState.conversations);
 
   const currentUser = useSelector((state) => state.userState.currentUser);
-
-  console.log(conversations);
 
   async function createChat(uid) {
     let user = [];
@@ -158,10 +157,23 @@ const ChatList = ({ navigation, previous }) => {
   }
   const usersList = () => {
     return conversations.map((chat) => {
+      console.log(chat.data.timeStamp.toDate().getHours().toString());
+      let time = {
+        Hours: chat.data.timeStamp.toDate().getHours().toString(),
+        Minutes: chat.data.timeStamp.toDate().getMinutes().toString(),
+        Day: chat.data.timeStamp.toDate().getDate().toString(),
+        Year: chat.data.timeStamp.toDate().getFullYear().toString(),
+        Month: chat.data.timeStamp.toDate().getMonth().toString(),
+      };
+      if (Number(time.Minutes) < 10) {
+        time = { ...time, Minutes: "0" + time.Minutes };
+      }
       return (
         <ListItem
-          onPress={() => {
-            dispatch(fetchMessages(firebase.auth().currentUser.uid, chat.id));
+          onPress={async () => {
+            await dispatch(
+              fetchMessages(firebase.auth().currentUser.uid, chat.id)
+            );
             navigation.navigate("Chat", {
               userid: chat.data.userid,
               chatid: chat.id,
@@ -188,9 +200,20 @@ const ChatList = ({ navigation, previous }) => {
           <Right
             style={{ flexDirection: "column", justifyContent: "flex-end" }}
           >
-            <Text note>{/* put time here */} </Text>
+            <Text note>
+              {time.Day +
+                "/" +
+                time.Month +
+                "/" +
+                time.Year +
+                "  " +
+                time.Hours +
+                ":" +
+                time.Minutes}
+            </Text>
+
             <TouchableOpacity style={{ marginTop: 10 }}>
-              <Text style={{ color: "red" }}>Delete</Text>
+              <AntDesign name="delete" size={24} color="black" />
             </TouchableOpacity>
           </Right>
         </ListItem>
@@ -204,7 +227,6 @@ const ChatList = ({ navigation, previous }) => {
       <Container>
         <Content>
           <List>{usersList()}</List>
-          <ListItem></ListItem>
         </Content>
       </Container>
     );

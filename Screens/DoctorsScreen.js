@@ -246,7 +246,7 @@ function DoctorsScreen() {
         currentUser.coordinates.latitude,
         currentUser.coordinates.longitude
       ),
-      radius: 100, //radius in km
+      radius: 15,
     });
 
     await query
