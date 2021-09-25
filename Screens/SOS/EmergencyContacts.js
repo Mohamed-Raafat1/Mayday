@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../../redux/actions";
 import { useLayoutEffect } from "react";
-import Toast from "react-native-simple-toast";
+import { Toast } from "native-base";
 
 import Modal from "react-native-modal";
 import filter from "lodash.filter";

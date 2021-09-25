@@ -305,7 +305,12 @@ function Tabs({ navigation }) {
           response.notification.request.content.data.category === "DailyTip"
         )
           navigation.navigate("First Aid");
+          else if(
+            response.notification.request.content.data.category === "chatMsg"
+          )
+          navigation.navigate("ChatList");
       });
+      
 
     // freeing Handlers
     return () => {
