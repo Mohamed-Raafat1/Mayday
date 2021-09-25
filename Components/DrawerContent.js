@@ -16,8 +16,15 @@ import * as Notifications from "expo-notifications";
 
 export function DrawerContent(props) {
   const dispatch = useDispatch();
+
   useLayoutEffect(() => {
-    dispatch(fetchUser());
+    const Unsubscribe = dispatch(fetchUser());
+    return () => {
+      Unsubscribe()
+
+    }
+
+
   }, []);
 
   const onSignout = () => {
@@ -156,9 +163,9 @@ export function DrawerContent(props) {
             />
           )}
           label="Support"
-          //   onPress={() => {
-          // props.navigation.navigate("SupportScreen");
-          //   }}
+        //   onPress={() => {
+        // props.navigation.navigate("SupportScreen");
+        //   }}
         />
         <DrawerItem
           icon={({ color, size }) => (

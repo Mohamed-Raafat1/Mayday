@@ -54,11 +54,13 @@ function Chat({ route, navigation }) {
   const fetchedmessages = useSelector((state) => state.userState.messages);
   const [initialmessages, setinitialmessages] = useState([]);
   useEffect(() => {
-    return () => {};
+    return () => { };
   }, [fetchedmessages]);
+
   useLayoutEffect(() => {
-    dispatch(fetchMessages(userid, chatid));
-    dispatch(fetchUser());
+    const messagesUnsubscribe =
+      dispatch(fetchMessages(userid, chatid));
+    const userUnsubscribe = dispatch(fetchUser());
 
     setinitialmessages(fetchedmessages);
 
@@ -67,6 +69,9 @@ function Chat({ route, navigation }) {
     //   fetchedmessages
     // );
     return () => {
+      
+      messagesUnsubscribe()
+      userUnsubscribe()
       // console.log(
       //   "unmouting-----------------------------------------------------\n",
       //   fetchedmessages
@@ -80,7 +85,7 @@ function Chat({ route, navigation }) {
   // console.log(route.params);
 
   useEffect(
-    () => navigation.addListener("beforeRemove", (e) => {}),
+    () => navigation.addListener("beforeRemove", (e) => { }),
     [navigation]
   );
 

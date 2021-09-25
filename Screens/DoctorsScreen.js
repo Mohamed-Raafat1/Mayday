@@ -107,6 +107,9 @@ function DoctorsScreen() {
 
   //========================Functions==========================
 
+  //for unsubscribing
+  let UnsubscribeRequest = () => { }
+
   //--------------------------------fn to request permissions----------------------------------------------------
   const requestPermissions = async () => {
     try {
@@ -204,8 +207,7 @@ function DoctorsScreen() {
           location.latitude,
           location.longitude
         ),
-        Location: currentUser.location,
-        PatientGeoHash: currentUser.geohash,
+        PatientGeoHash: currentUser.g.geohash,
         PatientID: currentUser.uid,
         PatientFirstName: currentUser.FirstName,
         PatientLastName: currentUser.LastName,
@@ -226,7 +228,7 @@ function DoctorsScreen() {
 
 
 
-        dispatch(fetchRequest(result.id));
+        UnsubscribeRequest = dispatch(fetchRequest(result.id));
       })
       .catch((error) => {
         Toast.show({
@@ -279,9 +281,12 @@ function DoctorsScreen() {
 
   //Done on mount
   useLayoutEffect(() => {
-    dispatch(fetchUser());
+    const UnsubscribeUser =
+      dispatch(fetchUser());
 
     return () => {
+      UnsubscribeUser()
+      UnsubscribeRequest()
     };
   }, []);
 
@@ -341,7 +346,7 @@ function DoctorsScreen() {
           );
           // console.log("in settimeout now");
           setTimeout(() => {
-            setlocation(currentUser.location);
+            setlocation(currentUser.coordinates);
           }, 500);
         } else {
           screen = (

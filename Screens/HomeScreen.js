@@ -52,10 +52,13 @@ const HomeScreen = ({ navigation, route }) => {
   let NUs;
   let users = [];
 
+  //for unsubscribing to conversations
+  let UnsubscribeConversations = () => { }
+
   useEffect(() => {
     if (currentUser) {
       ECs = currentUser.EmergencyContacts;
-
+      // console.log('cUREENT %ARTARARFSD', currentUser)
       getNearBySOSUsers().then((result) => {
         NUs = result;
       });
@@ -69,15 +72,19 @@ const HomeScreen = ({ navigation, route }) => {
 
 
 
-  
-  
+
+
 
 
   useLayoutEffect(() => {
-    dispatch(fetchUser());
+    const UnsubscribeUser =
+      dispatch(fetchUser());
 
-   
-    
+    return () => {
+      UnsubscribeUser()
+      UnsubscribeConversations()
+    }
+
   }, []);
   //------------------------------getting nearby Users-------------------------------------------
   const getNearBySOSUsers = async () => {
@@ -118,17 +125,20 @@ const HomeScreen = ({ navigation, route }) => {
 
     // Sending SOS notificition to Emergency Contacts
     // let ECsTokens;
-    for (var i = 0; i < ECs.length; i++) {
-      addNotification(ECs[i].uid, message, "🚨RESCU", false, "SOS");
-      // to get the latest ExpoTokens of the Emergency contacts
-      console.log("ECSSSSS " + ECs[i].uid);
-      getExpoTokenById(ECs[i].uid).then((result) => {
-        console.log(result);
-        // ECsTokens[i] = result;
-        sendPushNotification(result, "🚨RESCU", message, "SOS");
-      });
-    }
-    // Sending SOS notificition to Nearby Users
+    if (ECs)
+      for (var i = 0; i < ECs.length; i++) {
+        addNotification(ECs[i].uid, message, "🚨RESCU", false, "SOS");
+        // to get the latest ExpoTokens of the Emergency contacts
+        console.log("ECSSSSS " + ECs[i].uid);
+        getExpoTokenById(ECs[i].uid).then((result) => {
+          console.log(result);
+          // ECsTokens[i] = result;
+          sendPushNotification(result, "🚨RESCU", message, "SOS");
+        });
+      }
+
+    if (NUs)
+      // Sending SOS notificition to Nearby Users
       for (var i = 0; i < NUs.length; i++) {
         addNotification(NUs[i].uid, messageNearby, "🚨RESCU", false, "SOS");
         sendPushNotification(NUs[i].ExpoToken, "🚨RESCU", messageNearby, "SOS");
@@ -158,23 +168,11 @@ const HomeScreen = ({ navigation, route }) => {
 
       <View style={styles.bottomSheet}>
         <View style={styles.buttons}>
-          {currentAcceptedRequest && (
-            <Button
-              onPress={() => {
-                navigation.navigate("CurrentRequest", {
-                  requestid: currentAcceptedRequest.Requestid,
-                  chatid: currentAcceptedRequest.chatid,
-                });
-              }}
-            >
-              <Text>get me to accepted Request</Text>
-            </Button>
-          )}
           <Button
             style={styles.button}
             bordered
             onPress={() => {
-              dispatch(fetchConversations());
+              UnsubscribeConversations = dispatch(fetchConversations());
               navigation.navigate("View Nearest Hospital");
             }}
           >

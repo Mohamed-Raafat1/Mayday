@@ -86,7 +86,11 @@ function SOS({ navigation, route }) {
   }, []);
 
   useLayoutEffect(() => {
-    dispatch(fetchUser());
+    const unsubscribe =
+      dispatch(fetchUser());
+    return () => {
+      unsubscribe()
+    }
   }, []);
 
   function Update() {

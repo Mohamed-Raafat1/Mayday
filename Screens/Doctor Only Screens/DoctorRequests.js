@@ -143,6 +143,7 @@ const DoctorRequests = ({ navigation }) => {
 
   //========================Functions==========================
 
+
   //--------------------------------fn to request permissions----------------------------------------------------
   const requestPermissions = async () => {
     try {
@@ -269,10 +270,10 @@ const DoctorRequests = ({ navigation }) => {
       .collection("requests")
       .doc(request.Requestid)
       .set({ ...request, State: "Accepted", current: true });
-    await dispatch(fetchAcceptedRequest(request.Requestid));
     navigation.navigate("CurrentRequest", {
       requestid: request.Requestid,
       chatid: sharedChatid,
+      
     });
 
     //need to notify other user that their request has been accepted
@@ -466,15 +467,19 @@ const DoctorRequests = ({ navigation }) => {
       });
   };
 
-  
+
 
   //=====================================  USE EFFECTS  ========================================
 
   //for onmount and cleanup
   useEffect(() => {
+    const unsubscribeUser = 
     dispatch(fetchUser());
-    
-    return () => { };
+
+    return () => { 
+      unsubscribeUser()
+      
+    };
   }, []);
 
   //-------------------for focusing and unfocusing Screen
@@ -483,7 +488,7 @@ const DoctorRequests = ({ navigation }) => {
       requestPermissions();
 
       return () => {
-        
+
         // setisRequested(false);
         setPermissionGranted(0);
         setErr(null);
@@ -545,7 +550,7 @@ const DoctorRequests = ({ navigation }) => {
       <Container>
         {Requests.length === 0 ?
           <View style={[styles.View, { flexDirection: 'column' }]}>
-            <Text>There are no currently available requests FUCKKCKCKKCKCKCKKC</Text>
+            <Text style={{alignSelf:'center'}}>There are no currently available requests </Text>
           </View>
           :
           <Content>

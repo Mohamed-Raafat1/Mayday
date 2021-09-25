@@ -189,9 +189,11 @@ export default function ViewNearestHospital({ navigation, route }) {
 
   //-------------------Done on Mount
   useLayoutEffect(() => {
+
     //Fetch user regardless of permission granted or not
-    dispatch(fetchUser());
+    const Unsubscribe = dispatch(fetchUser());
     return () => {
+      Unsubscribe()
     }
   }, []);
 
@@ -292,7 +294,7 @@ export default function ViewNearestHospital({ navigation, route }) {
 
     setTimeout(() => {
 
-      setlocation(currentUser.location)
+      setlocation(currentUser.coordinates)
     }, 500);
 
   }
@@ -411,8 +413,7 @@ export default function ViewNearestHospital({ navigation, route }) {
           showsCompass={true}
           // showsMyLocationButton={true}
           showsPointsOfInterest={true}
-          loadingEnabled={true}
-          loadingIndicatorColor="red"
+          
           onMapReady={() => {
             if (themargin === 0) setthemargin(1)
             else setthemargin(0)
@@ -589,7 +590,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginBottom: 10,
     alignContent: "center",
-    alignSelf:'center',
+    alignSelf: 'center',
     backgroundColor: "rgb(250,91,90)",
   },
 });

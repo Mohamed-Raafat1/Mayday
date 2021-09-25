@@ -172,6 +172,7 @@ function RegistrationScreen({ navigation }) {
             location,
             ExpoToken: expoPushToken,
             DailyTips: false,
+            coordinates: new firebase.firestore.GeoPoint(0, 0),
             g: {
               geohash: "",
               geopoint: new firebase.firestore.GeoPoint(0, 0),

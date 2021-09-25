@@ -29,13 +29,17 @@ import { fetchUser } from "../redux/actions";
 import { useLayoutEffect } from "react";
 import QRCode from "react-native-qrcode-svg";
 
-function MedicalIdScreen({ navigation, route }) {
+function MedicalIdScreen({ navigation }) {
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {
-    dispatch(fetchUser());
+    const Unsubscribe =
+      dispatch(fetchUser());
     // console.log("MedicalID---------------\n")
-  }, [route]);
+    return () => {
+      Unsubscribe()
+    }
+  }, []);
 
   // useEffect(()=>{
   //   console.log("ENTERING MEDICAL ID")//,navigation,"\n------")

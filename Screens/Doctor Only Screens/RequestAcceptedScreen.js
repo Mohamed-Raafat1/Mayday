@@ -94,6 +94,9 @@ function RequestAcceptedScreen({ route, navigation }) {
     (state) => state.userState.AcceptedRequest
   );
 
+  const requestid = route.params.requestid
+  const chatid = route.params.chatid
+
   const currentUser = useSelector((state) => state.userState.currentUser);
   // console.log("--------------------------------", currentAcceptedRequest);
 
@@ -114,6 +117,10 @@ function RequestAcceptedScreen({ route, navigation }) {
 
 
   //========================Functions==========================
+
+  //function to unsubscribe
+  let UnsubscribeAcceptedRequest = () => { }
+
 
   //--------------------------------fn to request permissions----------------------------------------------------
   const requestPermissions = async () => {
@@ -323,14 +330,20 @@ function RequestAcceptedScreen({ route, navigation }) {
 
   // useEffect(() => {
   //   dispatch(fetchUser());
+
   //   return () => { };
   // }, [route]);
 
 
   //Done on mount and for cleanup
   useLayoutEffect(() => {
-    dispatch(fetchUser());
+    const unsubscribe =
+      dispatch(fetchUser());
+    UnsubscribeAcceptedRequest = dispatch(fetchAcceptedRequest(requestid))
+    console.log(UnsubscribeAcceptedRequest)
     return () => {
+      unsubscribe()
+      UnsubscribeAcceptedRequest()
     };
   }, []);
 
@@ -408,6 +421,7 @@ function RequestAcceptedScreen({ route, navigation }) {
                       error
                     );
                   });
+                UnsubscribeAcceptedRequest()
 
                 navigation.dispatch(e.data.action)
               },

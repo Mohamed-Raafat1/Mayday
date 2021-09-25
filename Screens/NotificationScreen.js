@@ -25,7 +25,12 @@ const NotificationScreen = () => {
   );
 
   useLayoutEffect(() => {
-    dispatch(fetchNotifications());
+    const Unsubscribe =
+      dispatch(fetchNotifications());
+
+    return () => {
+      Unsubscribe()
+    }
   }, []);
   //------------------------------------------------------------------------------------
   function displayNotifications() {
