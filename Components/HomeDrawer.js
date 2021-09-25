@@ -15,44 +15,12 @@ import AccountSettings from "../Screens/Settings Screens/AccountSettings";
 import LocationSettings from "../Screens/Settings Screens/LocationSettings";
 import NotificationSettings from "../Screens/Settings Screens/NotificationSettings";
 import AccidentsList from "../Screens/AccidentsListScreen";
-import Search from "../Screens/SOS/SearchScreen";
-import temp from "../Screens/temp";
 
 //for initial signup
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState, useEffect, useRef } from "react";
 
 const Drawer = createDrawerNavigator();
 
 const HomeDrawer = ({ navigation }) => {
-  // -------------------------this is all for first signup trial-----------------
-  // const [isFirstSignup, setisFirstSignup] = useState(null);
-  // useEffect(() => {
-
-  //   AsyncStorage.getItem("alreadyLoggedin").then(async (value) => {
-
-  //     await console.log(value)
-  //     // console.log(isFirstSignup)
-  //     if (value == null || value==false) {
-  //       AsyncStorage.setItem("alreadyLoggedin", "true"); // No need to wait for `setItem` to finish, although you might want to handle errors
-  //       setisFirstSignup(true);
-  //     } else {
-  //       setisFirstSignup(false);
-
-  //     }
-  //   }); // Add some error handling, also you can simply do setIsFirstLaunch(null)
-  // }, []);
-  // let routeName
-
-  // if (isFirstSignup === null) {
-  //   return (<View></View>); // This is the 'tricky' part: The query to AsyncStorage is not finished, but we have to present something to the user. Null will just render nothing, so you can also put a placeholder of some sort, but effectively the interval between the first mount and AsyncStorage retrieving your data won't be noticeable to the user. But if you want to display anything then you can use a LOADER here
-  // } else if (isFirstSignup == true) {
-  //   routename = "User Rating";
-  // } else {
-  //   routeName = "Home";
-  // }
-  // ------------------------------------------------------------------------
-
   return (
     <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={Tabs} />
@@ -73,7 +41,6 @@ const HomeDrawer = ({ navigation }) => {
       <Drawer.Screen name="Accidents List" component={AccidentsList} />
 
       <Drawer.Screen name="Settings" component={SettingsStackScreen} />
-      <Drawer.Screen name="temp" component={temp} />
     </Drawer.Navigator>
   );
 };
@@ -93,20 +60,6 @@ const SettingsStackScreen = ({ navigation }) => (
       component={AccountSettings}
       options={{ title: "Account Settings" }}
     />
-    {/* <SettingsStack.Screen
-      name="EditProfile"
-      component={EditProfileScreen}
-      options={{
-        headerRight: () => (
-          <Content >
-            <Button transparent >
-              <Text>Save</Text>
-            </Button>
-          </Content>),
-        title: "Edit Medical ID",
- 
-      }}
-    /> */}
     <SettingsStack.Screen
       name="LocationSettings"
       component={LocationSettings}
@@ -127,7 +80,6 @@ const EmergencyContactsScreen = ({ navigation }) => (
       component={EmergencyContacts}
       options={{ headerShown: false }}
     />
-    <EmergencyContactsStack.Screen name="Search" component={Search} />
   </EmergencyContactsStack.Navigator>
 );
 export default HomeDrawer;

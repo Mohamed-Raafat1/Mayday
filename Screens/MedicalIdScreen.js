@@ -1,29 +1,19 @@
 import React from "react";
-import {
-  SafeAreaView,
-  StyleSheet,
-  TouchableOpacity,
-  StatusBar,
-} from "react-native";
+import { StyleSheet, TouchableOpacity, StatusBar } from "react-native";
 import {
   Container,
   Text,
   Content,
-  Card,
-  CardItem,
   Body,
   Left,
   View,
-  Thumbnail,
   Right,
   Header,
   Icon,
   Button,
 } from "native-base";
 
-import { Avatar, Title, Caption, TouchableRipple } from "react-native-paper";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { useEffect } from "react";
+import { Avatar, Title } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/actions";
 import { useLayoutEffect } from "react";
@@ -33,30 +23,21 @@ function MedicalIdScreen({ navigation }) {
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {
-    const Unsubscribe =
-      dispatch(fetchUser());
-    // console.log("MedicalID---------------\n")
-    return () => {
-      Unsubscribe()
-    }
-  }, []);
+    const Unsubscribe = dispatch(fetchUser());
 
-  // useEffect(()=>{
-  //   console.log("ENTERING MEDICAL ID")//,navigation,"\n------")
-  // })
+    return () => {
+      Unsubscribe();
+    };
+  }, []);
 
   const currentUser = useSelector((state) => state.userState.currentUser);
 
   if (currentUser == undefined) return <View></View>;
 
-  //for birthdate
-  // console.log(currentUser.Birthdate)
-
   //---------------------------------QRCODE--------------------------------------------------------
   let Bdate = currentUser.Birthdate.toDate().toString();
   Bdate = Bdate.slice(4, 16);
   let qr;
-  //This code be written in jason
   qr =
     "Patient Name : " +
     currentUser.FirstName +
@@ -78,7 +59,6 @@ function MedicalIdScreen({ navigation }) {
     currentUser.MedicalID.Height +
     "\n Weight : " +
     currentUser.MedicalID.Weight;
-  //======================================================================================
 
   return (
     <Container style={styles.container}>

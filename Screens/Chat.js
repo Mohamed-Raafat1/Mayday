@@ -27,94 +27,41 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchMessages, fetchUser, updateMessages } from "../redux/actions";
 import { addNotification, sendPushNotification } from "../HomeNavigation/tabs";
 
-//-------------------------getExpoToken by UserID----------------------
-
-export async function getExpoTokenById(id) {
-  let userToken;
-  await firebase
-    .firestore()
-    .collection("users")
-    .doc(id)
-    .get()
-    .then((result) => {
-      userToken = result.data().ExpoToken;
-    })
-    .catch((e) => {
-      console.log(e);
-    });
-  return userToken;
-}
-//---------------------------------------------------------------------
+import { getExpoTokenById } from "../Components/functions/functions";
 
 function Chat({ route, navigation }) {
+  //constants
   const userid = firebase.auth().currentUser.uid;
   const dispatch = useDispatch();
   const chatid = route.params.chatid;
-
   const fetchedmessages = useSelector((state) => state.userState.messages);
-  const [initialmessages, setinitialmessages] = useState([]);
-  useEffect(() => {
-    return () => { };
-  }, [fetchedmessages]);
+
+  //fetch on mount and unsubscribe on unmount
 
   useLayoutEffect(() => {
-    const messagesUnsubscribe =
-      dispatch(fetchMessages(userid, chatid));
+    const messagesUnsubscribe = dispatch(fetchMessages(userid, chatid));
     const userUnsubscribe = dispatch(fetchUser());
 
-    setinitialmessages(fetchedmessages);
-
-    // console.log(
-    //   "mounting-------------------------------------------------\n",
-    //   fetchedmessages
-    // );
     return () => {
-      
-      messagesUnsubscribe()
-      userUnsubscribe()
-      // console.log(
-      //   "unmouting-----------------------------------------------------\n",
-      //   fetchedmessages
-      // );
+      messagesUnsubscribe();
+      userUnsubscribe();
     };
   }, [route]);
 
   const currentUser = useSelector((state) => state.userState.currentUser);
 
   const chatRecepient = route.params.userid;
-  // console.log(route.params);
-
-  useEffect(
-    () => navigation.addListener("beforeRemove", (e) => { }),
-    [navigation]
-  );
-
-  // useEffect(() => {
-  //   console.log("Testing Notification inprogress");
-  //   if (getExpoTokenById(chatRecepient)) {
-
-  //   }
-  // }, [currentUser]);
-  // useEffect(() => {}, [initialmessages.length]);
 
   const onSend = useCallback((Messages = []) => {
     let message = Messages[0];
     dispatch(updateMessages(message, userid, chatRecepient, chatid));
-    //--------------------------send Notifications---------------
-    let myuserToken;
+
     let chatMessage =
       currentUser.FirstName + " " + currentUser.LastName + " : " + message.text;
     getExpoTokenById(chatRecepient).then((result) => {
       sendPushNotification(result, "🚨RESCU", chatMessage, "chatMsg");
       addNotification(chatRecepient, chatMessage, "🚨RESCU", false, "chatMsg");
     });
-
-    // setinitialmessages((previousMessages) =>
-    //   GiftedChat.append(previousMessages, Messages)
-    // );
-
-    // console.log("new fetched messages ---------------------------------\n");
-    // console.log(fetchedmessages);
   }, []);
   const scrolllToBottomComponent = (props) => {
     return <Feather name="chevrons-down" size={24} color="black" />;

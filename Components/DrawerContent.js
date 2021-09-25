@@ -20,11 +20,8 @@ export function DrawerContent(props) {
   useLayoutEffect(() => {
     const Unsubscribe = dispatch(fetchUser());
     return () => {
-      Unsubscribe()
-
-    }
-
-
+      Unsubscribe();
+    };
   }, []);
 
   const onSignout = () => {
@@ -163,9 +160,9 @@ export function DrawerContent(props) {
             />
           )}
           label="Support"
-        //   onPress={() => {
-        // props.navigation.navigate("SupportScreen");
-        //   }}
+          //   onPress={() => {
+          // props.navigation.navigate("SupportScreen");
+          //   }}
         />
         <DrawerItem
           icon={({ color, size }) => (
@@ -177,19 +174,6 @@ export function DrawerContent(props) {
           )}
           label="Sign Out"
           onPress={onSignout}
-        />
-        <DrawerItem
-          icon={({ color, size }) => (
-            <MaterialCommunityIcons
-              name="exit-to-app"
-              color={"black"}
-              size={25}
-            />
-          )}
-          label="bagarab"
-          onPress={() => {
-            props.navigation.navigate("temp");
-          }}
         />
       </Drawer.Section>
     </View>

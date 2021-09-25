@@ -1,72 +1,44 @@
 //BUTTONS NATIVE BASE
 
-import React, { useEffect, useState, useRef, useLayoutEffect, useCallback } from "react";
-import { TouchableOpacity } from "react-native";
-//React Native
-import {
-  NavigationContainer,
-  useNavigationContainerRef,
-} from "@react-navigation/native";
-import * as TaskManager from "expo-task-manager";
-import { useRoute } from "@react-navigation/native";
-import { StyleSheet, Image, StatusBar, Alert } from "react-native";
-import { Avatar, Badge, withBadge } from "react-native-elements";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
-
 import {
-  createStackNavigator,
   CardStyleInterpolators,
+  createStackNavigator,
 } from "@react-navigation/stack";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import EmergencyTab from "./EmergencyTab";
-// import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-
-// Screens
-import HomeScreen from "../Screens/HomeScreen";
-import DoctorsScreen from "../Screens/DoctorsScreen";
-import MedicalIdScreen from "../Screens/MedicalIdScreen";
-import EditProfileScreen from "../Screens/EditProfileScreen";
-import FirstAidSection from "../Screens/FirstAidSection";
-import ViewNearestHospital from "../Screens/ViewNearestHospital";
-import {
-  Button,
-  Icon,
-  Header,
-  Item,
-  Input,
-  Text,
-  Content,
-  View,
-} from "native-base";
-import ChatListStackScreen from "../Screens/ChatList";
-import NotificationScreen from "../Screens/NotificationScreen";
-import Chat from "../Screens/Chat";
-//Stacks Navigation
-//First-Aid Screens
-import Hypothermia from "../Screens/First-Aid Screens/Hypothermia";
-import Meningitis from "../Screens/First-Aid Screens/Meningitis";
-import Poisoning from "../Screens/First-Aid Screens/Poisoning";
-import Seizure from "../Screens/First-Aid Screens/Seizure";
-import Choking from "../Screens/First-Aid Screens/Choking";
-import HeartAttack from "../Screens/First-Aid Screens/HeartAttack";
-import Bleeding from "../Screens/First-Aid Screens/Bleeding";
-import Burns from "../Screens/First-Aid Screens/Burns";
-import Fractures from "../Screens/First-Aid Screens/Fractures";
-
-import VisitedProfileScreen from "../Screens/VisitedProfileScreen";
-
-import DiagnosisScreen from "../Screens/DiagnosisScreen";
-import CurrentReport from "../Screens/CurrentReport";
-import DoctorRequests from "../Screens/Doctor Only Screens/DoctorRequests";
-import { faBorderNone } from "@fortawesome/free-solid-svg-icons";
-import firebase from "firebase";
 //-----------------------Push Notifications------------------------------------
 import * as Notifications from "expo-notifications";
+import * as TaskManager from "expo-task-manager";
+import firebase from "firebase";
+import { Button, Content, Text, View } from "native-base";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import { Alert, StyleSheet } from "react-native";
+import { Badge } from "react-native-elements";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchNotifications, fetchUser } from "../redux/actions/index";
+import Chat from "../Screens/Chat";
+import ChatListStackScreen from "../Screens/ChatList";
+import CurrentReport from "../Screens/CurrentReport";
+import DiagnosisScreen from "../Screens/DiagnosisScreen";
+import DoctorRequests from "../Screens/Doctor Only Screens/DoctorRequests";
 import RequestAcceptedScreen from "../Screens/Doctor Only Screens/RequestAcceptedScreen";
+import DoctorsScreen from "../Screens/DoctorsScreen";
+import EditProfileScreen from "../Screens/EditProfileScreen";
+import FirstAidSection from "../Screens/FirstAidSection";
+// import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+// Screens
+import HomeScreen from "../Screens/HomeScreen";
+import MedicalIdScreen from "../Screens/MedicalIdScreen";
+import NotificationScreen from "../Screens/NotificationScreen";
+import EmergencyTab from "./EmergencyTab";
+
 // Function to send notifications given token and message
 export async function sendPushNotification(
   expoPushToken,
@@ -208,63 +180,6 @@ const DoctorRequestsStack = createStackNavigator();
 
 //Tab Navigation
 const Tab = createBottomTabNavigator();
-// const EmergencyTab = createMaterialTopTabNavigator();
-const newTabs = createBottomTabNavigator();
-function Mytabs() {
-  //2 Tabs Home , First Aid
-  return (
-    <newTabs.Navigator
-      initialRouteName="Home"
-      activeColor="#cf5b72"
-      barStyle={{ backgroundColor: "white" }}
-    >
-      <Tab.Screen
-        name="Home"
-        component={HomeStackScreen}
-        options={{
-          tabBarLabel: "Home",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" color={color} size={26} />
-          ),
-        }}
-      />
-
-      <Tab.Screen
-        name="First Aid"
-        component={FirstAidStackScreen}
-        options={{
-          tabBarLabel: "First Aid",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="television-play"
-              color={color}
-              size={26}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="DoctorRequests"
-        component={DoctorRequestsStackScreen}
-        options={({ route }) => ({
-          tabBarVisible: getTabBarVisibility(route),
-          tabBarLabel: "Requests",
-          tabBarBadge: "1",
-          tabBarBadgeStyle: { margin: 30 },
-
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="medical-bag"
-              size={24}
-              color={color}
-              style={{ marginBottom: 10 }}
-            />
-          ),
-        })}
-      />
-    </newTabs.Navigator>
-  );
-}
 
 let currentAcceptedRequest;
 function Tabs({ navigation }) {
@@ -282,26 +197,23 @@ function Tabs({ navigation }) {
     (state) => state.notificationState.currentNotifications
   );
 
-
   //!!!!!!!!!!!!!REMOVE LATER!!!!!!!!!!!!!!!!!!!!
   //!!!!!!!!!!!!!!!!!this is used to unregister all tasks which is used in onmount
   //!!This is only used to help when testing cuz reloading app doesnt remove tasks
   const unregisterTasks = useCallback(async () => {
-    await TaskManager.unregisterAllTasksAsync()
-      .catch(err => console.log('ops! error unregistering alltasks', err))
-  }, [])
-
-
+    await TaskManager.unregisterAllTasksAsync().catch((err) =>
+      console.log("ops! error unregistering alltasks", err)
+    );
+  }, []);
 
   useLayoutEffect(() => {
-    const userUnsubscribe =
-      dispatch(fetchUser());
+    const userUnsubscribe = dispatch(fetchUser());
     dispatch(fetchNotifications());
-    unregisterTasks()//!!!!!!!!!!!!!!!!!!!!REMOVE LATER!!!!!!!!!!!!!!
+    unregisterTasks(); //!!!!!!!!!!!!!!!!!!!!REMOVE LATER!!!!!!!!!!!!!!
 
     return () => {
-      userUnsubscribe()
-    }
+      userUnsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -327,14 +239,6 @@ function Tabs({ navigation }) {
         )
           navigation.navigate("ChatList");
       });
-
-
-
-
-
-
-
-
 
     // freeing Handlers
     return () => {
@@ -364,10 +268,8 @@ function Tabs({ navigation }) {
     }
   }, [currentNotifications]);
 
-  //=============================================================================
   const getTabBarVisibility = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? "Home";
-    // console.log(routeName);
     if (routeName === "Chat") return false;
     else return true;
   };
@@ -416,39 +318,30 @@ function Tabs({ navigation }) {
           ),
         }}
       />
-      <Tab.Screen
-        name="DoctorRequests"
-        component={DoctorRequestsStackScreen}
-        options={({ route }) => ({
-          tabBarLabel: "Requests",
-          tabBarBadge: 1,
-          tabBarBadgeStyle: { color: "white", backgroundColor: "red" },
+      {currentUser && currentUser.medicalProfessional && (
+        <Tab.Screen
+          name="DoctorRequests"
+          component={DoctorRequestsStackScreen}
+          options={({ route }) => ({
+            tabBarLabel: "Requests",
+            tabBarBadge: 1,
+            tabBarBadgeStyle: { color: "white", backgroundColor: "red" },
 
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              style={{ marginTop: 10 }}
-              name="medical-bag"
-              size={24}
-              color={color}
-            />
-          ),
-        })}
-      />
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons
+                style={{ marginTop: 10 }}
+                name="medical-bag"
+                size={24}
+                color={color}
+              />
+            ),
+          })}
+        />
+      )}
     </Tab.Navigator>
   );
 }
 
-// function EmergencyTab (){
-//   return (
-//     <Tab.Navigator>
-//       <Tab.Screen name="RequestDoctor" component={DoctorsScreen} />
-//       <Tab.Screen name="ChatList" component={ChatList} />
-//       <Tab.Screen name="View Nearest Hospital" component={ViewNearestHospital}/>
-//     </Tab.Navigator>
-//   );
-// }
-
-//
 const HomeStackScreen = ({ navigation }) => (
   <HomeStack.Navigator detachInactiveScreens={true} headerMode={"float"}>
     <HomeStack.Screen

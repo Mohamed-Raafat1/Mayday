@@ -1,49 +1,41 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-
-import { Image, Text, TouchableOpacity, View } from "react-native";
-import firebase from "firebase";
-import { Spinner, Button } from "native-base";
-import MapView, { Marker } from "react-native-maps";
-import { Dimensions } from "react-native";
-import {
-  fetchRequest,
-  fetchUser,
-  fetchAcceptedRequest,
-
-} from "../../redux/actions";
-import { Polyline } from "react-native-maps";
-import { useDispatch, useSelector } from "react-redux";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { Alert } from "react-native";
-
-
-import * as geofirestore from "geofirestore";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
+import firebase from "firebase";
+import { Spinner } from "native-base";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import {
+  Alert,
+  Dimensions,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { useDispatch, useSelector } from "react-redux";
 import { Geofirestore } from "../../App";
-
+import { customstyleAcceptedRequests } from "../../Components/functions/functions";
+import { fetchAcceptedRequest, fetchUser } from "../../redux/actions";
 
 const geofire = require("geofire-common");
-const RESCU_TRACKING = "background-accepted-request-location"
-let AcceptedRequest = null
-////////////////////////  TASK MANAGER  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+const RESCU_TRACKING = "background-accepted-request-location";
+let AcceptedRequest = null;
+//______TASK MANAGER__________
 TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
-  // console.log("im in acceptedddddd request taskmanager");
   if (error) {
     console.log(error);
     // Error occurred - check `error.message` for more details.
     return;
   }
   if (data) {
-    // console.log(data);
     const { locations } = data;
 
     let latitude = locations[0].coords.latitude;
     let longitude = locations[0].coords.longitude;
     const hash = geofire.geohashForLocation([latitude, longitude]);
 
-    let location = { latitude, longitude };
     await Geofirestore.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .update({
@@ -56,14 +48,16 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
         );
       });
 
-
     if (AcceptedRequest)
-      await firebase.
-        firestore()
+      await firebase
+        .firestore()
         .collection("requests")
         .doc(AcceptedRequest.id)
         .update({
-          Doctorcoordinates: new firebase.firestore.GeoPoint(latitude, longitude),
+          Doctorcoordinates: new firebase.firestore.GeoPoint(
+            latitude,
+            longitude
+          ),
           DoctorGeoHash: hash,
         })
         .catch((error) => {
@@ -72,19 +66,11 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
             error
           );
         });
-
   }
-
 });
-// ==============================================================
-
-
 
 function RequestAcceptedScreen({ route, navigation }) {
-
-
-  //=============================CONSTANTS=========================================================
-
+  //constants
   const [Err, setErr] = useState(null);
   const [TrackingStatus, setTrackingStatus] = useState(false); //currently tracking ?
   const [PermissionGranted, setPermissionGranted] = useState(false); //foreground and background permissions granted?
@@ -94,20 +80,17 @@ function RequestAcceptedScreen({ route, navigation }) {
     (state) => state.userState.AcceptedRequest
   );
 
-  const requestid = route.params.requestid
-  const chatid = route.params.chatid
+  const requestid = route.params.requestid;
+  const chatid = route.params.chatid;
 
   const currentUser = useSelector((state) => state.userState.currentUser);
-  // console.log("--------------------------------", currentAcceptedRequest);
 
   const hasUnsavedChanges = true;
-
 
   const [location, setlocation] = useState({
     longitude: 0,
     latitude: 0,
   });
-
 
   //---------mapview CONSTANTS
   const { height: HEIGHT, width: WIDTH } = Dimensions.get("window");
@@ -115,17 +98,14 @@ function RequestAcceptedScreen({ route, navigation }) {
   const LONGITUDE_DELTA = LATITUDE_DELTA * (WIDTH / HEIGHT);
   const [themargin, setthemargin] = useState(0);
 
-
-  //========================Functions==========================
+  //_____Functions______
 
   //function to unsubscribe
-  let UnsubscribeAcceptedRequest = () => { }
+  let UnsubscribeAcceptedRequest = () => {};
 
-
-  //--------------------------------fn to request permissions----------------------------------------------------
+  //request location permissions
   const requestPermissions = async () => {
     try {
-      //---------------- request foregroundlocationpermission
       const { status: ForegroundStatus } =
         await Location.requestForegroundPermissionsAsync();
 
@@ -134,34 +114,25 @@ function RequestAcceptedScreen({ route, navigation }) {
         throw Error("Foreground Location permission not granted! ");
       }
 
-      //---------------- request backgroundlocationpermission
       const { status: BackgroundStatus } =
         await Location.requestBackgroundPermissionsAsync();
 
-      //if backgroundpermission not granted exit the whole function
       if (BackgroundStatus !== "granted") {
         throw Error("Background Location permission not granted!");
       }
 
-      // console.log("Background permission granted");
       //opening location services
       await Location.enableNetworkProviderAsync();
 
-      // console.log("location services enabled");
       setPermissionGranted(true);
     } catch (e) {
-      // console.log("Permission Error:\n ", e);
       setErr("Permission Error!\n" + e.message);
     }
   };
-  //--------------------------------------------------------------------------------------------------
-
-  //-------------Fn to retrieve location in the foreground and the background------------
+  //retrieve location in the foreground and the background------------
   const _getLocationAsync = async () => {
     try {
-      // console.log("entering get location");
-
-      //---------------------------Checking if Task Already Running
+      //Checking if Task Already Running
       const TaskStarted = await Location.hasStartedLocationUpdatesAsync(
         RESCU_TRACKING
       );
@@ -170,32 +141,38 @@ function RequestAcceptedScreen({ route, navigation }) {
       }
 
       //!!!!!!!!!!!!!!!to stop tracking from nearby hospital & doctors screen & doctor request when starting tracking from here
-      const nearbyhospitaltracking = await Location.hasStartedLocationUpdatesAsync(
-        "background-nearest-hospital-task"
-      );
+      const nearbyhospitaltracking =
+        await Location.hasStartedLocationUpdatesAsync(
+          "background-nearest-hospital-task"
+        );
       if (nearbyhospitaltracking) {
         // console.log('stopping nearby hospital tracking')
-        await Location.stopLocationUpdatesAsync("background-nearest-hospital-task");
+        await Location.stopLocationUpdatesAsync(
+          "background-nearest-hospital-task"
+        );
       }
 
-      const doctorscreentracking = await Location.hasStartedLocationUpdatesAsync(
-        "background-doctor-screen-location-task"
-      );
+      const doctorscreentracking =
+        await Location.hasStartedLocationUpdatesAsync(
+          "background-doctor-screen-location-task"
+        );
       if (doctorscreentracking) {
-        // console.log('stopping nearby hospital tracking')
-        await Location.stopLocationUpdatesAsync("background-doctor-screen-location-task");
+        await Location.stopLocationUpdatesAsync(
+          "background-doctor-screen-location-task"
+        );
       }
 
-      const doctorrequesttracking = await Location.hasStartedLocationUpdatesAsync(
-        "background-doctor-requests-location"
-      );
+      const doctorrequesttracking =
+        await Location.hasStartedLocationUpdatesAsync(
+          "background-doctor-requests-location"
+        );
       if (doctorrequesttracking) {
-        // console.log('stopping nearby hospital tracking')
-        await Location.stopLocationUpdatesAsync("background-doctor-requests-location");
+        await Location.stopLocationUpdatesAsync(
+          "background-doctor-requests-location"
+        );
       }
-      //!!!!!!!!!!!!
 
-      //---------------------------starting fn to fetch location in the background
+      //starting fn to fetch location in the background
       await Location.startLocationUpdatesAsync(RESCU_TRACKING, {
         accuracy: Location.Accuracy.BestForNavigation,
         showsBackgroundLocationIndicator: true,
@@ -208,23 +185,18 @@ function RequestAcceptedScreen({ route, navigation }) {
       setErr("Location Fetch Error\n" + e.message);
     }
   };
-  //--------------------------------------------------------
 
-  //------------------------------------to stop location updates----------------------------------------------
   const StopTracking = async () => {
     const tracking = await Location.hasStartedLocationUpdatesAsync(
-      RESCU_TRACKING);
+      RESCU_TRACKING
+    );
     if (tracking)
       await Location.stopLocationUpdatesAsync(RESCU_TRACKING)
         .then(() => {
           setTrackingStatus(false);
         })
         .catch((err) => setErr("StopTracking Error\n" + err));
-
   };
-
-  //----------------------------------------------------------
-
   const gotoChat = (uid, chatid) => {
     navigation.navigate("DoctorChat", {
       userid: uid,
@@ -232,134 +204,29 @@ function RequestAcceptedScreen({ route, navigation }) {
     });
   };
 
-  //custom map style to simplify
-  let customstyle = [
-    {
-      featureType: "poi.medical",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "administrative",
-      elementType: "geometry",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "poi.attraction",
-      stylers: [
-        {
-          visibility: "on",
-        },
-      ],
-    },
-    {
-      featureType: "poi.business",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "poi.government",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "poi.park",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "poi.place_of_worship",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "poi.school",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "poi.sports_complex",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "road",
-      elementType: "labels.icon",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-    {
-      featureType: "transit",
-      stylers: [
-        {
-          visibility: "off",
-        },
-      ],
-    },
-  ];
-
-  //=====================================  USE EFFECTS  ========================================
-
-  // useEffect(() => {
-  //   dispatch(fetchUser());
-
-  //   return () => { };
-  // }, [route]);
-
-
+  //useeffects
   //Done on mount and for cleanup
   useLayoutEffect(() => {
-    const unsubscribe =
-      dispatch(fetchUser());
-    UnsubscribeAcceptedRequest = dispatch(fetchAcceptedRequest(requestid))
-    console.log(UnsubscribeAcceptedRequest)
+    const unsubscribe = dispatch(fetchUser());
+    UnsubscribeAcceptedRequest = dispatch(fetchAcceptedRequest(requestid));
+    console.log(UnsubscribeAcceptedRequest);
     return () => {
-      unsubscribe()
-      UnsubscribeAcceptedRequest()
+      unsubscribe();
+      UnsubscribeAcceptedRequest();
     };
   }, []);
 
-  //-------------------for focusing and unfocusing Screen
+  //for focusing and unfocusing Screen
   useFocusEffect(
     React.useCallback(() => {
       requestPermissions();
 
       return () => {
-        // setisRequested(false);
         setPermissionGranted(0);
         setErr(null);
       };
     }, [])
   );
-
 
   useEffect(() => {
     if (Err) {
@@ -367,24 +234,20 @@ function RequestAcceptedScreen({ route, navigation }) {
       if (TrackingStatus == true) StopTracking();
     } else {
       if (PermissionGranted == true && TrackingStatus == false) {
-        // console.log("entering useeffect after permission granted");
         _getLocationAsync();
       } else if (PermissionGranted == false && TrackingStatus == true) {
-        // console.log("3: was tracking but permission now denied so stopping");
         StopTracking();
       }
     }
   }, [PermissionGranted, Err]);
 
-
-  //--------------for putting the received accepted request from redux into 
+  //for putting the received accepted request from redux into
   //the global variable (acceptedrequest) to be used in taskmanager
   useEffect(() => {
-    if (currentAcceptedRequest)
-      AcceptedRequest = currentAcceptedRequest
-  }, [currentAcceptedRequest])
+    if (currentAcceptedRequest) AcceptedRequest = currentAcceptedRequest;
+  }, [currentAcceptedRequest]);
 
-  //---------for preventing back button functionality
+  //for preventing back button functionality
   React.useEffect(
     () =>
       navigation.addListener("beforeRemove", (e) => {
@@ -401,7 +264,7 @@ function RequestAcceptedScreen({ route, navigation }) {
           "Discard changes?",
           "You have unsaved changes. Are you sure you want to discard them and leave the screen?",
           [
-            { text: "Don't leave", style: "cancel", onPress: () => { } },
+            { text: "Don't leave", style: "cancel", onPress: () => {} },
             {
               text: "Discard",
               style: "destructive",
@@ -409,11 +272,13 @@ function RequestAcceptedScreen({ route, navigation }) {
               // This will continue the action that had triggered the removal of the screen
 
               onPress: async () => {
-                await StopTracking() //stop locationn tracking 
-                await firebase.firestore().collection("requests") // set the request to cancelled to remove it
+                await StopTracking(); //stop locationn tracking
+                await firebase
+                  .firestore()
+                  .collection("requests") // set the request to cancelled to remove it
                   .doc(AcceptedRequest.id)
                   .update({
-                    State: 'Cancelled',
+                    State: "Cancelled",
                   })
                   .catch((error) => {
                     console.log(
@@ -421,9 +286,9 @@ function RequestAcceptedScreen({ route, navigation }) {
                       error
                     );
                   });
-                UnsubscribeAcceptedRequest()
+                UnsubscribeAcceptedRequest();
 
-                navigation.dispatch(e.data.action)
+                navigation.dispatch(e.data.action);
               },
             },
           ]
@@ -431,12 +296,6 @@ function RequestAcceptedScreen({ route, navigation }) {
       }),
     [navigation, hasUnsavedChanges]
   );
-
-
-
-
-
-
 
   let screen;
   if (
@@ -462,7 +321,7 @@ function RequestAcceptedScreen({ route, navigation }) {
             latitudeDelta: LATITUDE_DELTA,
             longitudeDelta: LONGITUDE_DELTA,
           }}
-          customMapStyle={customstyle}
+          customMapStyle={customstyleAcceptedRequests}
           provider="google"
           showsUserLocation={true}
           userLocationUpdateInterval={5000}
@@ -499,10 +358,7 @@ function RequestAcceptedScreen({ route, navigation }) {
         </MapView>
         <TouchableOpacity
           onPress={() => {
-            gotoChat(
-              currentAcceptedRequest.PatientID,
-              currentAcceptedRequest.chatid
-            );
+            gotoChat(currentAcceptedRequest.PatientID, chatid);
           }}
           style={{
             borderColor: "black",

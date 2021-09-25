@@ -12,19 +12,14 @@ import {
   Form,
   Item,
   Input,
-  Label,
-  Content,
-  Header,
   Toast,
 } from "native-base";
-import { SafeAreaView, StyleSheet, TouchableOpacity } from "react-native";
+import { SafeAreaView, StyleSheet } from "react-native";
 import { Thumbnail } from "native-base";
 import GlobalStyles from "../GlobalStyles";
 import { Feather } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
-
-//====================================================================//
 
 // Notif. Token Registeration function
 async function registerForPushNotificationsAsync() {
@@ -46,7 +41,7 @@ async function registerForPushNotificationsAsync() {
   } else {
     alert("Must use physical device for Push Notifications");
   }
-  //=====================================//
+
   if (Platform.OS === "android") {
     Notifications.setNotificationChannelAsync("default", {
       name: "default",
@@ -58,7 +53,6 @@ async function registerForPushNotificationsAsync() {
 
   return token;
 }
-//====================================================================//
 
 function LoginScreen({ navigation }) {
   useEffect(
@@ -71,7 +65,7 @@ function LoginScreen({ navigation }) {
       }),
     [navigation]
   );
-  // ----------------------------Push Notification------------------------------------------------
+  // Push Notification
   const [expoPushToken, setExpoPushToken] = useState("");
 
   useEffect(() => {
@@ -80,13 +74,11 @@ function LoginScreen({ navigation }) {
       setExpoPushToken(token)
     );
   }, []);
-  //====================================================================//
+
   //regex for checking email validity
   const [isValid, setIsValid] = useState(null);
   const emailRegex = /\S+@\S+\.\S+/;
-  //regex for checking email syntax validity
-  //instead of using multiple use states just used one
-  //each one can be accessed by destructing the data
+
   const [data, setData] = useState({
     Email: "",
     Password: "",
@@ -113,12 +105,7 @@ function LoginScreen({ navigation }) {
       setIsValid(false);
     }
   };
-  //====================================================================//
 
-  //accessing context to use signIn functionality
-
-  //called when text changes in the password input
-  //sets password variable to the current password input value
   const handlePasswordChange = (text) => {
     setData({
       ...data,
@@ -128,9 +115,6 @@ function LoginScreen({ navigation }) {
   const updateSecureTextEntry = () => {
     setData({ ...data, secureTextEntry: !data.secureTextEntry });
   };
-
-  //====================================================================//
-
   const onSignIn = () => {
     firebase
       .auth()
@@ -155,7 +139,6 @@ function LoginScreen({ navigation }) {
         console.log(error);
       });
   };
-  //====================================================================//
 
   return (
     <Container>
@@ -229,11 +212,6 @@ function LoginScreen({ navigation }) {
             </Text>
             <Button
               style={styles.Button}
-              // style={{
-              //   marginBottom: 10,
-              //   alignContent: "center",
-              //   backgroundColor: "rgb(250,91,90)",
-              // }}
               primary
               iconRight
               rounded

@@ -1,6 +1,5 @@
 import {
   Container,
-  Header,
   Content,
   List,
   ListItem,
@@ -10,30 +9,21 @@ import {
   Thumbnail,
   Text,
   View,
-  Button,
 } from "native-base";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Chat from "../Screens/Chat";
 const ChatListStack = createStackNavigator();
-import { useRoute } from "@react-navigation/native";
+
 import { useNavigationState } from "@react-navigation/native";
-import firebase from "firebase";
 
-import { useEffect, useLayoutEffect } from "react";
+import { useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchChatList,
-  fetchConversations,
-  fetchMessages,
-  fetchUser,
-} from "../redux/actions";
-import { user } from "../redux/reducers/user";
+import { fetchConversations, fetchUser } from "../redux/actions";
 
+//get previous routename
 function usePreviousRouteName() {
   return useNavigationState((state) =>
     state.routes[state.index - 1]?.name
@@ -44,122 +34,19 @@ function usePreviousRouteName() {
 
 const ChatList = ({ navigation, previous }) => {
   const dispatch = useDispatch();
+  //fetch conversations on mount and clean up
   useLayoutEffect(() => {
     const conversUnsubscribe = dispatch(fetchConversations());
     const userUnsubscribe = dispatch(fetchUser());
     return () => {
-      conversUnsubscribe()
-      userUnsubscribe()
-    }
+      conversUnsubscribe();
+      userUnsubscribe();
+    };
   }, []);
 
   const conversations = useSelector((state) => state.userState.conversations);
 
-  const currentUser = useSelector((state) => state.userState.currentUser);
-
-  async function createChat(uid) {
-    let user = [];
-    let chatid;
-    await firebase
-      .firestore()
-      .collection("users")
-      .doc(uid)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.exists) {
-          user = snapshot.data();
-        } else {
-          console.log("does not exist");
-        }
-      });
-    await firebase
-      .firestore()
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .collection("conversations")
-
-      .add({
-        talkingto: user.FirstName + " " + user.LastName,
-        userid: uid,
-        timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
-        userOne: {
-          firsName: currentUser.FirstName,
-          lastName: currentUser.LastName,
-          email: currentUser.Email,
-        },
-        userTwo: {
-          firsName: user.FirstName,
-          lastName: user.LastName,
-          email: user.Email,
-        },
-        latestMessage: {
-          _id: "",
-          createdAt: "",
-          text: "",
-          timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
-          chatid: "",
-          user: "",
-          chatRecepient: "",
-          uid: "",
-        },
-      })
-      .then((snapshot) => {
-        chatid = snapshot.id;
-      });
-    await firebase
-      .firestore()
-      .collection("users")
-      .doc(uid)
-      .collection("conversations")
-      .doc(chatid)
-      .set({
-        talkingto: currentUser.FirstName + " " + currentUser.LastName,
-        userid: firebase.auth().currentUser.uid,
-        timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
-        userOne: {
-          firsName: currentUser.FirstName,
-          lastName: currentUser.LastName,
-          email: currentUser.Email,
-        },
-        userTwo: {
-          firsName: user.FirstName,
-          lastName: user.LastName,
-          email: user.Email,
-        },
-        latestMessage: {
-          _id: "",
-          createdAt: "",
-          text: "",
-          timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
-          chatid: "",
-          user: "",
-          chatRecepient: "",
-          uid: "",
-        },
-      });
-    await firebase
-      .firestore()
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .update(
-        "chats",
-        firebase.firestore.FieldValue.arrayUnion({
-          chatid: chatid,
-          Recepient: uid,
-        })
-      );
-    await firebase
-      .firestore()
-      .collection("users")
-      .doc(uid)
-      .update(
-        "chats",
-        firebase.firestore.FieldValue.arrayUnion({
-          chatid: chatid,
-          Recepient: firebase.auth().currentUser.uid,
-        })
-      );
-  }
+  //mapping conversations to a chat list
   const usersList = () => {
     return conversations.map((chat) => {
       console.log(chat.data.timeStamp.toDate().getHours().toString());
@@ -175,8 +62,9 @@ const ChatList = ({ navigation, previous }) => {
       }
       return (
         <ListItem
+          style={{ borderBottomColor: "black", borderBottomWidth: 1 }}
+          noBorder
           onPress={async () => {
-
             navigation.navigate("Chat", {
               userid: chat.data.userid,
               chatid: chat.id,
@@ -254,11 +142,3 @@ const ChatListStackScreen = ({ navigation, previous }) => (
 );
 
 export default ChatListStackScreen;
-const styles = StyleSheet.create({
-  button: {
-    marginTop: 50,
-    marginBottom: 10,
-    alignContent: "center",
-    backgroundColor: "rgb(250,91,90)",
-  },
-});

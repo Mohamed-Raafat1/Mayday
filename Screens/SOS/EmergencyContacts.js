@@ -1,67 +1,48 @@
-import React, { useState, useEffect } from "react";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
+import firebase from "firebase";
+import { update } from "lodash";
+import {
+  Body,
+  Button,
+  Container,
+  Content,
+  Fab,
+  Header,
+  Icon,
+  Input,
+  Item,
+  Left,
+  ListItem,
+  Right,
+  Text,
+  Thumbnail,
+  Toast,
+} from "native-base";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import Modal from "react-native-modal";
+import { Avatar, Title } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../../redux/actions";
-import { useLayoutEffect } from "react";
-import { Toast } from "native-base";
-
-import Modal from "react-native-modal";
-import filter from "lodash.filter";
-import firebase from "firebase";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
-require("firebase/firestore");
-require("firebase/firebase-storage");
-import {
-  Container,
-  Header,
-  Content,
-  Button,
-  ListItem,
-  Text,
-  Icon,
-  Left,
-  Body,
-  Right,
-  Switch,
-  Input,
-  Thumbnail,
-  FlatList,
-  Fab,
-  Item,
-} from "native-base";
-import { Avatar, Title, Caption, TouchableRipple } from "react-native-paper";
-import { StyleSheet, View, TextInput, TouchableOpacity } from "react-native";
-import { update } from "lodash";
 let sharedChatid;
 
 const Stack = createStackNavigator();
-function SOS({ navigation, route }) {
+function SOS({ navigation }) {
+  //constants
   const [modalVisible, setModalVisible] = useState(false);
   const [users, setusers] = useState([]);
-  const [fullData, setFullData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [query, setQuery] = useState("");
   const [searchText, setSearchText] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [contact, setContact] = useState();
-  let flag = 0;
-  //Toggle Switch to enable SOS
-  // const [isEnabled, setIsEnabled] = useState(false);
-  // const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
-
-  //To save contact numbers (first contact only right now as a Test)
-
+  //redux
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.userState.currentUser);
   let EmergencyContacts = useSelector(
     (state) => state.userState.currentUser.EmergencyContacts
   );
-
-  // const [EmergencyContacts, setEmergencyContacts] = useState(
-  //   currentUser.EmergencyContacts
-  // );
-
+  //useeffect
   useEffect(() => {
     const subscriber = firebase
       .firestore()
@@ -77,8 +58,6 @@ function SOS({ navigation, route }) {
         });
 
         setusers(users);
-        setFullData(users);
-        setLoading(false);
       });
 
     // Unsubscribe from events when no longer in use
@@ -86,15 +65,13 @@ function SOS({ navigation, route }) {
   }, []);
 
   useLayoutEffect(() => {
-    const unsubscribe =
-      dispatch(fetchUser());
+    const unsubscribe = dispatch(fetchUser());
     return () => {
-      unsubscribe()
-    }
+      unsubscribe();
+    };
   }, []);
 
   function Update() {
-    console.log("upppppppppppppppppppppppppppppppppp");
     firebase
       .firestore()
       .collection("users")
@@ -120,24 +97,13 @@ function SOS({ navigation, route }) {
 
   function onDelete(item) {
     let index;
-    console.log(currentUser.EmergencyContacts);
     index = EmergencyContacts.findIndex(function (elm, i) {
       return item.Email === elm.Email;
     });
-    let array = EmergencyContacts;
-    console.log(
-      "Before removal------------------------------------\n",
-      EmergencyContacts
-    );
     EmergencyContacts.splice(index, 1);
-    console.log(
-      "After removal------------------------------------\n",
-      EmergencyContacts
-    );
     Toast.show("Contact removed successfully");
 
     Update();
-    // return (removed);
   }
 
   const openProfileModal = (contact1) => {
@@ -157,23 +123,14 @@ function SOS({ navigation, route }) {
         setLastName(users[i].LastName);
         openProfileModal(users[i]);
         return;
-
-        // console.log("Before ------------------------------------\n", EmergencyContacts[0]);
-        // console.log("------4--------")
-        // EmergencyContacts.push(users[i]);
-        // Toast.show("Contact is added Successfully");
-        // Update();
-        // return;
       }
     }
     Toast.show("User doesnt exist");
   };
   const onAdd = () => {
     if (EmergencyContacts.length < 5) {
-      console.log("------1--------");
       // adding current user as an Emergency contact handling
       if (currentUser.Email.toLowerCase() === searchText.toLowerCase()) {
-        console.log("------2--------");
         Toast.show("Can't add yourself as an Emergency Contact");
         return;
       }
@@ -182,7 +139,6 @@ function SOS({ navigation, route }) {
         if (
           searchText.toLowerCase() === EmergencyContacts[i].Email.toLowerCase()
         ) {
-          console.log("------3--------");
           Toast.show("Contact is already added");
           return;
         }
@@ -338,22 +294,6 @@ function SOS({ navigation, route }) {
       chatid: sharedChatid,
     });
   }
-  //update Contacts
-  // useEffect(() => {
-
-  // });
-
-  // const onDelete = (id) => {
-  //   setEmergencyContacts((EmergencyContacts) => {
-  //     for (var i = 0; i < EmergencyContacts.length; i++) {
-  //       if (id === EmergencyContacts[i].uid) {
-  //         EmergencyContacts.splice(i, 1);
-  //         Toast.show("Contact has been removed");
-  //         return EmergencyContacts;
-  //       }
-  //     }
-  //   });
-  // };
 
   function display() {
     return EmergencyContacts.map((item) => {
@@ -370,7 +310,7 @@ function SOS({ navigation, route }) {
               }}
             />
           </Left>
-          {/* Emergency Number */}
+
           <Body>
             <Text>{item.FirstName + " " + item.LastName}</Text>
             <Text note numberOfLines={1}>
@@ -390,7 +330,6 @@ function SOS({ navigation, route }) {
             <TouchableOpacity
               onPress={() => {
                 createChat(item.uid);
-                //chat
               }}
               primary
               rounded
@@ -436,8 +375,6 @@ function SOS({ navigation, route }) {
             </View>
           </View>
         </Modal>
-
-        {/* <Text style={styles.Text}>Add up to 5 Emergency Contacts</Text> */}
         <Header searchBar style={{ backgroundColor: "white" }}>
           <Item style={styles.search}>
             <Icon name="ios-search" />

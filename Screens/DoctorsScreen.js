@@ -1,4 +1,9 @@
-import React, { useState, useEffect, useCallback, useLayoutEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useLayoutEffect,
+} from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import MapView from "react-native-maps";
 import * as Location from "expo-location";
@@ -31,16 +36,17 @@ let users = [];
 
 // To DO: apply the fix from ViewNearestHospital
 
-////////////////////////  TASK MANAGER  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/* ______________________________
+  Task Manager
+  -------------------------------
+ */
 TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
-  // console.log("im in doctor screen taskmanager");
   if (error) {
     console.log(error);
-    // Error occurred - check `error.message` for more details.
+
     return;
   }
   if (data) {
-    // console.log(data);
     const { locations } = data;
 
     let latitude = locations[0].coords.latitude;
@@ -68,88 +74,68 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
     }
   }
 });
-// ==============================================================
 
-////////////////////////////  MAIN COMPONENT   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+/* ______________________________
+  Main Component
+  -------------------------------
+ */
 function DoctorsScreen() {
-
-  //=============================CONSTANTS=========================================================
-  const [RequestCreated, setRequestCreated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // do we show spinner or show screen
-  const [isRequested, setisRequested] = useState(false); //state of request (is button pressed or not?)
-  const [RequestID, setRequestID] = useState(false);
-
+  //*_*_*_*_*_constants*_*_*_*_*_*_*
+  let usersunsubsrcibe = () => {};
+  //state of request (is button pressed or not?)
+  const [isRequested, setisRequested] = useState(false);
   const [Err, setErr] = useState(null);
-  const [TrackingStatus, setTrackingStatus] = useState(false); //currently tracking ?
-  const [PermissionGranted, setPermissionGranted] = useState(false); //foreground and background permissions granted?
+  //currently tracking ?
+  const [TrackingStatus, setTrackingStatus] = useState(false);
+  //foreground and background permissions granted?
+  const [PermissionGranted, setPermissionGranted] = useState(false);
 
   const currentUser = useSelector((state) => state.userState.currentUser);
-  const state = useSelector((state) => state);
-  // console.log("this is the state-------------------------------", state);
   const currentRequest = useSelector(
     (state) => state.requestState.currentRequest
   );
-  // console.log("this is the current request", currentUser.uid, currentRequest);
+  //mapview consts
   const dispatch = useDispatch();
-
-  //----------------------constants for mapview
   const [location, setlocation] = useState({
     longitude: 0,
     latitude: 0,
   });
   const { height: HEIGHT, width: WIDTH } = Dimensions.get("window");
-  const LATITUDE_DELTA = 0.02; //This controls default zoom
+
+  //default zoom
+  const LATITUDE_DELTA = 0.02;
   const LONGITUDE_DELTA = LATITUDE_DELTA * (WIDTH / HEIGHT);
   const [themargin, setthemargin] = useState(0);
-  const [count, setcount] = useState(0); //this is just for a workaround to mapview issue
-  //=====================================================================================================
-
-
-  //========================Functions==========================
+  const [count, setcount] = useState(0);
 
   //for unsubscribing
-  let UnsubscribeRequest = () => { }
+  let UnsubscribeRequest = () => {};
 
-  //--------------------------------fn to request permissions----------------------------------------------------
+  //Request Permissions
   const requestPermissions = async () => {
     try {
-      //---------------- request foregroundlocationpermission
       const { status: ForegroundStatus } =
         await Location.requestForegroundPermissionsAsync();
-
-      //if foregroundpermission not granted exit the whole function
       if (ForegroundStatus !== "granted") {
         throw Error("Foreground Location permission not granted! ");
       }
-
-      //---------------- request backgroundlocationpermission
       const { status: BackgroundStatus } =
         await Location.requestBackgroundPermissionsAsync();
-
-      //if backgroundpermission not granted exit the whole function
       if (BackgroundStatus !== "granted") {
         throw Error("Background Location permission not granted!");
       }
-
-      // console.log("Background permission granted");
-      //opening location services
       await Location.enableNetworkProviderAsync();
 
-      // console.log("location services enabled");
       setPermissionGranted(true);
     } catch (e) {
       // console.log("Permission Error:\n ", e);
       setErr("Permission Error!\n" + e.message);
     }
   };
-  //--------------------------------------------------------------------------------------------------
 
-  //-------------Fn to retrieve location in the foreground and the background------------
+  //Retrieve function background and foreground
   const _getLocationAsync = async () => {
     try {
-      // console.log("entering get location");
-
-      //---------------------------Checking if Task Already Running
       const TaskStarted = await Location.hasStartedLocationUpdatesAsync(
         RESCU_TRACKING
       );
@@ -157,34 +143,35 @@ function DoctorsScreen() {
         Location.stopLocationUpdatesAsync(RESCU_TRACKING);
       }
 
-      //-----------------to stop tracking from nearby hospital when starting tracking from here
-      const nearbyhospitaltracking = await Location.hasStartedLocationUpdatesAsync(
-        "background-nearest-hospital-task"
-      );
+      //to stop tracking from nearby hospital when starting tracking from here
+      const nearbyhospitaltracking =
+        await Location.hasStartedLocationUpdatesAsync(
+          "background-nearest-hospital-task"
+        );
       if (nearbyhospitaltracking) {
-        // console.log('stopping nearby hospital tracking')
-        await Location.stopLocationUpdatesAsync("background-nearest-hospital-task");
+        await Location.stopLocationUpdatesAsync(
+          "background-nearest-hospital-task"
+        );
       }
 
-      //---------------------------starting fn to fetch location in the background
+      //starting fn to fetch location in the background
       await Location.startLocationUpdatesAsync(RESCU_TRACKING, {
         accuracy: Location.Accuracy.BestForNavigation,
         showsBackgroundLocationIndicator: true,
         timeInterval: 3000,
       });
 
-      // console.log("Background location tracking has started");
       setTrackingStatus(true);
     } catch (e) {
       setErr("Location Fetch Error\n" + e.message);
     }
   };
-  //--------------------------------------------------------
 
-  //------------------------------------to stop location updates----------------------------------------------
+  //to stop location updates
   const StopTracking = async () => {
     const tracking = await Location.hasStartedLocationUpdatesAsync(
-      RESCU_TRACKING);
+      RESCU_TRACKING
+    );
     if (tracking)
       await Location.stopLocationUpdatesAsync(RESCU_TRACKING)
         .then(() => {
@@ -193,9 +180,7 @@ function DoctorsScreen() {
         .catch((err) => setErr("StopTracking Error\n" + err));
   };
 
-
-
-  //-------------------this is big part of create request and send it----------------
+  //Create and send request
   async function SendRequest() {
     // await firebase;
     await Geofirestore.collection("requests")
@@ -222,11 +207,7 @@ function DoctorsScreen() {
       .then((result) => {
         Requestid = result.id;
 
-        setRequestID(Requestid);
-
         setisRequested(true);
-
-
 
         UnsubscribeRequest = dispatch(fetchRequest(result.id));
       })
@@ -237,21 +218,17 @@ function DoctorsScreen() {
         });
         console.log(error);
       });
-
-
   }
 
-
-  const getNearByUsers = async () => {
-    const query = await Geofirestore.collection("users").near({
-      center: new firebase.firestore.GeoPoint(
-        currentUser.coordinates.latitude,
-        currentUser.coordinates.longitude
-      ),
-      radius: 15,
-    });
-
-    await query
+  const getNearByUsers = () => {
+    usersunsubsrcibe = Geofirestore.collection("users")
+      .near({
+        center: new firebase.firestore.GeoPoint(
+          currentUser.coordinates.latitude,
+          currentUser.coordinates.longitude
+        ),
+        radius: 15,
+      })
       .where("medicalProfessional", "==", false)
       .get()
       .then((snapshot) => {
@@ -262,7 +239,6 @@ function DoctorsScreen() {
             ...data,
             id,
           };
-
         });
       })
       .catch((error) => {
@@ -277,16 +253,16 @@ function DoctorsScreen() {
     return users;
   };
 
-  //=====================================  USE EFFECTS  ========================================
+  //  USE EFFECTS
 
-  //Done on mount
+  //Done on mount + cleanup
   useLayoutEffect(() => {
-    const UnsubscribeUser =
-      dispatch(fetchUser());
+    const UnsubscribeUser = dispatch(fetchUser());
 
     return () => {
-      UnsubscribeUser()
-      UnsubscribeRequest()
+      UnsubscribeUser();
+      UnsubscribeRequest();
+      usersunsubsrcibe();
     };
   }, []);
 
@@ -305,7 +281,7 @@ function DoctorsScreen() {
     }
   }, [PermissionGranted, isRequested, Err]);
 
-  //-------------------for focusing and unfocusing Screen
+  //focusing and unfocusing Screen
   useFocusEffect(
     React.useCallback(() => {
       requestPermissions();
@@ -317,17 +293,7 @@ function DoctorsScreen() {
       };
     }, [])
   );
-
-  // checking if current request got accepted to view map
-  // useEffect(() => {
-  //   // console.log("i am here", currentRequest);
-  //   if (currentRequest ) {
-  //     console.log('NOW IM REQWUESTISOANGONAISONFG')
-  //     setIsLoading(false);
-  //   }
-  // }, [currentRequest]);
-
-
+  //rendering
   let screen;
   if (!currentUser) {
     screen = (
@@ -411,36 +377,10 @@ function DoctorsScreen() {
                     title="batee5"
                   ></Marker>
                 )}
-                {/* {users.length > 0 &&
-                    users.map((marker) => (
-                      <Marker
-                        onPress={() => {
-                          console.log(
-                            marker.g.geopoint.latitude,
-                            marker.g.geopoint.longitude
-                          );
-                        }}
-                        key={marker.id}
-                        coordinate={{
-                          latitude: marker.g.geopoint.latitude,
-                          longitude: marker.g.geopoint.longitude,
-                        }}
-                        title={marker.FirstName}
-                        description={marker.LastName}
-                      >
-                        <Image
-                          source={require("../assets/doctor.png")}
-                          style={{ height: 35, width: 35 }}
-                        ></Image>
-                      </Marker>
-                    ))} */}
               </MapView>
               <Button
                 style={[styles.button, { alignSelf: "center" }]}
                 onPress={() => {
-                  console.log("------------------pressed-------------");
-                  //       // await terminationFn.remove()
-                  //       // fcn()
                   StopTracking();
                   setPermissionGranted(0);
                 }}
@@ -457,9 +397,12 @@ function DoctorsScreen() {
           <Button
             onPress={() => {
               SendRequest();
-              getNearByUsers()
+              getNearByUsers();
             }}
-            style={[styles.button, { position: 'relative', alignSelf: 'center' }]}
+            style={[
+              styles.button,
+              { position: "relative", alignSelf: "center" },
+            ]}
             primary
             iconRight
             rounded
@@ -468,16 +411,18 @@ function DoctorsScreen() {
           </Button>
         </View>
       );
-    }
-    else {
+    } else {
       screen = (
-        <View style={[styles.View, { flexDirection: 'column' }]}>
+        <View style={[styles.View, { flexDirection: "column" }]}>
           <Text>Please Enable Location Tracking</Text>
           <Button
             onPress={() => {
-              requestPermissions()
+              requestPermissions();
             }}
-            style={[styles.button, { position: 'relative', alignSelf: 'center' }]}
+            style={[
+              styles.button,
+              { position: "relative", alignSelf: "center" },
+            ]}
             primary
             iconRight
             rounded
@@ -529,71 +474,3 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-
-{
-  /*      
-        {isLoading ? (<Spinner />) : (
-
-          <View>
-            <MapView style={{
-              width: Dimensions.get("window").width,
-              height: Dimensions.get("window").height / 2,
-            }}
-              initialRegion={{
-                latitude: 30.0930721,
-                longitude: 31.3298159,
-                latitudeDelta: 0.0,
-                longitudeDelta: 0.0,
-              }}
-              mapType={"standard"}
-            >
-              <MapView.Marker
-                coordinate={{
-                  latitude: 30.0930721,
-                  longitude: 31.3298159
-                }}
-                title={"title"}
-                description={"description"}
-              />
-            </MapView>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 10, marginBottom: 15 }}>
-              <Left>
-                <Text style={{ fontSize: 18, color: "#777777", marginLeft: 15 }}>Nearest Hospital:{"\n"}<Text style={{ fontSize: 18, color: "#777777", fontWeight: "bold" }}>5 Mins Away</Text></Text>
-              </Left>
-              <Body>
-                <Text style={{ fontSize: 18, color: "#777777", marginLeft: 15 }}>Location:{"\n"}<Text style={{ fontSize: 18, color: "#777777", fontWeight: "bold" }}>Masr El Gedida</Text></Text>
-              </Body>
-              <Right>
-                <Text style={{ fontSize: 18, color: "#777777", marginLeft: 15 }}>Name:{"\n"}<Text style={{ fontSize: 18, color: "#777777", fontWeight: "bold" }}>Cleopatra Hospital</Text></Text>
-              </Right>
-            </View>
-            <View>
-              <View style={styles.avatar}>
-                <Avatar.Image
-                  source={{
-                    uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
-                  }}
-                  size={80}
-                />
-              </View>
-
-              <View>
-                <Title style={styles.title}>Dr Ahmed Samir</Title>
-              </View>
-            </View>
-          </View>
-        )} */
-}
-
-{
-  /* if you want to activate request doctor with button
-         <Button 
-        rounded  
-        style={{marginTop: 10, backgroundColor: "rgb(250,91,90)"}}>
-          <Text>Request Doctor</Text>
-        </Button> */
-}
-
-{
-  /*add a spinner once you open the screen*/
-}

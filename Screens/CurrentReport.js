@@ -23,13 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUser, fetchRequest } from "../redux/actions";
 import { StyleSheet, Dimensions, Image } from "react-native";
 
-
 function CurrentReport() {
-
-
-
-  //=============================CONSTANTS=========================================================
-
   const currentUser = useSelector((state) => state.userState.currentUser);
 
   const currentRequest = useSelector(
@@ -37,15 +31,6 @@ function CurrentReport() {
   );
   // console.log("this is the current request", currentUser.uid, currentRequest);
   const dispatch = useDispatch();
-
-
-
-
-
-
-
-
-
 
   const [Selected, setSelected] = useState("Nothing Selected");
   const printme = () => {

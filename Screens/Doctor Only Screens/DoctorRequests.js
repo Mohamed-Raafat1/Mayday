@@ -1,42 +1,26 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
-import {
-  SafeAreaView,
-  FlatList,
-  StyleSheet,
-  StatusBar,
-  Alert,
-} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  Text,
-  Container,
-  Content,
-  List,
-  Icon,
-  ListItem,
-  Left,
-  Button,
-  Right,
-  Body,
-  View,
-  Thumbnail,
-  Item,
-} from "native-base";
-import { useDispatch, useSelector } from "react-redux";
-import RequestAcceptedScreen from "./RequestAcceptedScreen";
-import {
-  fetchRequest,
-  fetchUser,
-  fetchStaticRequests,
-  fetchAcceptedRequest,
-} from "../../redux/actions";
-let sharedChatid;
-
-import firebase from "firebase";
-import * as geofirestore from "geofirestore";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
+import firebase from "firebase";
+import {
+  Body,
+  Button,
+  Container,
+  Content,
+  Icon,
+  Left,
+  List,
+  ListItem,
+  Text,
+  Thumbnail,
+  View,
+} from "native-base";
+import React, { useEffect, useState } from "react";
+import { StyleSheet } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { Geofirestore } from "../../App";
+import { fetchUser } from "../../redux/actions";
+let sharedChatid;
 
 let Requests = [];
 
@@ -45,24 +29,20 @@ let updateRequestsFn = () => {
   console.log("State not yet initialized");
 };
 
-const geofire = require("geofire-common");
-const RESCU_TRACKING = "background-doctor-requests-location"
-////////////////////////  TASK MANAGER  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+const RESCU_TRACKING = "background-doctor-requests-location";
+//  TASK MANAGER
 TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
-  // console.log("im in doctor Requestssssss taskmanager");
   if (error) {
     console.log(error);
     // Error occurred - check `error.message` for more details.
     return;
   }
   if (data) {
-    // console.log(data);
     const { locations } = data;
 
     let latitude = locations[0].coords.latitude;
     let longitude = locations[0].coords.longitude;
 
-    let location = { latitude, longitude };
     await Geofirestore.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .update({
@@ -74,8 +54,6 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
           error
         );
       });
-
-
     // doctor querying for nearby requests
     await Geofirestore.collection("requests")
       .near({
@@ -85,9 +63,7 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
       .where("State", "==", "Pending")
       .get()
       .then((snapshot) => {
-        // console.log('current requests:ssssssssssssssssss', Requests.length)
         Requests = snapshot.docs.map((doc) => {
-          // console.log('the nearby users FOUND TANN  TAN  TNAN  NNNNNNN', doc.id)
           const data = doc.data();
           const id = doc.id;
           const distance = doc.distance;
@@ -97,57 +73,29 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
             distance: distance,
           };
         });
-        // console.log('after snapshot:----------------', Requests.length)
       });
 
-    updateRequestsFn(Requests)
-
-
-
-
+    updateRequestsFn(Requests);
   }
 });
-// ==============================================================
-
 const DoctorRequests = ({ navigation }) => {
-
-  //=============================CONSTANTS=========================================================
-
+  //constants
   const [Err, setErr] = useState(null);
   const [TrackingStatus, setTrackingStatus] = useState(false); //currently tracking ?
   const [PermissionGranted, setPermissionGranted] = useState(false); //foreground and background permissions granted?
-  const [AvailableRequests, setAvailableRequests] = useState(Requests)
+  //**************don't delete********
+  const [AvailableRequests, setAvailableRequests] = useState(Requests);
   updateRequestsFn = setAvailableRequests;
-  // Create a Firestore reference
-  const firestore = firebase.firestore();
-
-
+  //********************************** */
 
   const currentUser = useSelector((state) => state.userState.currentUser);
-  // Requests = useSelector((state) => state.userState.Requests);
   const dispatch = useDispatch();
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     dispatch(
-  //       fetchStaticRequests(
-  //         currentUser.g.geopoint.latitude,
-  //         currentUser.g.geopoint.longitude,
-  //         1000
-  //       )
-  //     );
 
-  //     return () => { };
-  //   }, [])
-  // );
-
-
-  //========================Functions==========================
-
-
-  //--------------------------------fn to request permissions----------------------------------------------------
+  //________functions__________
+  //request location permissions
   const requestPermissions = async () => {
     try {
-      //---------------- request foregroundlocationpermission
+      //request foregroundlocationpermission
       const { status: ForegroundStatus } =
         await Location.requestForegroundPermissionsAsync();
 
@@ -165,25 +113,18 @@ const DoctorRequests = ({ navigation }) => {
         throw Error("Background Location permission not granted!");
       }
 
-      // console.log("Background permission granted");
       //opening location services
       await Location.enableNetworkProviderAsync();
 
-      // console.log("location services enabled");
       setPermissionGranted(true);
     } catch (e) {
-      // console.log("Permission Error:\n ", e);
       setErr("Permission Error!\n" + e.message);
     }
   };
-  //--------------------------------------------------------------------------------------------------
 
-  //-------------Fn to retrieve location in the foreground and the background------------
+  //Fn to retrieve location
   const _getLocationAsync = async () => {
     try {
-      // console.log("entering get location");
-
-      //---------------------------Checking if Task Already Running
       const TaskStarted = await Location.hasStartedLocationUpdatesAsync(
         RESCU_TRACKING
       );
@@ -191,31 +132,33 @@ const DoctorRequests = ({ navigation }) => {
         Location.stopLocationUpdatesAsync(RESCU_TRACKING);
       }
 
-      //-----------------to stop tracking from nearby hospital & doctors screen when starting tracking from here
-      const nearbyhospitaltracking = await Location.hasStartedLocationUpdatesAsync(
-        "background-nearest-hospital-task"
-      );
+      //to stop tracking from nearby hospital & doctors screen when starting tracking from here
+      const nearbyhospitaltracking =
+        await Location.hasStartedLocationUpdatesAsync(
+          "background-nearest-hospital-task"
+        );
       if (nearbyhospitaltracking) {
-        // console.log('stopping nearby hospital tracking')
-        await Location.stopLocationUpdatesAsync("background-nearest-hospital-task");
+        await Location.stopLocationUpdatesAsync(
+          "background-nearest-hospital-task"
+        );
       }
 
-      const doctorscreentracking = await Location.hasStartedLocationUpdatesAsync(
-        "background-doctor-screen-location-task"
-      );
+      const doctorscreentracking =
+        await Location.hasStartedLocationUpdatesAsync(
+          "background-doctor-screen-location-task"
+        );
       if (doctorscreentracking) {
-        // console.log('stopping nearby hospital tracking')
-        await Location.stopLocationUpdatesAsync("background-doctor-screen-location-task");
+        await Location.stopLocationUpdatesAsync(
+          "background-doctor-screen-location-task"
+        );
       }
 
-
-
-      //---------------------------starting fn to fetch location in the background
-      //------------------------after checking that acceptedrequest tracking is disabled
-      const acceptedrequesttracking = await Location.hasStartedLocationUpdatesAsync(
-        "background-accepted-request-location"
-      );
-      // console.log('tghis is the4 doctor screen haslocatin started------------------', acceptedrequesttracking)
+      //starting fn to fetch location in the background
+      //after checking that acceptedrequest tracking is disabled
+      const acceptedrequesttracking =
+        await Location.hasStartedLocationUpdatesAsync(
+          "background-accepted-request-location"
+        );
       if (!acceptedrequesttracking) {
         await Location.startLocationUpdatesAsync(RESCU_TRACKING, {
           accuracy: Location.Accuracy.BestForNavigation,
@@ -224,19 +167,16 @@ const DoctorRequests = ({ navigation }) => {
         });
       }
 
-
-      // console.log("Background location tracking has started");
       setTrackingStatus(true);
     } catch (e) {
       setErr("Location Fetch Error\n" + e.message);
     }
   };
-  //--------------------------------------------------------
 
-  //------------------------------------to stop location updates----------------------------------------------
   const StopTracking = async () => {
     const tracking = await Location.hasStartedLocationUpdatesAsync(
-      RESCU_TRACKING);
+      RESCU_TRACKING
+    );
     if (tracking)
       await Location.stopLocationUpdatesAsync(RESCU_TRACKING)
         .then(() => {
@@ -244,9 +184,6 @@ const DoctorRequests = ({ navigation }) => {
         })
         .catch((err) => setErr("StopTracking Error\n" + err));
   };
-
-  //----------------------------------------------------------
-
 
   const AcceptRequest = async (request) => {
     await firebase
@@ -273,7 +210,6 @@ const DoctorRequests = ({ navigation }) => {
     navigation.navigate("CurrentRequest", {
       requestid: request.Requestid,
       chatid: sharedChatid,
-      
     });
 
     //need to notify other user that their request has been accepted
@@ -437,7 +373,9 @@ const DoctorRequests = ({ navigation }) => {
               <Text note numberOfLines={1}>
                 Accident Type: {request.AccidentType}
               </Text>
-              <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+              <View
+                style={{ flexDirection: "row", justifyContent: "flex-end" }}
+              >
                 <Button transparent>
                   <Icon style={{ marginRight: -10 }} active name="location" />
                   <Text>Location</Text>
@@ -457,28 +395,17 @@ const DoctorRequests = ({ navigation }) => {
               </View>
             </Body>
           </ListItem>
-          /*  <View key={request.Requestid}>
-            <Text>
-              {" "}
-              {request.PatientFirstName + " " + request.PatientLastName}
-            </Text>
-          </View> */
         );
       });
   };
 
-
-
-  //=====================================  USE EFFECTS  ========================================
-
+  //USE EFFECTS
   //for onmount and cleanup
   useEffect(() => {
-    const unsubscribeUser = 
-    dispatch(fetchUser());
+    const unsubscribeUser = dispatch(fetchUser());
 
-    return () => { 
-      unsubscribeUser()
-      
+    return () => {
+      unsubscribeUser();
     };
   }, []);
 
@@ -488,14 +415,11 @@ const DoctorRequests = ({ navigation }) => {
       requestPermissions();
 
       return () => {
-
-        // setisRequested(false);
         setPermissionGranted(0);
         setErr(null);
       };
     }, [])
   );
-
 
   useEffect(() => {
     if (Err) {
@@ -503,30 +427,25 @@ const DoctorRequests = ({ navigation }) => {
       if (TrackingStatus == true) StopTracking();
     } else {
       if (PermissionGranted == true && TrackingStatus == false) {
-        // console.log("entering useeffect after permission granted");
         _getLocationAsync();
       } else if (PermissionGranted == false && TrackingStatus == true) {
-        // console.log("3: was tracking but permission now denied so stopping");
         StopTracking();
       }
     }
   }, [PermissionGranted, Err]);
 
-
-
-
-  let screen
+  let screen;
 
   if (Err || !PermissionGranted) {
     screen = (
-      <View style={[styles.View, { flexDirection: 'column' }]}>
+      <View style={[styles.View, { flexDirection: "column" }]}>
         <Text>Please Enable Location Tracking</Text>
         <Button
           onPress={() => {
-            setErr(null)
-            requestPermissions()
+            setErr(null);
+            requestPermissions();
           }}
-          style={[styles.button, { position: 'relative', alignSelf: 'center' }]}
+          style={[styles.button, { position: "relative", alignSelf: "center" }]}
           primary
           iconRight
           rounded
@@ -534,25 +453,17 @@ const DoctorRequests = ({ navigation }) => {
           <Text>Enable Tracking</Text>
         </Button>
       </View>
-    )
-  }
-
-
-  // else if (Requests.length === 0) screen = (
-  //   <View style={[styles.View, { flexDirection: 'column' }]}>
-  //     <Text>There are no currently available requests FUCKKCKCKKCKCKCKKC</Text>
-  //   </View>
-  // )
-
-  else {
+    );
+  } else {
     screen = (
-
       <Container>
-        {Requests.length === 0 ?
-          <View style={[styles.View, { flexDirection: 'column' }]}>
-            <Text style={{alignSelf:'center'}}>There are no currently available requests </Text>
+        {Requests.length === 0 ? (
+          <View style={[styles.View, { flexDirection: "column" }]}>
+            <Text style={{ alignSelf: "center" }}>
+              There are no currently available requests{" "}
+            </Text>
           </View>
-          :
+        ) : (
           <Content>
             <List>
               <ListItem itemHeader first style={{ marginBottom: -30 }}>
@@ -561,22 +472,14 @@ const DoctorRequests = ({ navigation }) => {
               {RequestsList()}
             </List>
           </Content>
-        }
-
+        )}
       </Container>
     );
   }
-  return <Container>
-    {screen}
-    {/* <View>
-    <Button onPress={async () => { await TaskManager.unregisterAllTasksAsync() }}>
-      <Text>a8787a7a77a7a</Text>
-    </Button></View> */}
-  </Container>
+  return <Container>{screen}</Container>;
 };
 
 export default DoctorRequests;
-
 
 const styles = StyleSheet.create({
   container: {

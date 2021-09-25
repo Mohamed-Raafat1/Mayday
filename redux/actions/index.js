@@ -15,24 +15,22 @@ import {
 } from "../constants";
 
 export function fetchUser() {
-
   return (dispatch) => {
-    const Unsubscribe =
-      firebase
-        .firestore()
-        .collection("users")
-        .doc(firebase.auth().currentUser.uid)
-        .onSnapshot((snapshot) => {
-          if (snapshot.exists) {
-            dispatch({
-              type: USER_STATE_CHANGE,
-              currentUser: snapshot.data(),
-            });
-          } else {
-            console.log("does not exist");
-          }
-        });
-    return Unsubscribe
+    const Unsubscribe = firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .onSnapshot((snapshot) => {
+        if (snapshot.exists) {
+          dispatch({
+            type: USER_STATE_CHANGE,
+            currentUser: snapshot.data(),
+          });
+        } else {
+          console.log("does not exist");
+        }
+      });
+    return Unsubscribe;
   };
 }
 //--------under construction-----------------------
@@ -105,7 +103,7 @@ export function fetchAcceptedRequest(requestid) {
     //   });
     //   return query;
     // }
-    return query
+    return query;
   };
 }
 
@@ -120,27 +118,26 @@ export function fetchAcceptedRequest(requestid) {
 
 export function fetchRequest(id) {
   return (dispatch) => {
-    const Unsubscribe =
-      firebase
-        .firestore()
-        .collection("requests")
-        .doc(id)
-        .onSnapshot((snapshot) => {
-          if (snapshot) {
-            let data = snapshot.data();
+    const Unsubscribe = firebase
+      .firestore()
+      .collection("requests")
+      .doc(id)
+      .onSnapshot((snapshot) => {
+        if (snapshot) {
+          let data = snapshot.data();
 
-            dispatch({
-              type: REQUEST_STATE_CHANGE,
-              currentRequest: {
-                ...data,
-                id,
-              },
-            });
-          } else {
-            console.log("does not exist");
-          }
-        });
-    return Unsubscribe
+          dispatch({
+            type: REQUEST_STATE_CHANGE,
+            currentRequest: {
+              ...data,
+              id,
+            },
+          });
+        } else {
+          console.log("does not exist");
+        }
+      });
+    return Unsubscribe;
   };
 }
 
@@ -148,11 +145,10 @@ export function CancelCurrentRequest() {
   return (dispatch) => {
     dispatch({
       type: REQUEST_STATE_CHANGE,
-      currentRequest: null
+      currentRequest: null,
     });
   };
-};
-
+}
 
 // function to fetch nearby requests
 // due to the fact that users location keeps changing we need to create a task to keep searching for nearby reqests
@@ -226,7 +222,7 @@ export function updateMessages(message, sender, reciever, chatid) {
       .then((snapshot) => {
         messageid = snapshot.id;
       });
-    firebase
+    await firebase
       .firestore()
       .collection("users")
       .doc(reciever)
@@ -242,7 +238,7 @@ export function updateMessages(message, sender, reciever, chatid) {
         chatRecepient: reciever,
         uid: reciever,
       });
-    firebase
+    await firebase
       .firestore()
       .collection("users")
       .doc(sender)
@@ -260,7 +256,7 @@ export function updateMessages(message, sender, reciever, chatid) {
           uid: sender,
         },
       });
-    firebase
+    await firebase
       .firestore()
       .collection("users")
       .doc(reciever)
@@ -292,8 +288,8 @@ export function updateMessages(message, sender, reciever, chatid) {
   };
 }
 export function fetchMessages(id, chatid) {
-  return  (dispatch) => {
-    let query =  firebase
+  return (dispatch) => {
+    let query = firebase
       .firestore()
       .collection("users")
       .doc(id)
@@ -301,7 +297,7 @@ export function fetchMessages(id, chatid) {
       .where("chatid", "==", chatid)
       .orderBy("timeStamp", "desc")
       .onSnapshot((snapshot) => {
-        snapshot.docs.map((dummy) => { });
+        snapshot.docs.map((dummy) => {});
         let messages = snapshot.docs.map((doc) => {
           const data = doc.data();
           const id = doc.id;
@@ -322,7 +318,7 @@ export function fetchMessages(id, chatid) {
           messages,
         });
       });
-    return query
+    return query;
   };
 }
 // export function fetchMessages(id) {
@@ -347,29 +343,28 @@ export function fetchMessages(id, chatid) {
 // }
 export function fetchConversations() {
   return (dispatch) => {
-    const Unsubscribe =
-      firebase
-        .firestore()
-        .collection("users")
-        .doc(firebase.auth().currentUser.uid)
-        .collection("conversations")
-        .orderBy("latestMessage.createdAt", "desc")
-        .onSnapshot((snapshot) => {
-          let conversations = snapshot.docs.map((doc) => {
-            const data = doc.data();
-            const id = doc.id;
-            return {
-              userid: firebase.auth().currentUser.uid,
-              id,
-              data,
-            };
-          });
-          dispatch({
-            type: USER_CHATLIST_CHANGE,
-            conversations,
-          });
+    const Unsubscribe = firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("conversations")
+      .orderBy("latestMessage.createdAt", "desc")
+      .onSnapshot((snapshot) => {
+        let conversations = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          return {
+            userid: firebase.auth().currentUser.uid,
+            id,
+            data,
+          };
         });
-    return Unsubscribe
+        dispatch({
+          type: USER_CHATLIST_CHANGE,
+          conversations,
+        });
+      });
+    return Unsubscribe;
   };
 }
 export function fetchChatList() {

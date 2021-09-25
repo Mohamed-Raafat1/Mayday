@@ -1,31 +1,10 @@
-import React, { Component } from "react";
-import {
-  View,
-  Container,
-  Header,
-  Badge,
-  Content,
-  Button,
-  Text,
-  Icon,
-  Card,
-  CardItem,
-  Thumbnail,
-  constants,
-  TouchableOpacity,
-  StyleSheet,
-} from "native-base";
 import { useNavigation } from "@react-navigation/native";
+import { Container } from "native-base";
+import React from "react";
 import MapView from "react-native-maps";
-import { useState, useEffect } from "react";
-import * as Location from "expo-location";
 
 export default function RequestAmbulance() {
   const navigation = useNavigation();
-
-  function ReqAmbNav() {
-    navigation.navigate("Home");
-  }
 
   return (
     <Container>

@@ -1,43 +1,36 @@
-import "react-native-gesture-handler";
-import React, { useState, useEffect, useRef } from "react";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import RadioGroup from "react-native-radio-buttons-group";
-import {
-  Text,
-  Button,
-  Icon,
-  Form,
-  Container,
-  Header,
-  Content,
-  Item,
-  Input,
-  ListItem,
-  CheckBox,
-  Toast,
-  Label,
-  Radio,
-  Row,
-  Textarea,
-  Picker,
-  Subtitle,
-} from "native-base";
-
-import {
-  View,
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-} from "react-native";
-import GlobalStyles from "../GlobalStyles";
-import firebase from "firebase";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
+import firebase from "firebase";
+import {
+  Button,
+  CheckBox,
+  Form,
+  Icon,
+  Input,
+  Item,
+  Label,
+  ListItem,
+  Picker,
+  Subtitle,
+  Text,
+  Textarea,
+  Toast,
+} from "native-base";
+import React, { useEffect, useState } from "react";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from "react-native";
+import "react-native-gesture-handler";
+import RadioGroup from "react-native-radio-buttons-group";
+import GlobalStyles from "../GlobalStyles";
 import { DailyTipsAlert } from "../HomeNavigation/tabs";
 
-//====================================================================//
 // Notif. Token Registeration function
 async function registerForPushNotificationsAsync() {
   let token;
@@ -58,7 +51,6 @@ async function registerForPushNotificationsAsync() {
   } else {
     alert("Must use physical device for Push Notifications");
   }
-  //=====================================//
   if (Platform.OS === "android") {
     Notifications.setNotificationChannelAsync("default", {
       name: "default",
@@ -70,7 +62,6 @@ async function registerForPushNotificationsAsync() {
 
   return token;
 }
-//====================================================================//
 
 function RegistrationScreen({ navigation }) {
   //regex for checking email validity
@@ -106,8 +97,6 @@ function RegistrationScreen({ navigation }) {
     );
   }, []);
 
-  //====================================================================//
-
   //regex for checking email syntax validity
   const validateEmail = (text) => {
     setEmail(text);
@@ -123,7 +112,6 @@ function RegistrationScreen({ navigation }) {
     if (Password === text) setEqual(true);
     else setEqual(false);
   };
-  //====================================================================//
 
   const onSignUp = async () => {
     //Gathering MedicalID
@@ -241,7 +229,6 @@ function RegistrationScreen({ navigation }) {
     setShow(true);
     setMode(currentMode);
   };
-  //====================================================================//
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
