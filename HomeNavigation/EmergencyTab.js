@@ -28,7 +28,7 @@ export default function EmergencyTab({ navigation }) {
 
 
   //--------for preventing the back button
-  
+
   const hasUnsavedChanges = true;
   //------------------------------------
 
@@ -41,7 +41,7 @@ export default function EmergencyTab({ navigation }) {
 
   //====================================================================================================
 
- 
+
 
 
   //========================Functions==========================
@@ -52,10 +52,10 @@ export default function EmergencyTab({ navigation }) {
 
   //-------------Done on mount
   useLayoutEffect(() => {
-    dispatch(fetchUser());
+    const Unsubscribe = dispatch(fetchUser());
 
     return () => {
-     
+      Unsubscribe()
     };
   }, []);
 
@@ -83,7 +83,7 @@ export default function EmergencyTab({ navigation }) {
               style: "destructive",
               // If the user confirmed, then we dispatch the action we blocked earlier
               // This will continue the action that had triggered the removal of the screen
-              onPress: async() => {
+              onPress: async () => {
                 dispatch(CancelCurrentRequest())
                 await TaskManager.unregisterAllTasksAsync()
                 navigation.dispatch(e.data.action)
@@ -165,11 +165,11 @@ export default function EmergencyTab({ navigation }) {
     // </Container>
   );
 }
-  
 
 
 
- 
+
+
 
 
 const styles = StyleSheet.create({});

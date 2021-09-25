@@ -16,8 +16,13 @@ const temp = () => {
 
   //Done everytime u navigate to the screen
   useLayoutEffect(() => {
-    //Fetch user regardless of permission granted or not
-    dispatch(fetchUser());
+    const Unsubscribe =
+      //Fetch user regardless of permission granted or not
+      dispatch(fetchUser());
+
+    return () => {
+      Unsubscribe()
+    }
   }, []);
 
   useEffect(() => {

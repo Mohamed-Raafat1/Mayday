@@ -283,20 +283,25 @@ function Tabs({ navigation }) {
   );
 
 
-   //!!!!!!!!!!!!!REMOVE LATER!!!!!!!!!!!!!!!!!!!!
-    //!!!!!!!!!!!!!!!!!this is used to unregister all tasks which is used in onmount
-    //!!This is only used to help when testing cuz reloading app doesnt remove tasks
-    const unregisterTasks = useCallback(async()=>{
-      await TaskManager.unregisterAllTasksAsync()
-        .catch(err => console.log('ops! error unregistering alltasks', err))
-    },[]) 
-    
-    
+  //!!!!!!!!!!!!!REMOVE LATER!!!!!!!!!!!!!!!!!!!!
+  //!!!!!!!!!!!!!!!!!this is used to unregister all tasks which is used in onmount
+  //!!This is only used to help when testing cuz reloading app doesnt remove tasks
+  const unregisterTasks = useCallback(async () => {
+    await TaskManager.unregisterAllTasksAsync()
+      .catch(err => console.log('ops! error unregistering alltasks', err))
+  }, [])
+
+
 
   useLayoutEffect(() => {
-    dispatch(fetchUser());
+    const userUnsubscribe =
+      dispatch(fetchUser());
     dispatch(fetchNotifications());
     unregisterTasks()//!!!!!!!!!!!!!!!!!!!!REMOVE LATER!!!!!!!!!!!!!!
+
+    return () => {
+      userUnsubscribe()
+    }
   }, []);
 
   useEffect(() => {
@@ -317,15 +322,15 @@ function Tabs({ navigation }) {
           response.notification.request.content.data.category === "DailyTip"
         )
           navigation.navigate("First Aid");
-          else if(
-            response.notification.request.content.data.category === "chatMsg"
-          )
+        else if (
+          response.notification.request.content.data.category === "chatMsg"
+        )
           navigation.navigate("ChatList");
       });
-      
 
 
-   
+
+
 
 
 

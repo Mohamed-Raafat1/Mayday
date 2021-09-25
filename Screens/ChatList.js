@@ -32,6 +32,7 @@ import {
   fetchMessages,
   fetchUser,
 } from "../redux/actions";
+import { user } from "../redux/reducers/user";
 
 function usePreviousRouteName() {
   return useNavigationState((state) =>
@@ -44,8 +45,12 @@ function usePreviousRouteName() {
 const ChatList = ({ navigation, previous }) => {
   const dispatch = useDispatch();
   useLayoutEffect(() => {
-    dispatch(fetchConversations());
-    dispatch(fetchUser());
+    const conversUnsubscribe = dispatch(fetchConversations());
+    const userUnsubscribe = dispatch(fetchUser());
+    return () => {
+      conversUnsubscribe()
+      userUnsubscribe()
+    }
   }, []);
 
   const conversations = useSelector((state) => state.userState.conversations);
@@ -171,9 +176,7 @@ const ChatList = ({ navigation, previous }) => {
       return (
         <ListItem
           onPress={async () => {
-            await dispatch(
-              fetchMessages(firebase.auth().currentUser.uid, chat.id)
-            );
+
             navigation.navigate("Chat", {
               userid: chat.data.userid,
               chatid: chat.id,
