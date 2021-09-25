@@ -18,6 +18,8 @@ import { fetchAcceptedRequest } from "../redux/actions/index";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser, fetchConversations } from "../redux/actions/index";
 
+
+
 //===============================================================================
 
 //for editprofilescreen
@@ -65,8 +67,17 @@ const HomeScreen = ({ navigation, route }) => {
     }
   }, [currentUser]);
 
+
+
+  
+  
+
+
   useLayoutEffect(() => {
     dispatch(fetchUser());
+
+   
+    
   }, []);
   //------------------------------getting nearby Users-------------------------------------------
   const getNearBySOSUsers = async () => {

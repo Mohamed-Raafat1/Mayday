@@ -1,13 +1,13 @@
 //BUTTONS NATIVE BASE
 
-import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
+import React, { useEffect, useState, useRef, useLayoutEffect, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 //React Native
 import {
   NavigationContainer,
   useNavigationContainerRef,
 } from "@react-navigation/native";
-
+import * as TaskManager from "expo-task-manager";
 import { useRoute } from "@react-navigation/native";
 import { StyleSheet, Image, StatusBar, Alert } from "react-native";
 import { Avatar, Badge, withBadge } from "react-native-elements";
@@ -268,7 +268,7 @@ function Mytabs() {
 
 let currentAcceptedRequest;
 function Tabs({ navigation }) {
-  console.log(currentAcceptedRequest);
+  // console.log(currentAcceptedRequest);
   //-----------------------Push Notifications------------------------------------
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
@@ -282,9 +282,21 @@ function Tabs({ navigation }) {
     (state) => state.notificationState.currentNotifications
   );
 
+
+   //!!!!!!!!!!!!!REMOVE LATER!!!!!!!!!!!!!!!!!!!!
+    //!!!!!!!!!!!!!!!!!this is used to unregister all tasks which is used in onmount
+    //!!This is only used to help when testing cuz reloading app doesnt remove tasks
+    const unregisterTasks = useCallback(async()=>{
+      await TaskManager.unregisterAllTasksAsync()
+        .catch(err => console.log('ops! error unregistering alltasks', err))
+    },[]) 
+    
+    
+
   useLayoutEffect(() => {
     dispatch(fetchUser());
     dispatch(fetchNotifications());
+    unregisterTasks()//!!!!!!!!!!!!!!!!!!!!REMOVE LATER!!!!!!!!!!!!!!
   }, []);
 
   useEffect(() => {
@@ -311,6 +323,13 @@ function Tabs({ navigation }) {
           navigation.navigate("ChatList");
       });
       
+
+
+   
+
+
+
+
 
     // freeing Handlers
     return () => {
@@ -343,7 +362,7 @@ function Tabs({ navigation }) {
   //=============================================================================
   const getTabBarVisibility = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? "Home";
-    console.log(routeName);
+    // console.log(routeName);
     if (routeName === "Chat") return false;
     else return true;
   };
@@ -582,15 +601,15 @@ const HomeStackScreen = ({ navigation }) => (
 const DoctorRequestsStackScreen = () => (
   <DoctorRequestsStack.Navigator>
     <DoctorRequestsStack.Screen
-      name="CurrentRequest"
-      component={RequestAcceptedScreen}
-      options={{ title: "Current Request" }}
-    />
-
-    <DoctorRequestsStack.Screen
       name="DoctorRequests"
       component={DoctorRequests}
       options={{ title: "Requests" }}
+    />
+
+    <DoctorRequestsStack.Screen
+      name="CurrentRequest"
+      component={RequestAcceptedScreen}
+      options={{ title: "Current Request" }}
     />
 
     <DoctorRequestsStack.Screen

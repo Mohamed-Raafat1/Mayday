@@ -8,12 +8,14 @@ import * as TaskManager from "expo-task-manager";
 import firebase from "firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/actions";
+import { Geofirestore } from "../App";
+
 const geofire = require("geofire-common");
 
-const RESCU_TRACKING = "background-location-task";
+const RESCU_TRACKING = "background-nearest-hospital-task";
 ////////////////////////  TASK MANAGER  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
-  console.log("im in taskmanager");
+TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
+  // console.log("im in taskmanager");
   if (error) {
     console.log(error);
     // Error occurred - check `error.message` for more details.
@@ -27,15 +29,10 @@ TaskManager.defineTask(RESCU_TRACKING, ({ data, error }) => {
 
     let latitude = locations[0].coords.latitude;
     let longitude = locations[0].coords.longitude;
-    const hash = geofire.geohashForLocation([latitude, longitude]);
-    let location = { latitude, longitude }
-    firebase
-      .firestore()
-      .collection("users")
+    await Geofirestore.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .update({
-        geohash: hash,
-        location,
+        coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
       })
       .catch((error) => {
         console.log(
@@ -114,17 +111,20 @@ export default function ViewNearestHospital({ navigation, route }) {
 
 
 
-      console.log("Background permission granted");
+      // console.log("Background permission granted");
+
       //opening location services
       await Location.enableNetworkProviderAsync()
       // .then(() => {
-      console.log('location services enabled')
+
+      // console.log('location services enabled')
+
       setPermissionGranted(true);
       // })
       // .catch((err) => setErr("Networkservice error\n" + err));
     }
     catch (e) {
-      console.log('Permission Error:\n ', e)
+      // console.log('Permission Error:\n ', e)
       setErr('Permission Error!\n' + e.message)
     }
   };
@@ -133,58 +133,34 @@ export default function ViewNearestHospital({ navigation, route }) {
   //-------------  Fn to retrieve location in the foreground and the background------------
   const _getLocationAsync = async () => {
     try {
-      console.log("entering get location");
+      // console.log("entering get location");
 
 
-      // await Location.hasServicesEnabledAsync()
-      //   .then(r => {
-      //     console.log(r)
-      //   }
-      //   )
-      //   .catch(e => {
-      //     throw Error('serveice fujk' + e.message)
-      //   })
-      //------------------------  fn to get initial location for the mapview
-      // const currentloc = await 
-      // await Location.getCurrentPositionAsync({
-      //   accuracy: Location.Accuracy.Balanced,
-
-      // })
-      //   .then((loc) => {
-      //     console.log('initial Location received\n', loc)
-      //     setlocation(loc.coords);
-      //   })
-      //   .catch((err) => {
-      //     // console.log("getcurrentposition error:", err);
-      //     // setErr("GetCurrentPosition Error \n" + err);
-      //     throw Error('Error' + err.message)
-      //   });
-
-
-      // console.log('currentloc:',currentloc)
-      // setlocation(currentloc.coords)
-
-
-
-
-      //if getlocation returned an error then exit
-      // if (Err) return
       //---------------------------Checking if Task Already Running
       const TaskStarted = await Location.hasStartedLocationUpdatesAsync(RESCU_TRACKING)
       if (TaskStarted) {
-        Location.stopLocationUpdatesAsync(RESCU_TRACKING)
+        await Location.stopLocationUpdatesAsync(RESCU_TRACKING)
       }
 
-      //---------------------------starting fn to fetch location in the background
-      await Location.startLocationUpdatesAsync(RESCU_TRACKING, {
-        accuracy: Location.Accuracy.BestForNavigation,
-        showsBackgroundLocationIndicator: true,
-        timeInterval: 3000,
-      })
+      //-----------------
+      const doctorscreentracking = await Location.hasStartedLocationUpdatesAsync(
+        "background-doctor-screen-location-task"
+      );
+      // console.log('tghis is the4 doctor screen haslocatin started------------------', doctorscreentracking)
+      if (!doctorscreentracking) {
+        //---------------------------starting fn to fetch location in the background
+        await Location.startLocationUpdatesAsync(RESCU_TRACKING, {
+          accuracy: Location.Accuracy.BestForNavigation,
+          showsBackgroundLocationIndicator: true,
+          timeInterval: 3000,
+        })
 
-      console.log("Background location tracking has started");
+
+      }
+
+
+      // console.log("Background location tracking has started");
       setTrackingStatus(true);
-
       // .catch((err) => {
       //   console.log("StartLocationUpdate Error:", err);
       //   setErr("Error when starting LocationUpdate:\n" + err);
@@ -198,12 +174,15 @@ export default function ViewNearestHospital({ navigation, route }) {
 
   //------------------------------------  to stop location updates  ----------------------------------------------
   const StopTracking = async () => {
-    if (TrackingStatus)
-      Location.stopLocationUpdatesAsync(RESCU_TRACKING)
-        .then(() => {
-          setTrackingStatus(false);
-        })
+
+    // if 
+    const tracking = await Location.hasStartedLocationUpdatesAsync(
+      RESCU_TRACKING);
+    if (tracking) {
+      await Location.stopLocationUpdatesAsync(RESCU_TRACKING)
         .catch((err) => setErr("StopTracking Error\n" + err));
+    }
+    setTrackingStatus(false);
   };
 
   //=====================================  USE EFFECTS  ========================================
@@ -213,7 +192,6 @@ export default function ViewNearestHospital({ navigation, route }) {
     //Fetch user regardless of permission granted or not
     dispatch(fetchUser());
     return () => {
-      StopTracking()
     }
   }, []);
 
@@ -224,7 +202,7 @@ export default function ViewNearestHospital({ navigation, route }) {
       // setthemargin(3)
       return () => {
         //   PauseLocation()
-        setPermissionGranted(null);
+        setPermissionGranted(0);
         setErr(null);
       };
     }, [])
@@ -239,12 +217,12 @@ export default function ViewNearestHospital({ navigation, route }) {
     }
     else {
       if (PermissionGranted == true && TrackingStatus == false) {
-        console.log("Getting Location After Permission Granted");
+        // console.log("Getting Location After Permission Granted");
         _getLocationAsync();
       }
 
       else if (PermissionGranted == false && TrackingStatus == true) {
-        console.log("3: was tracking but permission now denied so stopping");
+        // console.log("3: was tracking but permission now denied so stopping");
         StopTracking();
       }
     }
@@ -280,19 +258,23 @@ export default function ViewNearestHospital({ navigation, route }) {
   if (Err) {
     screen = (
       <View>
-        <Text>{Err}</Text>
+        <Text >Please Turn On Your Location Services</Text>
+        <Button style={styles.button} onPress={() => {
+          // setPermissionGranted(0)
+          requestPermissions()
+          setErr(false)
+        }}>
+          <Text>Enable Tracking</Text>
+        </Button>
       </View>
     );
   }
-
-
-
   else if (TrackingStatus == false) {
     screen = (
       <View>
         <Text>Tracking Disabled</Text>
         <Button style={styles.button} onPress={() => {
-          setPermissionGranted(null)
+          setPermissionGranted(0)
           requestPermissions()
         }}>
           <Text>Enable Tracking</Text>
@@ -300,7 +282,7 @@ export default function ViewNearestHospital({ navigation, route }) {
       </View>)
   }
   else if (location.latitude === 0 && location.longitude === 0) {
-    console.log('entering settimeout______________________________________', location)
+    // console.log('entering settimeout______________________________________', location)
 
     screen = (
       <View>
@@ -446,10 +428,11 @@ export default function ViewNearestHospital({ navigation, route }) {
         >
           <Text>Stop Tracking</Text>
         </Button>
-        <Button onPress={() => { 
+        <Button onPress={() => {
 
           console.log(MarkerPosition);
-          Linking.openURL('https://www.google.com/maps/dir/?api=1&destination=' + MarkerPosition.latitude + ',' + MarkerPosition.longitude) }}>
+          Linking.openURL('https://www.google.com/maps/dir/?api=1&destination=' + MarkerPosition.latitude + ',' + MarkerPosition.longitude)
+        }}>
           <Text>Get Direction To {MarkerName}</Text>
         </Button>
       </View>
@@ -606,6 +589,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginBottom: 10,
     alignContent: "center",
+    alignSelf:'center',
     backgroundColor: "rgb(250,91,90)",
   },
 });

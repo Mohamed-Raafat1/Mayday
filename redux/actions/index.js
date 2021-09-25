@@ -77,7 +77,7 @@ export function fetchAcceptedRequest(requestid) {
           data = { ...data };
           let id = snapshot.id;
 
-          if (data.State == "Done") done = true;
+          if (data.State == "Done" || data.State == "Cancelled") done = true;
 
           dispatch({
             type: ACCEPTED_REQUEST_CHANGE,
@@ -90,9 +90,30 @@ export function fetchAcceptedRequest(requestid) {
           console.log("does not exist");
         }
       });
-    if (done) return query;
+
+    //if the state is done or cancelled then stop querying and empty the AcceptedRequest
+    if (done) {
+      dispatch({
+        type: ACCEPTED_REQUEST_CHANGE,
+        AcceptedRequest: {
+          ...data,
+          id,
+        },
+      });
+      return query;
+    }
   };
 }
+
+// export function CancelAcceptedRequest() {
+//   return (dispatch) => {
+//     dispatch({
+//       type: ACCEPTED_REQUEST_CHANGE,
+//       AcceptedRequest: null
+//     });
+//   };
+// }
+
 export function fetchRequest(id) {
   return (dispatch) => {
     firebase
@@ -116,6 +137,17 @@ export function fetchRequest(id) {
       });
   };
 }
+
+export function CancelCurrentRequest() {
+  return (dispatch) => {
+    dispatch({
+      type: REQUEST_STATE_CHANGE,
+      currentRequest: null
+    });
+  };
+};
+
+
 // function to fetch nearby requests
 // due to the fact that users location keeps changing we need to create a task to keep searching for nearby reqests
 // this needs to happen even when the medical professional is on the move

@@ -16,11 +16,37 @@ import {
   View,
   Left,
 } from "native-base";
-import { StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import firebase from "firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser, fetchRequest } from "../redux/actions";
+import { StyleSheet, Dimensions, Image } from "react-native";
+
 
 function CurrentReport() {
+
+
+
+  //=============================CONSTANTS=========================================================
+
+  const currentUser = useSelector((state) => state.userState.currentUser);
+
+  const currentRequest = useSelector(
+    (state) => state.requestState.currentRequest
+  );
+  // console.log("this is the current request", currentUser.uid, currentRequest);
+  const dispatch = useDispatch();
+
+
+
+
+
+
+
+
+
+
   const [Selected, setSelected] = useState("Nothing Selected");
   const printme = () => {
     console.log(Selected);
