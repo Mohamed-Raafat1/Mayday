@@ -1,28 +1,13 @@
-import React, { useState, Component, useEffect } from "react";
-import {
-  Picker,
-  Item,
-  Content,
-  Container,
-  Textarea,
-  Header,
-  Button,
-  Text,
-  View,
-  Icon,
-  Left,
-  Body,
-  Right,
-  Title,
-  Form,
-} from "native-base";
-import { StyleSheet, TextInput } from "react-native";
-import { Avatar } from "react-native-paper";
-
 import firebase from "firebase";
+import {
+  Body, Button, Container, Content, Form, Header, Icon, Item, Left, Picker, Right, Text, Textarea, Title, View
+} from "native-base";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, TextInput } from "react-native";
+import Avatar from 'react-native-interactive-avatar';
+import {onPressImage } from "../Components/functions/functions";
 require("firebase/firestore");
 require("firebase/firebase-storage");
-
 function EditProfileScreen({ navigation, route }) {
   const [isValid, setIsValid] = useState(false);
 
@@ -54,6 +39,8 @@ function EditProfileScreen({ navigation, route }) {
   const [Medications, setMedications] = useState(
     currentUser.MedicalID.Medications
   );
+  const [Uri, setUri] = useState("https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png");
+  const [Render, setRender] = useState("");
   //uploading data to firestore (add rest of data)
   const onSave = () => {
     //filling MedicalID
@@ -85,6 +72,25 @@ function EditProfileScreen({ navigation, route }) {
       });
     navigation.replace("Medical ID");
   };
+  
+  useEffect(() => {
+    setUri (firebase.auth().currentUser.photoURL)
+    firebase.storage().ref().child("images/"+firebase.auth().currentUser.email).getDownloadURL().then((result)=>{
+      setUri (result)
+      firebase.auth().currentUser.updateProfile(
+        {
+          photoURL:result
+        })
+     })
+     setRender("1");
+     let r;
+     r=Render;
+    return () => {
+      
+    }
+  }, [Render])
+
+
 
   if (currentUser == undefined) return <View></View>;
   else
@@ -124,15 +130,29 @@ function EditProfileScreen({ navigation, route }) {
           <View style={styles.userInfoSection}>
             {/* -------------------avatar, caption button, name----------------- */}
             <View style={styles.avatar}>
-              <Avatar.Image
-                source={{
-                  uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
-                }}
-                size={80}
-              />
-              <Button transparent style={styles.avatarCaptionButton}>
-                <Text>Change Profile Photo</Text>
-              </Button>
+              
+
+            {Uri && <Avatar
+              withBorder
+              interactive
+              placeholderSource={{ uri: firebase.auth().currentUser.photoURL}}
+              onPress={async ()=>{await onPressImage()
+                firebase.storage().ref().child("images/"+firebase.auth().currentUser.email).getDownloadURL().then((result)=>{
+                  setUri (result)
+                  firebase.auth().currentUser.updateProfile(
+                    {
+                      photoURL:result
+                    })
+                 })}}
+              overlayColor={'#e8fbff'}
+              style={{
+                backgroundColor: 'green',
+                borderColor: '#000000',
+                borderWidth: 1,
+                marginLeft: 5,
+              }}
+              size={'medium'}
+            />}
             </View>
           </View>
 

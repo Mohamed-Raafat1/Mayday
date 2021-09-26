@@ -290,7 +290,9 @@ export default function ViewNearestHospital({ navigation, route }) {
             console.log(MarkerPosition);
             Linking.openURL(
               "https://www.google.com/maps/dir/?api=1&destination=" +
-                MarkerPosition +
+                MarkerPosition.latitude +
+                "," +
+                MarkerPosition.longitude +
                 "&destination_place_id=" +
                 MarkerID
             );
@@ -305,8 +307,6 @@ export default function ViewNearestHospital({ navigation, route }) {
       <View style={{ flex: 1, width: "100%" }}>
         <MapView
           onPoiClick={(e) => {
-            console.log(e.nativeEvent);
-
             setMarkerName(e.nativeEvent.name);
             setMarkerPosition(e.nativeEvent.coordinate);
             setMarkerID(e.nativeEvent.placeId);
