@@ -1,4 +1,6 @@
 import React from "react";
+import firebase from "firebase";
+import { useEffect,useState } from "react";
 import { StyleSheet, TouchableOpacity, StatusBar } from "react-native";
 import {
   Container,
@@ -20,7 +22,9 @@ import { useLayoutEffect } from "react";
 import QRCode from "react-native-qrcode-svg";
 
 function MedicalIdScreen({ navigation }) {
+
   const dispatch = useDispatch();
+  const [Uri, setUri] = useState("https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png");
 
   useLayoutEffect(() => {
     const Unsubscribe = dispatch(fetchUser());
@@ -29,6 +33,17 @@ function MedicalIdScreen({ navigation }) {
       Unsubscribe();
     };
   }, []);
+  
+  useEffect(() => {
+    firebase.storage().ref().child("images/"+firebase.auth().currentUser.email).getDownloadURL().then((result)=>{
+      setUri (result)
+       console.log("This is the imaageeeeeee refffff",result)
+     })
+    return () => {
+      
+    }
+  }, [Uri])
+
 
   const currentUser = useSelector((state) => state.userState.currentUser);
 
@@ -106,7 +121,7 @@ function MedicalIdScreen({ navigation }) {
           <View style={styles.avatar}>
             <Avatar.Image
               source={{
-                uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+                uri: firebase.auth().currentUser.photoURL,
               }}
               size={80}
             />
