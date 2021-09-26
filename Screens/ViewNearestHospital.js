@@ -262,6 +262,8 @@ export default function ViewNearestHospital({ navigation, route }) {
           showsCompass={true}
           // showsMyLocationButton={true}
           showsPointsOfInterest={true}
+          // loadingEnabled={true}
+          // loadingIndicatorColor="blue"
           onMapReady={() => {
             if (themargin === 0) setthemargin(1);
             else setthemargin(0);

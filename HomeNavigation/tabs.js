@@ -292,8 +292,9 @@ function Tabs({ navigation }) {
 
       <Tab.Screen
         name="First Aid"
-        component={FirstAidStackScreen}
+        component={FirstAidSection}
         options={{
+          
           tabBarLabel: "First Aid",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
@@ -505,79 +506,17 @@ const DoctorRequestsStackScreen = () => (
   </DoctorRequestsStack.Navigator>
 );
 
-const FirstAidStackScreen = ({ navigation }) => (
-  <FirstAidStack.Navigator
-    mode="modal"
-    screenOptions={{
-      cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-    }}
-  >
-    <FirstAidStack.Screen name="FirstAid" component={FirstAidSection} />
-    {/* <FirstAidStack.Screen
-      name="Hypothermia"
-      component={Hypothermia}
-      options={{
-        title: "Hypothermia",
-      }}
-    />
-    <FirstAidStack.Screen
-      name="Meningitis"
-      component={Meningitis}
-      options={{
-        title: "Meningitis",
-      }}
-    />
-    <FirstAidStack.Screen
-      name="Poisoning"
-      component={Poisoning}
-      options={{
-        title: "Poisoning",
-      }}
-    />
-    <FirstAidStack.Screen
-      name="Seizure"
-      component={Seizure}
-      options={{
-        title: "Seizure",
-      }}
-    />
-    <FirstAidStack.Screen
-      name="Choking"
-      component={Choking}
-      options={{
-        title: "Choking",
-      }}
-    />
-    <FirstAidStack.Screen
-      name="HeartAttack"
-      component={HeartAttack}
-      options={{
-        title: "Heart Attack",
-      }}
-    />
-    <FirstAidStack.Screen
-      name="Bleeding"
-      component={Bleeding}
-      options={{
-        title: "Bleeding",
-      }}
-    />
-    <FirstAidStack.Screen
-      name="Burns"
-      component={Burns}
-      options={{
-        title: "Burns",
-      }}
-    />
-    <FirstAidStack.Screen
-      name="Fractures"
-      component={Fractures}
-      options={{
-        title: "Fractures",
-      }}
-    /> */}
-  </FirstAidStack.Navigator>
-);
+// const FirstAidStackScreen = ({ navigation }) => (
+//   <FirstAidStack.Navigator
+//     mode="modal"
+//     screenOptions={{
+//       cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+//     }}
+//   >
+//     <FirstAidStack.Screen name="First Aid" component={FirstAidSection} />
+    
+//   </FirstAidStack.Navigator>
+// );
 
 export default Tabs;
 

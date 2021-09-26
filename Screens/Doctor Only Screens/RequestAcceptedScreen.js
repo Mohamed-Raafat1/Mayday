@@ -17,7 +17,11 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { useDispatch, useSelector } from "react-redux";
 import { Geofirestore } from "../../App";
 import { customstyleAcceptedRequests } from "../../Components/functions/functions";
-import { fetchAcceptedRequest, fetchUser } from "../../redux/actions";
+import {
+  clearAcceptedRequest,
+  fetchAcceptedRequest,
+  fetchUser,
+} from "../../redux/actions";
 
 const geofire = require("geofire-common");
 const RESCU_TRACKING = "background-accepted-request-location";
@@ -264,9 +268,13 @@ function RequestAcceptedScreen({ route, navigation }) {
           "Discard changes?",
           "You have unsaved changes. Are you sure you want to discard them and leave the screen?",
           [
-            { text: "Don't leave", style: "cancel", onPress: () => {} },
             {
-              text: "Discard",
+              text: "Don't cancel Request",
+              style: "cancel",
+              onPress: () => {},
+            },
+            {
+              text: "Cancel Request",
               style: "destructive",
               // If the user confirmed, then we dispatch the action we blocked earlier
               // This will continue the action that had triggered the removal of the screen
@@ -278,7 +286,7 @@ function RequestAcceptedScreen({ route, navigation }) {
                   .collection("requests") // set the request to cancelled to remove it
                   .doc(AcceptedRequest.id)
                   .update({
-                    State: "Cancelled",
+                    State: "Pending",
                   })
                   .catch((error) => {
                     console.log(
@@ -286,7 +294,10 @@ function RequestAcceptedScreen({ route, navigation }) {
                       error
                     );
                   });
-                UnsubscribeAcceptedRequest();
+
+                await UnsubscribeAcceptedRequest();
+                dispatch(clearAcceptedRequest());
+                AcceptedRequest = null;
 
                 navigation.dispatch(e.data.action);
               },
@@ -359,19 +370,20 @@ function RequestAcceptedScreen({ route, navigation }) {
             gotoChat(currentAcceptedRequest.PatientID, chatid);
           }}
           style={{
-            borderColor: "black",
-            borderWidth: 1,
             borderRadius: 5,
             padding: 5,
             position: "absolute",
             top: 70,
             right: 13,
-            backgroundColor: "rgba(225, 225, 225, 0.8)",
+            backgroundColor: "rgba(225, 225, 225, 0)",
+            flexDirection: "row",
+            flex: 1,
           }}
         >
+          <Text style={{ fontSize: "10" }}> this is text</Text>
           <MaterialCommunityIcons
             name="message-text-outline"
-            size={24}
+            size={40}
             color="red"
           />
         </TouchableOpacity>

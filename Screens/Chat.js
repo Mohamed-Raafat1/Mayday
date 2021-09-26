@@ -89,7 +89,6 @@ function Chat({ route, navigation }) {
     return (
       <GiftedChat
         scrollToBottom={true}
-        renderS
         messages={fetchedmessages}
         onSend={(messages) => onSend(messages)}
         user={{
