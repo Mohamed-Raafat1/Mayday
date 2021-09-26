@@ -1,25 +1,12 @@
-import React, { useState, useEffect  } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Container, Text, List, ListItem, Content, Body, Left, Right, Thumbnail, Header, Item, Input, Button, View, Title, Card } from "native-base";
-import { StyleSheet, Touchable, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Modal from "react-native-modal";
 import firebase from "firebase";
 import filter from 'lodash.filter';
-import YoutubePlayer from 'react-native-youtube-iframe';
-import Hypothermia from './First-Aid Screens/Hypothermia';
-import Meningitis from './First-Aid Screens/Meningitis';
-import Poisoning from './First-Aid Screens/Poisoning';
-import Seizure from './First-Aid Screens/Seizure';
-import Choking from './First-Aid Screens/Choking';
-import HeartAttack from './First-Aid Screens/HeartAttack';
-import Bleeding from './First-Aid Screens/Bleeding';
-import Burns from './First-Aid Screens/Burns';
-import Fractures from './First-Aid Screens/Fractures';
-import { shadow, TextInput } from 'react-native-paper';
-import tempData from '../Data/tempData';
+import { Body, Button, Card, Container, Header, Left, Input, Item, ListItem, Text, Thumbnail, Title, View, Icon } from "native-base";
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, StyleSheet } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
+import Modal from "react-native-modal";
+import YoutubePlayer from 'react-native-youtube-iframe';
 
 
 
@@ -28,8 +15,8 @@ export default function FirstAidSection() {
   const [tips, setTips] = useState([]);
   const [query, setQuery] = useState('');
   const [fullData, setFullData] = useState([]);
-  const [search, setSearch]= useState('');
-  const [pressed , setPressed ] = useState(false);
+  const [search, setSearch] = useState('');
+  const [pressed, setPressed] = useState(false);
   const [text, setText] = useState("")
   const [category1, setCategory] = useState("")
   const [video, setVideo] = useState("")
@@ -42,19 +29,19 @@ export default function FirstAidSection() {
       .collection('firstAidTips2')
       .onSnapshot(querySnapshot => {
         const tips = [];
-  
+
         querySnapshot.forEach(documentSnapshot => {
           tips.push({
             ...documentSnapshot.data(),
             key: documentSnapshot.id,
           });
         });
-  
+
         setTips(tips);
         setFullData(tips);
         setLoading(false);
       });
-  
+
     // Unsubscribe from events when no longer in use
     return () => subscriber();
   }, []);
@@ -71,29 +58,27 @@ export default function FirstAidSection() {
     setTips(filteredData);
     setQuery(text);
   };
-  
-  const contains1 = ({text}, query) => {
-  
+
+  const contains1 = ({ text }, query) => {
+
     var keywords = query.split(" ");
-    for(var i = 0; i < keywords.length; i++){
-      if(keywords[i] == "") continue;
+    for (var i = 0; i < keywords.length; i++) {
+      if (keywords[i] == "") continue;
       if (!(text.toLowerCase().match(keywords[i]))) {
         return false;
       }
     }
     return true
   };
-  function checkPressed() {
-    
-  }
+
 
   const openProfileModal = (tip1) => {
-   
+
     setCategory(tip1.category)
     setText(tip1.text.replace(/\\n/g, '\n\n'))
     setVideo(tip1.video)
-    
-    
+
+
     setModalVisible(!modalVisible);
   };
   const toggleModal = () => {
@@ -101,26 +86,25 @@ export default function FirstAidSection() {
   };
 
   function display() {
-  return tips.map((item) => {
-    return (
-      
+    return tips.map((item) => {
+      return (
+
         <ListItem
           key={item.category}
-          
+
           style={{ marginBottom: 10, marginTop: 10 }}
         >
           <Body>
-            <View style={{ flexDirection: 'row'}}>
-          <Thumbnail resizeMode="contain" style={{ width: 30, height: 30 }} source={{
-                  uri: item.image}} />
-            <Button transparent onPress={() => { openProfileModal(item)}}><Text>{item.category}</Text></Button>
+            <View style={{ flexDirection: 'row' }}>
+              <Thumbnail resizeMode="contain" style={{ width: 30, height: 30 }} source={{
+                uri: item.image
+              }} />
+              <Button transparent onPress={() => { openProfileModal(item) }}><Text>{item.category}</Text></Button>
             </View>
-            {/* <Text>
-              {item.text.replace(/\\n/g, '\n\n')}
-            </Text> */}
+
           </Body>
         </ListItem>
-    )
+      )
     });
   }
 
@@ -129,37 +113,44 @@ export default function FirstAidSection() {
 
     <Container >
       <Modal
-          visible={modalVisible}
-          backdropOpacity={0}
-          animationIn="slideInUp"
-          onBackdropPress={toggleModal}
-          onBackButtonPress={toggleModal}
-          style={styles.bottomModalView}
-        >
-          <View style={styles.modal}>
-            <Header transparent style={{marginTop: 0}}>
-              <Title style={{color: 'black', fontSize: 27, marginTop: 0}}>{category1}</Title>
-            </Header>
-            <View >
+        visible={modalVisible}
+        backdropOpacity={0}
+        animationIn="slideInUp"
+        // onBackdropPress={toggleModal}
+        onBackButtonPress={toggleModal}
+        style={styles.bottomModalView}
+      >
+        <View style={styles.modal}>
+          <Header transparent style={{ marginTop: -35 }}>
+            <Left>
+              <Button transparent onPress={toggleModal}>
+              <Icon name='arrow-back' fontSize={27} style={{ color: 'black' }} />
+            </Button>
+            </Left>
+            <Body>
+            <Title style={{ color: 'black', fontSize: 27, marginTop: 0 }}>{category1}</Title>
+            </Body>
+          </Header>
+          <View >
             <YoutubePlayer
               height={220}
               play={false}
               videoId={video}
             />
           </View>
-            
-            <Card>
-              <Text style={{fontSize: 19, marginLeft: 10, margin: 5}}>{text}</Text>
-            </Card>
-            
-            
-          </View>
-        </Modal>
 
-      
+          <Card>
+            <Text style={{ fontSize: 19, marginLeft: 10, margin: 5 }}>{text}</Text>
+          </Card>
+
+
+        </View>
+      </Modal>
+
+
       <Header searchBar rounded style={{ backgroundColor: "white" }}>
         <Item>
-          <Icon name="search" size={30}/>
+          <Icon name="search" size={30} />
           <Input
             placeholder="Search"
             value={query}
@@ -170,118 +161,11 @@ export default function FirstAidSection() {
           <Text>Search</Text>
         </Button>
       </Header>
-        <ScrollView>{display()}</ScrollView>
-        
-        
-          {/* <FlatList
-            data={tips}
-            renderItem={({ item }) => (
-              <View style={styles.tip}>
-                <Thumbnail resizeMode="contain" style={{ width: 30, height: 30 }} source={require("../assets/Hypothermia.png")} />
-                <Text style={{ fontSize: 20, marginLeft: 15}}>{item.category.replace(/\\n/g, '\n\n')}</Text>
-                <Right>
-                <Icon.Button style={{justifyContent: 'flex-end'}}  name={arrowClicked ? 'sort-up' : 'sort-down'} size={33} onPress={showText(item)}/>
-                </Right>
-                  <Text>{item.text.replace(/\\n/g, '\n\n')}</Text>
-              </View>
-              
-            )}
-        /> */}
-            
+      <ScrollView>{display()}</ScrollView>
 
-        
-        {/* <List>
-          <ListItem noIndent style={styles.Buttons} onPress={() => navigation.navigate(Hypothermia)}>
-            <Left >
-              <Thumbnail resizeMode="contain" style={{ width: 30, height: 30 }} source={require("../assets/Hypothermia.png")} />
-              <Text style={{ fontSize: 20, marginLeft: 15 }}>Hypothermia</Text>
-            </Left>
-            <Right>
-              <Icon style={{ color: 'black' }} name="arrow-forward" />
-            </Right>
-          </ListItem>
 
-          <ListItem noIndent style={styles.Buttons} onPress={() => navigation.navigate(Meningitis)}>
-            <Left >
-              <Thumbnail resizeMode="contain" style={{ width: 30, height: 30 }} source={require("../assets/Meningitis.png")} />
-              <Text style={{ fontSize: 20, marginLeft: 15 }}>Meningitis</Text>
-            </Left>
-            <Right>
-              <Icon style={{ color: 'black' }} name="arrow-forward" />
-            </Right>
-          </ListItem>
 
-          <ListItem noIndent style={styles.Buttons} onPress={() => navigation.navigate(Poisoning)}>
-            <Left>
-              <Thumbnail resizeMode="contain" style={{ width: 30, height: 30 }} source={require("../assets/Poisoning.png")} />
-              <Text style={{ fontSize: 20, marginLeft: 15 }}>Poisoning</Text>
-            </Left>
-            <Right>
-              <Icon style={{ color: 'black' }} name="arrow-forward" />
-            </Right>
-          </ListItem>
 
-          <ListItem noIndent style={styles.Buttons} onPress={() => navigation.navigate(Seizure)}>
-            <Left >
-              <Thumbnail resizeMode="contain" style={{ width: 30, height: 30 }} source={require("../assets/Seizure.png")} />
-              <Text style={{ fontSize: 20, marginLeft: 15 }}>Seizure</Text>
-            </Left>
-            <Right>
-              <Icon style={{ color: 'black' }} name="arrow-forward" />
-            </Right>
-          </ListItem>
-
-          <ListItem noIndent style={styles.Buttons} onPress={() => navigation.navigate(Choking)}>
-            <Left >
-              <Thumbnail resizeMode="contain" style={{ width: 30, height: 30 }} source={require("../assets/Choking.png")} />
-              <Text style={{ fontSize: 20, marginLeft: 15 }}>Choking</Text>
-            </Left>
-            <Right>
-              <Icon style={{ color: 'black' }} name="arrow-forward" />
-            </Right>
-          </ListItem>
-
-          <ListItem noIndent style={styles.Buttons} onPress={() => navigation.navigate(HeartAttack)}>
-            <Left >
-              <Thumbnail resizeMode="contain" style={{ width: 30, height: 30 }} source={require("../assets/HeartAttack.png")} />
-              <Text style={{ fontSize: 20, marginLeft: 15 }}>Heart Attack</Text>
-            </Left>
-            <Right>
-              <Icon style={{ color: 'black' }} name="arrow-forward" />
-            </Right>
-          </ListItem>
-
-          <ListItem noIndent style={styles.Buttons} onPress={() => navigation.navigate(Bleeding)}>
-            <Left >
-              <Thumbnail resizeMode="contain" style={{ width: 30, height: 30 }} source={require("../assets/Bleeding.png")} />
-              <Text style={{ fontSize: 20, marginLeft: 15 }}>Bleeding</Text>
-            </Left>
-            <Right>
-              <Icon style={{ color: 'black' }} name="arrow-forward" />
-            </Right>
-          </ListItem>
-
-          <ListItem noIndent style={styles.Buttons} onPress={() => navigation.navigate(Burns)}>
-            <Left >
-              <Thumbnail resizeMode="contain" style={{ width: 30, height: 30 }} source={require("../assets/Burns.png")} />
-              <Text style={{ fontSize: 20, marginLeft: 15 }}>Burns</Text>
-            </Left>
-            <Right>
-              <Icon style={{ color: 'black' }} name="arrow-forward" />
-            </Right>
-          </ListItem>
-
-          <ListItem noIndent style={styles.Buttons} onPress={() => navigation.navigate(Fractures)}>
-            <Left >
-              <Thumbnail resizeMode="contain" style={{ width: 30, height: 30 }} source={require("../assets/Fractures.png")} />
-              <Text style={{ fontSize: 20, marginLeft: 15 }}>Fractures</Text>
-            </Left>
-            <Right>
-              <Icon style={{ color: 'black' }} name="arrow-forward" />
-            </Right>
-          </ListItem>
-        </List> */}
-      
     </Container>
   );
 }
@@ -306,7 +190,7 @@ const styles = StyleSheet.create({
 
   },
   search: {
-    height:60,
+    height: 60,
     borderWidth: 1,
   },
   tip: {
@@ -319,12 +203,13 @@ const styles = StyleSheet.create({
   },
   modal: {
     width: "100%",
-    height: "90%",
+    height: "100%",
     borderRadius: 10,
     borderStyle: "solid",
     backgroundColor: "white",
     padding: 10,
-    paddingTop: 0
+    paddingTop: 0,
+    marginTop:0
   },
 
 });
