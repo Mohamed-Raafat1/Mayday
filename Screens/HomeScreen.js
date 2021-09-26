@@ -17,6 +17,9 @@ import { getExpoTokenById } from "../Components/functions/functions";
 const HomeScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.userState.currentUser);
+  const currentAcceptedRequest = useSelector(
+    (state) => state.userState.AcceptedRequest
+  );
   let ECs;
   let message;
   let messageNearby;
@@ -157,6 +160,7 @@ const HomeScreen = ({ navigation, route }) => {
               Contact Doctor
             </Text>
           </Button>
+
           <Button style={styles.button} bordered onPress={helpOthers}>
             <Icon name="people-outline" size={24} />
             <Text

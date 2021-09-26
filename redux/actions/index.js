@@ -367,6 +367,14 @@ export function fetchConversations() {
     return Unsubscribe;
   };
 }
+export function clearAcceptedRequest() {
+  return (dispatch) => {
+    dispatch({
+      type: ACCEPTED_REQUEST_CHANGE,
+      AcceptedRequest: null,
+    });
+  };
+}
 export function fetchChatList() {
   var chatList = [];
   var conversations = [];
