@@ -1,13 +1,12 @@
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
 import firebase from "firebase";
-import { update } from "lodash";
 import {
   Body,
   Button,
   Container,
   Content,
-  Fab,
+
   Header,
   Icon,
   Input,
@@ -101,7 +100,10 @@ function SOS({ navigation }) {
       return item.Email === elm.Email;
     });
     EmergencyContacts.splice(index, 1);
-    Toast.show("Contact removed successfully");
+    Toast.show({
+      text: "Contact removed successfully",
+      duration: 1000
+    });
 
     Update();
   }
@@ -125,13 +127,13 @@ function SOS({ navigation }) {
         return;
       }
     }
-    Toast.show("User doesnt exist");
+    Toast.show({ text: "User doesnt exist" });
   };
   const onAdd = () => {
     if (EmergencyContacts.length < 5) {
       // adding current user as an Emergency contact handling
       if (currentUser.Email.toLowerCase() === searchText.toLowerCase()) {
-        Toast.show("Can't add yourself as an Emergency Contact");
+        Toast.show({ text: "Can't add yourself as an Emergency Contact" });
         return;
       }
       // handling not entering the same contact two times
@@ -139,17 +141,21 @@ function SOS({ navigation }) {
         if (
           searchText.toLowerCase() === EmergencyContacts[i].Email.toLowerCase()
         ) {
-          Toast.show("Contact is already added");
+          Toast.show({ text: "Contact is already added" });
           return;
         }
       }
-      EmergencyContacts.push(contact);
-      Toast.show("Contact is added Successfully");
+      let EContact = {
+        uid: contact.uid, FirstName: contact.FirstName, LastName: contact.LastName,
+        PhoneNumber: contact.PhoneNumber, Email: contact.Email
+      }
+      EmergencyContacts.push(EContact);
+      Toast.show({ text: "Contact is added Successfully" });
       Update();
     } else {
-      Toast.show("Reached maximum number of contacts");
+      Toast.show({ text: "Reached maximum number of contacts" });
     }
-    update();
+    Update();
   };
 
   async function createChat(uid) {
@@ -350,8 +356,10 @@ function SOS({ navigation }) {
     return (
       <Container>
         <Modal
-          visible={modalVisible}
-          backdropOpacity={0}
+          isVisible={modalVisible}
+          animationIn="slideInUp"
+          animationOut="slideOutDown"
+          backdropOpacity={0.3}
           onBackdropPress={toggleModal}
           style={styles.bottomModalView}
         >
@@ -369,7 +377,10 @@ function SOS({ navigation }) {
               <Title>{firstName + " " + lastName}</Title>
             </View>
             <View>
-              <Button rounded style={styles.button} onPress={onAdd}>
+              <Button rounded style={styles.button} onPress={() => {
+                onAdd()
+                setModalVisible(false)
+              }}>
                 <Text>Add as an emergency contact</Text>
               </Button>
             </View>
@@ -379,7 +390,7 @@ function SOS({ navigation }) {
           <Item style={styles.search}>
             <Icon name="ios-search" />
             <Input
-              placeholder="Add up to 5 Emergency Contacts"
+              placeholder="Search using Email"
               onChangeText={(searchText) => setSearchText(searchText)}
             />
           </Item>
@@ -396,14 +407,7 @@ function SOS({ navigation }) {
           </Text>
         </Header>
         <View>{display()}</View>
-        <Fab
-          style={styles.fab}
-          onPress={() => {
-            openProfileModal();
-          }}
-        >
-          <Icon name="add" />
-        </Fab>
+
       </Container>
     );
 }
@@ -466,13 +470,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginVertical: 20,
   },
-  fab: {
-    backgroundColor: "#00C1D4",
-    shadowColor: "rgba(0, 0, 255, 255)",
-    shadowOpacity: 1,
-    shadowRadius: 20,
-    shadowOffset: { width: 100, height: 100 },
-  },
+
   modal: {
     width: "100%",
     height: "40%",
@@ -484,7 +482,7 @@ const styles = StyleSheet.create({
   },
   bottomModalView: {
     justifyContent: "flex-end",
-    margin: 0,
+    marginBottom: '20%',
   },
   search: {
     borderWidth: 0,
@@ -492,4 +490,5 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: "#c3c2c8",
   },
+
 });
