@@ -16,11 +16,10 @@ import {
 import React, { useLayoutEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { deleteChat } from "../Components/functions/functions";
 import { fetchConversations, fetchUser } from "../redux/actions";
 import Chat from "../Screens/Chat";
 const ChatListStack = createStackNavigator();
-import { deleteChat } from "../Components/functions/functions";
-import firebase from "firebase";
 
 //get previous routename
 function usePreviousRouteName() {

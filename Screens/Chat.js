@@ -1,7 +1,8 @@
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import firebase from "firebase";
-import { View } from "native-base";
+import { View, Text } from "native-base";
 import React, { useCallback, useLayoutEffect } from "react";
+import { TouchableWithoutFeedback } from "react-native";
 import { Bubble, GiftedChat, Send } from "react-native-gifted-chat";
 import { useDispatch, useSelector } from "react-redux";
 import { getExpoTokenById } from "../Components/functions/functions";
@@ -51,23 +52,25 @@ function Chat({ route, navigation }) {
   };
   const renderBubble = (props) => {
     return (
-      <Bubble
-        {...props}
-        wrapperStyle={{
-          right: {
-            backgroundColor: "#4287f5",
-          },
-          left: {
-            backgroundColor: "gray",
-          },
-        }}
-        textStyle={{
-          right: {
-            color: "white",
-          },
-          left: { color: "white" },
-        }}
-      ></Bubble>
+      <TouchableWithoutFeedback {...props}>
+        <Bubble
+          {...props}
+          wrapperStyle={{
+            right: {
+              backgroundColor: "#4287f5",
+            },
+            left: {
+              backgroundColor: "gray",
+            },
+          }}
+          textStyle={{
+            right: {
+              color: "white",
+            },
+            left: { color: "white" },
+          }}
+        ></Bubble>
+      </TouchableWithoutFeedback>
     );
   };
   const renderSend = (props) => {
@@ -83,6 +86,20 @@ function Chat({ route, navigation }) {
       </Send>
     );
   };
+  function renderChatEmpty() {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignSelf: "center",
+          justifyContent: "center",
+          transform: [{ scaleY: -1 }],
+        }}
+      >
+        <Text> Start sending messages :)</Text>
+      </View>
+    );
+  }
   if (!fetchedmessages) return <View></View>;
   else
     return (
@@ -90,13 +107,19 @@ function Chat({ route, navigation }) {
         scrollToBottom={true}
         messages={fetchedmessages}
         onSend={(messages) => onSend(messages)}
+        onLongPress={(context, message) => {
+          console.log(context);
+        }}
         user={{
           _id: firebase.auth().currentUser.uid,
           name: currentUser.FirstName + " " + currentUser.LastName,
         }}
+        alwaysShowSend={true}
+        renderChatEmpty={renderChatEmpty}
         showUserAvatar={true}
         renderBubble={renderBubble}
         renderSend={renderSend}
+        renderchat
         scrollToBottomComponent={scrolllToBottomComponent}
       />
     );

@@ -6,7 +6,6 @@ import {
   Button,
   Container,
   Content,
-
   Header,
   Icon,
   Input,
@@ -102,7 +101,7 @@ function SOS({ navigation }) {
     EmergencyContacts.splice(index, 1);
     Toast.show({
       text: "Contact removed successfully",
-      duration: 1000
+      duration: 1000,
     });
 
     Update();
@@ -146,9 +145,12 @@ function SOS({ navigation }) {
         }
       }
       let EContact = {
-        uid: contact.uid, FirstName: contact.FirstName, LastName: contact.LastName,
-        PhoneNumber: contact.PhoneNumber, Email: contact.Email
-      }
+        uid: contact.uid,
+        FirstName: contact.FirstName,
+        LastName: contact.LastName,
+        PhoneNumber: contact.PhoneNumber,
+        Email: contact.Email,
+      };
       EmergencyContacts.push(EContact);
       Toast.show({ text: "Contact is added Successfully" });
       Update();
@@ -377,10 +379,14 @@ function SOS({ navigation }) {
               <Title>{firstName + " " + lastName}</Title>
             </View>
             <View>
-              <Button rounded style={styles.button} onPress={() => {
-                onAdd()
-                setModalVisible(false)
-              }}>
+              <Button
+                rounded
+                style={styles.button}
+                onPress={() => {
+                  onAdd();
+                  setModalVisible(false);
+                }}
+              >
                 <Text>Add as an emergency contact</Text>
               </Button>
             </View>
@@ -407,7 +413,6 @@ function SOS({ navigation }) {
           </Text>
         </Header>
         <View>{display()}</View>
-
       </Container>
     );
 }
@@ -482,7 +487,7 @@ const styles = StyleSheet.create({
   },
   bottomModalView: {
     justifyContent: "flex-end",
-    marginBottom: '20%',
+    marginBottom: "20%",
   },
   search: {
     borderWidth: 0,
@@ -490,5 +495,4 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: "#c3c2c8",
   },
-
 });
