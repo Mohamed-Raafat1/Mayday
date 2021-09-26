@@ -1,27 +1,11 @@
-import React, { useState } from "react";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import {
-  Picker,
-  Item,
-  Label,
-  Content,
-  Container,
-  Button,
-  Text,
-  Icon,
-  Input,
-  Form,
-  Card,
-  CardItem,
-  Textarea,
-  View,
-  Left,
+  Button, Card,
+  CardItem, Container, Content, Form, Icon,Input, Item, Label, Picker, Text, Textarea,View
 } from "native-base";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
-import firebase from "firebase";
+import React, { useState } from "react";
+import { StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUser, fetchRequest } from "../redux/actions";
-import { StyleSheet, Dimensions, Image } from "react-native";
 
 function CurrentReport() {
   const currentUser = useSelector((state) => state.userState.currentUser);
