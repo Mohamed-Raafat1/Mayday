@@ -14,6 +14,7 @@ const Tab = createMaterialTopTabNavigator();
 ////////////////////////////  MAIN COMPONENT   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 export default function EmergencyTab({ navigation }) {
   const hasUnsavedChanges = true;
+
   const currentRequest = useSelector(
     (state) => state.requestState.currentRequest
   );
@@ -30,7 +31,7 @@ export default function EmergencyTab({ navigation }) {
   React.useEffect(
     () =>
       navigation.addListener("beforeRemove", (e) => {
-        if (!hasUnsavedChanges) {
+        if (!currentRequest) {
           // If we don't have unsaved changes, then we don't need to do anything
           return;
         }
@@ -50,7 +51,6 @@ export default function EmergencyTab({ navigation }) {
               // If the user confirmed, then we dispatch the action we blocked earlier
               // This will continue the action that had triggered the removal of the screen
               onPress: async () => {
-                
                 await TaskManager.unregisterAllTasksAsync();
                 navigation.dispatch(e.data.action);
               },

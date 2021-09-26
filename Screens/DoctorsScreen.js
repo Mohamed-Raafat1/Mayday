@@ -1,36 +1,21 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useLayoutEffect,
-} from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import MapView from "react-native-maps";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
-import { StyleSheet, Dimensions, Image } from "react-native";
-import { Marker } from "react-native-maps";
-import {
-  Container,
-  Header,
-  Button,
-  View,
-  Text,
-  Content,
-  Spinner,
-  Left,
-  Body,
-  Right,
-  Toast,
-} from "native-base";
-import { Avatar, Title } from "react-native-paper";
 import firebase from "firebase";
+import * as geofirestore from "geofirestore";
+import { Button, Spinner, Text, Toast, View } from "native-base";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { Dimensions, Image, StyleSheet } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUser, fetchRequest, CancelCurrentRequest } from "../redux/actions";
-import { Geofirestore } from "../App";
+import {
+  CancelCurrentRequest,
+  fetchRequest,
+  fetchUser,
+} from "../redux/actions";
+
 const RESCU_TRACKING = "background-doctor-screen-location-task";
-const geofire = require("geofire-common");
-let RequestCreated = false;
+
 let Requestid = null;
 let users = [];
 
@@ -41,6 +26,7 @@ let users = [];
   -------------------------------
  */
 TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
+  const Geofirestore = geofirestore.initializeApp(firebase.firestore());
   if (error) {
     console.log(error);
 
@@ -52,6 +38,7 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
     let latitude = locations[0].coords.latitude;
     let longitude = locations[0].coords.longitude;
     let location = { latitude, longitude };
+
     await Geofirestore.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .update({
@@ -182,6 +169,7 @@ function DoctorsScreen() {
 
   //Create and send request
   async function SendRequest() {
+    const Geofirestore = geofirestore.initializeApp(firebase.firestore());
     // await firebase;
     await Geofirestore.collection("requests")
       .add({
@@ -221,6 +209,8 @@ function DoctorsScreen() {
   }
 
   const getNearByUsers = () => {
+    const Geofirestore = geofirestore.initializeApp(firebase.firestore());
+
     usersunsubsrcibe = Geofirestore.collection("users")
       .near({
         center: new firebase.firestore.GeoPoint(
@@ -229,9 +219,8 @@ function DoctorsScreen() {
         ),
         radius: 15,
       })
-      .where("medicalProfessional", "==", false)
-      .get()
-      .then((snapshot) => {
+      .where("medicalProfessional", "==", true)
+      .onSnapshot((snapshot) => {
         users = snapshot.docs.map((doc) => {
           const data = doc.data();
           const id = doc.id;
@@ -240,28 +229,26 @@ function DoctorsScreen() {
             id,
           };
         });
-      })
-      .catch((error) => {
-        console.log(error);
       });
     // users = users.filter((x) => x.uid != firebase.auth().currentUser.uid);
     // console.log("this is the first user....\n", users[0]);
     setcount(count + 1);
 
-    users = users.filter((user) => user.id != currentUser.uid);
+    // users = users.filter((user) => user.id != currentUser.uid);
 
     return users;
   };
 
   //  USE EFFECTS
 
+  console.log(currentRequest);
   //Done on mount + cleanup
   useLayoutEffect(() => {
     const UnsubscribeUser = dispatch(fetchUser());
 
     return async () => {
       UnsubscribeUser();
-      UnsubscribeRequest();
+      await UnsubscribeRequest();
       usersunsubsrcibe();
       await dispatch(CancelCurrentRequest());
     };
@@ -301,94 +288,101 @@ function DoctorsScreen() {
       </View>
     );
   } else {
-    if (isRequested) {
-      if (currentRequest) {
-        if (location.latitude === 0 && location.longitude === 0) {
-          screen = (
-            <View>
-              <Spinner color="red" />
-            </View>
-          );
-          // console.log("in settimeout now");
-          setTimeout(() => {
-            setlocation(currentUser.coordinates);
-          }, 500);
-        } else {
-          screen = (
-            <View style={{ flex: 1, width: "100%" }}>
-              <MapView
-                initialRegion={{
-                  latitude: location.latitude,
-                  longitude: location.longitude,
-                  latitudeDelta: LATITUDE_DELTA,
-                  longitudeDelta: LONGITUDE_DELTA,
-                }}
-                provider="google"
-                showsUserLocation={true}
-                userLocationUpdateInterval={5000}
-                followsUserLocation={true}
-                showsCompass={true}
-                // showsMyLocationButton={true}
-                showsPointsOfInterest={true}
-                // loadingEnabled={true}
-                // loadingIndicatorColor="blue"
-                onMapReady={() => {
-                  if (themargin === 0) setthemargin(1);
-                  else setthemargin(0);
-                }}
-                style={{
-                  width: "100%",
-                  flex: 1,
-                  marginTop: themargin,
-                  alignSelf: "center",
-                }}
-              >
-                {currentRequest.State == "Pending" &&
-                  users.length > 0 &&
-                  users.map((marker) => (
-                    <Marker
-                      onPress={() => {
-                        console.log(
-                          marker.g.geopoint.latitude,
-                          marker.g.geopoint.longitude
-                        );
-                      }}
-                      key={marker.id}
-                      coordinate={{
-                        latitude: marker.g.geopoint.latitude,
-                        longitude: marker.g.geopoint.longitude,
-                      }}
-                      title={marker.FirstName}
-                      description={marker.LastName}
-                    >
-                      <Image
-                        source={require("../assets/doctor.png")}
-                        style={{ height: 35, width: 35 }}
-                      ></Image>
-                    </Marker>
-                  ))}
-                {currentRequest.State == "Accepted" && (
+    if (currentRequest) {
+      if (location.latitude === 0 && location.longitude === 0) {
+        screen = (
+          <View>
+            <Spinner color="red" />
+          </View>
+        );
+        // console.log("in settimeout now");
+        setTimeout(() => {
+          setlocation(currentUser.coordinates);
+        }, 500);
+      } else {
+        screen = (
+          <View style={{ flex: 1, width: "100%" }}>
+            <MapView
+              initialRegion={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA,
+              }}
+              provider="google"
+              showsUserLocation={true}
+              userLocationUpdateInterval={5000}
+              followsUserLocation={true}
+              showsCompass={true}
+              // showsMyLocationButton={true}
+              showsPointsOfInterest={true}
+              // loadingEnabled={true}
+              // loadingIndicatorColor="blue"
+              onMapReady={() => {
+                if (themargin === 0) setthemargin(1);
+                else setthemargin(0);
+              }}
+              style={{
+                width: "100%",
+                flex: 1,
+                marginTop: themargin,
+                alignSelf: "center",
+              }}
+            >
+              {currentRequest.State == "Pending" &&
+                users.length > 0 &&
+                users.map((marker) => (
                   <Marker
-                    coordinate={{
-                      latitude: currentRequest.DoctorCoordinates.latitude,
-                      longitude: currentRequest.DoctorCoordinates.longitude,
+                    onPress={() => {
+                      console.log(
+                        marker.g.geopoint.latitude,
+                        marker.g.geopoint.longitude
+                      );
                     }}
-                    title="batee5"
-                  ></Marker>
-                )}
-              </MapView>
-              <Button
-                style={[styles.button, { alignSelf: "center" }]}
-                onPress={() => {
-                  StopTracking();
-                  setPermissionGranted(0);
-                }}
-              >
-                <Text>Stop Tracking</Text>
-              </Button>
-            </View>
-          );
-        }
+                    key={marker.id}
+                    coordinate={{
+                      latitude: marker.g.geopoint.latitude,
+                      longitude: marker.g.geopoint.longitude,
+                    }}
+                    title={marker.FirstName}
+                    description={marker.LastName}
+                  >
+                    <Image
+                      source={require("../assets/doctor.png")}
+                      style={{ height: 35, width: 35 }}
+                    ></Image>
+                  </Marker>
+                ))}
+              {currentRequest.State == "Accepted" && (
+                <Marker
+                  coordinate={{
+                    latitude: currentRequest.DoctorCoordinates.latitude,
+                    longitude: currentRequest.DoctorCoordinates.longitude,
+                  }}
+                  title="batee5"
+                ></Marker>
+              )}
+            </MapView>
+            <Button
+              style={[styles.button, { alignSelf: "center" }]}
+              onPress={async () => {
+                await StopTracking();
+
+                await UnsubscribeRequest();
+
+                await dispatch(CancelCurrentRequest());
+
+                await firebase
+                  .firestore()
+                  .collection("requests")
+                  .doc(Requestid)
+                  .delete();
+              }}
+            >
+              <Text>Cancel Request</Text>
+            </Button>
+          </View>
+        );
       }
     } else if (!Err) {
       screen = (

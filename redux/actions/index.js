@@ -1,6 +1,7 @@
 import firebase from "firebase";
 
-import { Geofirestore } from "../../App";
+import * as geofirestore from "geofirestore";
+
 require("firebase/firestore");
 import {
   USER_CHATLIST_CHANGE,
@@ -123,7 +124,7 @@ export function fetchRequest(id) {
       .collection("requests")
       .doc(id)
       .onSnapshot((snapshot) => {
-        if (snapshot) {
+        if (snapshot.data()) {
           let data = snapshot.data();
 
           dispatch({
@@ -134,7 +135,7 @@ export function fetchRequest(id) {
             },
           });
         } else {
-          console.log("does not exist");
+          dispatch({ type: REQUEST_STATE_CHANGE, currentRequest: null });
         }
       });
     return Unsubscribe;
@@ -156,6 +157,7 @@ export function CancelCurrentRequest() {
 // so create a background task for the app that keeps updating the requests, based on the current location
 
 export function fetchStaticRequests(lat, lng, distance) {
+  const Geofirestore = geofirestore.initializeApp(firebase.firestore());
   return async (dispatch) => {
     await Geofirestore.collection("requests")
       .near({

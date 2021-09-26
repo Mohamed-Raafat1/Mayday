@@ -18,11 +18,11 @@ import {
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { Geofirestore } from "../../App";
+
 import { createChat } from "../../Components/functions/functions";
 import { fetchUser } from "../../redux/actions";
 let sharedChatid;
-
+import * as geofirestore from "geofirestore";
 let Requests = [];
 
 //variable that will carry a usestate function inside taskmanager
@@ -43,7 +43,7 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
 
     let latitude = locations[0].coords.latitude;
     let longitude = locations[0].coords.longitude;
-
+    const Geofirestore = geofirestore.initializeApp(firebase.firestore());
     await Geofirestore.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .update({

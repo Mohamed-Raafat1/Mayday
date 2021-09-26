@@ -1,27 +1,25 @@
+import { AntDesign } from "@expo/vector-icons";
+import { useNavigationState } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 import {
+  Body,
   Container,
   Content,
+  Left,
   List,
   ListItem,
-  Left,
-  Body,
   Right,
-  Thumbnail,
   Text,
+  Thumbnail,
   View,
 } from "native-base";
-import { AntDesign } from "@expo/vector-icons";
-import React from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
-import Chat from "../Screens/Chat";
-const ChatListStack = createStackNavigator();
-
-import { useNavigationState } from "@react-navigation/native";
-
-import { useLayoutEffect } from "react";
+import React, { useLayoutEffect } from "react";
+import { TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchConversations, fetchUser } from "../redux/actions";
+import Chat from "../Screens/Chat";
+const ChatListStack = createStackNavigator();
+import firebase from "firebase";
 
 //get previous routename
 function usePreviousRouteName() {
@@ -103,7 +101,30 @@ const ChatList = ({ navigation, previous }) => {
                 time.Minutes}
             </Text>
 
-            <TouchableOpacity style={{ marginTop: 10 }}>
+            <TouchableOpacity
+              onPress={() => {
+                firebase
+                  .firestore()
+                  .collection("users")
+                  .doc(firebase.auth().currentUser.uid)
+                  .collection("conversations")
+                  .doc(chat.id)
+                  .delete();
+                if (!firebase.auth().currentUser.uid === chat.data.userid)
+                  firebase
+                    .firestore()
+                    .collection("users")
+                    .doc(chat.data.userid)
+                    .collection("conversations")
+                    .doc(chat.id)
+                    .delete();
+                firebase
+                  .firestore()
+                  .collection("users")
+                  .doc(firebase.auth().currentUser.uid);
+              }}
+              style={{ marginTop: 10 }}
+            >
               <AntDesign name="delete" size={24} color="black" />
             </TouchableOpacity>
           </Right>

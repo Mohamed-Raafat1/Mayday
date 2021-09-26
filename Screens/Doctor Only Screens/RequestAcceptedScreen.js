@@ -15,7 +15,7 @@ import {
 import MapView, { Marker } from "react-native-maps";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch, useSelector } from "react-redux";
-import { Geofirestore } from "../../App";
+import * as geofirestore from "geofirestore";
 import { customstyleAcceptedRequests } from "../../Components/functions/functions";
 import {
   clearAcceptedRequest,
@@ -39,7 +39,7 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
     let latitude = locations[0].coords.latitude;
     let longitude = locations[0].coords.longitude;
     const hash = geofire.geohashForLocation([latitude, longitude]);
-
+    const Geofirestore = geofirestore.initializeApp(firebase.firestore());
     await Geofirestore.collection("users")
       .doc(firebase.auth().currentUser.uid)
       .update({
@@ -339,7 +339,6 @@ function RequestAcceptedScreen({ route, navigation }) {
           showsCompass={true}
           showsMyLocationButton={true}
           showsPointsOfInterest={true}
-          
           onMapReady={() => {
             if (themargin === 0) setthemargin(1);
             else setthemargin(0);
