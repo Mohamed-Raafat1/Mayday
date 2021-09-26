@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchConversations, fetchUser } from "../redux/actions";
 import Chat from "../Screens/Chat";
 const ChatListStack = createStackNavigator();
+import { deleteChat } from "../Components/functions/functions";
 import firebase from "firebase";
 
 //get previous routename
@@ -102,26 +103,8 @@ const ChatList = ({ navigation, previous }) => {
             </Text>
 
             <TouchableOpacity
-              onPress={() => {
-                firebase
-                  .firestore()
-                  .collection("users")
-                  .doc(firebase.auth().currentUser.uid)
-                  .collection("conversations")
-                  .doc(chat.id)
-                  .delete();
-                if (!firebase.auth().currentUser.uid === chat.data.userid)
-                  firebase
-                    .firestore()
-                    .collection("users")
-                    .doc(chat.data.userid)
-                    .collection("conversations")
-                    .doc(chat.id)
-                    .delete();
-                firebase
-                  .firestore()
-                  .collection("users")
-                  .doc(firebase.auth().currentUser.uid);
+              onPress={async () => {
+                deleteChat(chat.data.userid, chat.id);
               }}
               style={{ marginTop: 10 }}
             >

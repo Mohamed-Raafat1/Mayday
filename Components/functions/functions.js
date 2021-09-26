@@ -420,3 +420,48 @@ export function uploadImage(uri, imageName) {
     }
   }, 500);
 }
+export const deleteChat = async (uid, chatid) => {
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid)
+    .collection("conversations")
+    .doc(chatid)
+    .delete();
+
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(uid)
+    .collection("conversations")
+    .doc(chatid)
+    .delete();
+  await firebase
+    .firestore()
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid)
+    .collection("messages")
+    .where("chatid", "==", chatid)
+    .get()
+    .then((snapshot) => {
+      const batch = firebase.firestore().batch();
+      snapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+      batch.commit();
+    });
+  await firebase
+    .firestore()
+    .collection("users")
+    .doc(uid)
+    .collection("messages")
+    .where("chatid", "==", chatid)
+    .get()
+    .then((snapshot) => {
+      const batch = firebase.firestore().batch();
+      snapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+      batch.commit();
+    });
+};

@@ -9,7 +9,7 @@ import {
   addNotification,
   sendPushNotification,
 } from "../Components/functions/functions";
-
+import { deleteChat } from "../Components/functions/functions";
 import { fetchMessages, fetchUser, updateMessages } from "../redux/actions";
 
 function Chat({ route, navigation }) {
