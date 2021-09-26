@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import * as  ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 //-------------------------getExpoToken by UserID----------------------
 
 export async function getExpoTokenById(id) {
@@ -343,12 +343,12 @@ export async function createChat(uid, currentUser) {
   return sharedChatid;
 }
 
-export async function onPressImage (){
+export async function onPressImage() {
   let result = await ImagePicker.launchImageLibraryAsync();
   if (!result.cancelled) {
     uploadImage(result.uri, firebase.auth().currentUser.email)
       .then(() => {
-        alert("Success");
+        console.log("Success");
       })
       .catch((error) => {
         alert(error);
@@ -356,28 +356,24 @@ export async function onPressImage (){
   }
 }
 
-export function uploadImage(uri, imageName){
-  let firebaseAppDefined = false
+export async function uploadImage(uri, imageName) {
+  let firebaseAppDefined = false;
 
-setInterval(() => {
-  if (!firebaseAppDefined) {
-
-    
-    if (firebase.app()) {
-      uploadImage = async (uri, imageName) => {
+  setInterval(async () => {
+    if (!firebaseAppDefined) {
+      if (firebase.app()) {
         var storageRef = firebase.storage().ref();
         const response = await fetch(uri);
         const blob = await response.blob();
 
-        var ref = storageRef.child("images/"+imageName);
+        var ref = storageRef.child("images/" + imageName);
 
         ref.put(blob).then((snapshot) => {
-          console.log('Uploaded a blob or file!');
+          console.log("Uploaded a blob or file!");
         });
       }
 
-      firebaseAppDefined = true
+      firebaseAppDefined = true;
     }
-  }
-}, 500)
+  }, 500);
 }
