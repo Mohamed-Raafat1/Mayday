@@ -7,7 +7,7 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Dimensions, Linking, StyleSheet, Text, View } from "react-native";
 import MapView, { Callout } from "react-native-maps";
 import { useDispatch, useSelector } from "react-redux";
-import { Geofirestore } from "../App";
+import * as geofirestore from "geofirestore";
 import { customMapStyle } from "../Components/functions/functions";
 import { fetchUser } from "../redux/actions";
 
@@ -20,6 +20,7 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
   }
   if (data) {
     const { locations } = data;
+    const Geofirestore = geofirestore.initializeApp(firebase.firestore());
 
     let latitude = locations[0].coords.latitude;
     let longitude = locations[0].coords.longitude;
@@ -42,12 +43,6 @@ export default function ViewNearestHospital({ navigation, route }) {
   // Constants
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.userState.currentUser);
-  if (currentUser == undefined)
-    return (
-      <View style={{ justifyContent: "space-evenly" }}>
-        <Text>user undefined</Text>
-      </View>
-    );
 
   const [Err, setErr] = useState(null);
   const [TrackingStatus, setTrackingStatus] = useState(false);
@@ -198,6 +193,12 @@ export default function ViewNearestHospital({ navigation, route }) {
 
   //Conditions to decide what to show in the screen
   let screen;
+  if (currentUser == undefined)
+    return (
+      <View style={{ justifyContent: "space-evenly" }}>
+        <Text>user undefined</Text>
+      </View>
+    );
   if (Err) {
     screen = (
       <View>
@@ -243,10 +244,10 @@ export default function ViewNearestHospital({ navigation, route }) {
       <View style={{ flex: 1, width: "100%" }}>
         <MapView
           onPoiClick={(e) => {
-            console.log(e.nativeEvent)
+            console.log(e.nativeEvent);
             setMarkerName(e.nativeEvent.name);
             setMarkerPosition(e.nativeEvent.coordinate);
-            setMarkerID(e.nativeEvent.placeId)
+            setMarkerID(e.nativeEvent.placeId);
           }}
           customMapStyle={customMapStyle}
           initialRegion={{
@@ -288,8 +289,12 @@ export default function ViewNearestHospital({ navigation, route }) {
           onPress={() => {
             console.log(MarkerPosition);
             Linking.openURL(
-              "https://www.google.com/maps/dir/?api=1&destination=" + MarkerPosition.latitude + "," +  MarkerPosition.longitude
-              + "&destination_place_id=" + MarkerID
+              "https://www.google.com/maps/dir/?api=1&destination=" +
+                MarkerPosition.latitude +
+                "," +
+                MarkerPosition.longitude +
+                "&destination_place_id=" +
+                MarkerID
             );
           }}
         >
@@ -304,7 +309,7 @@ export default function ViewNearestHospital({ navigation, route }) {
           onPoiClick={(e) => {
             setMarkerName(e.nativeEvent.name);
             setMarkerPosition(e.nativeEvent.coordinate);
-            setMarkerID(e.nativeEvent.placeId)
+            setMarkerID(e.nativeEvent.placeId);
           }}
           customMapStyle={customMapStyle}
           initialRegion={{

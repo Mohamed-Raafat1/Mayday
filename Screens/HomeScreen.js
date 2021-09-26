@@ -5,8 +5,12 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 
 import Icon from "react-native-vector-icons/Ionicons";
-import { addNotification, sendPushNotification } from "../HomeNavigation/tabs";
-import { Geofirestore } from "../App";
+import {
+  addNotification,
+  sendPushNotification,
+} from "../Components/functions/functions";
+import * as geofirestore from "geofirestore";
+
 import firebase from "firebase";
 
 //redux imports
@@ -27,7 +31,7 @@ const HomeScreen = ({ navigation, route }) => {
   let users = [];
 
   //for unsubscribing to conversations
-  let UnsubscribeConversations = () => { };
+  let UnsubscribeConversations = () => {};
 
   useEffect(() => {
     if (currentUser) {
@@ -54,6 +58,7 @@ const HomeScreen = ({ navigation, route }) => {
   }, []);
   //------------------------------getting nearby Users-------------------------------------------
   const getNearBySOSUsers = async () => {
+    const Geofirestore = geofirestore.initializeApp(firebase.firestore());
     await Geofirestore.collection("users")
       .near({
         center: new firebase.firestore.GeoPoint(

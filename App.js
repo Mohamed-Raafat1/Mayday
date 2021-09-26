@@ -25,11 +25,7 @@ require("core-js/fn/map");
 require("core-js/fn/set");
 require("core-js/fn/array/find");
 
-
 LogBox.ignoreLogs(["Setting a timer"]);
-
-
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyCH4QqZ1C8cgycNz3X8uaaubH3R3gPoIGg",
@@ -45,7 +41,6 @@ if (firebase.apps.length === 0) {
   const app = firebase.initializeApp(firebaseConfig);
 }
 const firestore = firebase.firestore();
-export const Geofirestore = geofirestore.initializeApp(firestore);
 
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
@@ -58,8 +53,6 @@ export default function App({ props }) {
     Roboto: require("native-base/Fonts/Roboto.ttf"),
     Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
   });
-
-
 
   //!!!!!!!!!!!!!REMOVE LATER!!!!!!!!!!!!!!!!!!!!
   //!!!!!!!!!!!!!!!!!this is used to unregister all tasks which is used in onmount

@@ -342,6 +342,47 @@ export async function createChat(uid, currentUser) {
   }
   return sharedChatid;
 }
+//notification functiions
+export async function sendPushNotification(
+  expoPushToken,
+  Title,
+  Body,
+  Category
+) {
+  const message = {
+    to: expoPushToken,
+    sound: "default",
+    title: Title,
+    body: Body,
+    data: { category: Category },
+  };
+
+  await fetch("https://exp.host/--/api/v2/push/send", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Accept-encoding": "gzip, deflate",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(message),
+  });
+}
+// ----------------------------adding Notifications to firestore--------------------------
+export function addNotification(RecieverId, Body, Title, Delivered, Category) {
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(RecieverId)
+    .collection("Notifications")
+    .add({
+      body: Body,
+      title: Title,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      delivered: Delivered,
+      category: Category,
+    });
+}
+//
 
 export async function onPressImage() {
   let result = await ImagePicker.launchImageLibraryAsync();
@@ -377,3 +418,48 @@ export async function uploadImage(uri, imageName) {
     }
   }, 500);
 }
+export const deleteChat = async (uid, chatid) => {
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid)
+    .collection("conversations")
+    .doc(chatid)
+    .delete();
+
+  firebase
+    .firestore()
+    .collection("users")
+    .doc(uid)
+    .collection("conversations")
+    .doc(chatid)
+    .delete();
+  await firebase
+    .firestore()
+    .collection("users")
+    .doc(firebase.auth().currentUser.uid)
+    .collection("messages")
+    .where("chatid", "==", chatid)
+    .get()
+    .then((snapshot) => {
+      const batch = firebase.firestore().batch();
+      snapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+      batch.commit();
+    });
+  await firebase
+    .firestore()
+    .collection("users")
+    .doc(uid)
+    .collection("messages")
+    .where("chatid", "==", chatid)
+    .get()
+    .then((snapshot) => {
+      const batch = firebase.firestore().batch();
+      snapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+      batch.commit();
+    });
+};

@@ -2,21 +2,12 @@
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
-import {
-  CardStyleInterpolators,
-  createStackNavigator,
-} from "@react-navigation/stack";
+import { createStackNavigator } from "@react-navigation/stack";
 //-----------------------Push Notifications------------------------------------
 import * as Notifications from "expo-notifications";
 import firebase from "firebase";
 import { Button, Content, Text, View } from "native-base";
-import React, {
-  
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Alert, StyleSheet } from "react-native";
 import { Badge } from "react-native-elements";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -31,54 +22,20 @@ import RequestAcceptedScreen from "../Screens/Doctor Only Screens/RequestAccepte
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import EditProfileScreen from "../Screens/EditProfileScreen";
 import FirstAidSection from "../Screens/FirstAidSection";
+
 // import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 // Screens
 import HomeScreen from "../Screens/HomeScreen";
 import MedicalIdScreen from "../Screens/MedicalIdScreen";
 import NotificationScreen from "../Screens/NotificationScreen";
 import EmergencyTab from "./EmergencyTab";
+import {
+  addNotification,
+  sendPushNotification,
+} from "../Components/functions/functions";
 
 // Function to send notifications given token and message
-export async function sendPushNotification(
-  expoPushToken,
-  Title,
-  Body,
-  Category
-) {
-  const message = {
-    to: expoPushToken,
-    sound: "default",
-    title: Title,
-    body: Body,
-    data: { category: Category },
-  };
-
-  await fetch("https://exp.host/--/api/v2/push/send", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Accept-encoding": "gzip, deflate",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(message),
-  });
-}
-// ----------------------------adding Notifications to firestore--------------------------
-export function addNotification(RecieverId, Body, Title, Delivered, Category) {
-  firebase
-    .firestore()
-    .collection("users")
-    .doc(RecieverId)
-    .collection("Notifications")
-    .add({
-      body: Body,
-      title: Title,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      delivered: Delivered,
-      category: Category,
-    });
-}
-// ----------------------------setting Notifications to delivered--------------------------
+//----------------------------setting Notifications to delivered--------------------------
 function setNotificationDelivered(id) {
   firebase
     .firestore()
@@ -192,8 +149,6 @@ function Tabs({ navigation }) {
     (state) => state.notificationState.currentNotifications
   );
 
-  
-
   useLayoutEffect(() => {
     const userUnsubscribe = dispatch(fetchUser());
     dispatch(fetchNotifications());
@@ -294,7 +249,6 @@ function Tabs({ navigation }) {
         name="First Aid"
         component={FirstAidSection}
         options={{
-          
           tabBarLabel: "First Aid",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
@@ -514,7 +468,7 @@ const DoctorRequestsStackScreen = () => (
 //     }}
 //   >
 //     <FirstAidStack.Screen name="First Aid" component={FirstAidSection} />
-    
+
 //   </FirstAidStack.Navigator>
 // );
 
