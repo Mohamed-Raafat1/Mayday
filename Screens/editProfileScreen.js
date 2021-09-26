@@ -1,11 +1,25 @@
 import firebase from "firebase";
 import {
-  Body, Button, Container, Content, Form, Header, Icon, Item, Left, Picker, Right, Text, Textarea, Title, View
+  Body,
+  Button,
+  Container,
+  Content,
+  Form,
+  Header,
+  Icon,
+  Item,
+  Left,
+  Picker,
+  Right,
+  Text,
+  Textarea,
+  Title,
+  View,
 } from "native-base";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, TextInput } from "react-native";
-import Avatar from 'react-native-interactive-avatar';
-import {onPressImage } from "../Components/functions/functions";
+import Avatar from "react-native-interactive-avatar";
+import { onPressImage } from "../Components/functions/functions";
 require("firebase/firestore");
 require("firebase/firebase-storage");
 function EditProfileScreen({ navigation, route }) {
@@ -39,7 +53,7 @@ function EditProfileScreen({ navigation, route }) {
   const [Medications, setMedications] = useState(
     currentUser.MedicalID.Medications
   );
-  const [Uri, setUri] = useState("https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png");
+  const [Uri, setUri] = useState(firebase.auth().currentUser.photoURL);
   const [Render, setRender] = useState("");
   //uploading data to firestore (add rest of data)
   const onSave = () => {
@@ -72,24 +86,6 @@ function EditProfileScreen({ navigation, route }) {
       });
     navigation.replace("Medical ID");
   };
-  
-  useEffect(() => {
-    setUri (firebase.auth().currentUser.photoURL)
-    firebase.storage().ref().child("images/"+firebase.auth().currentUser.email).getDownloadURL().then((result)=>{
-      setUri (result)
-      firebase.auth().currentUser.updateProfile(
-        {
-          photoURL:result
-        })
-     })
-     setRender("1");
-     let r;
-     r=Render;
-    return () => {
-      
-    }
-  }, [Render])
-
 
 
   if (currentUser == undefined) return <View></View>;
@@ -130,29 +126,36 @@ function EditProfileScreen({ navigation, route }) {
           <View style={styles.userInfoSection}>
             {/* -------------------avatar, caption button, name----------------- */}
             <View style={styles.avatar}>
-              
-
-            {Uri && <Avatar
-              withBorder
-              interactive
-              placeholderSource={{ uri: firebase.auth().currentUser.photoURL}}
-              onPress={async ()=>{await onPressImage()
-                firebase.storage().ref().child("images/"+firebase.auth().currentUser.email).getDownloadURL().then((result)=>{
-                  setUri (result)
-                  firebase.auth().currentUser.updateProfile(
-                    {
-                      photoURL:result
-                    })
-                 })}}
-              overlayColor={'#e8fbff'}
-              style={{
-                backgroundColor: 'green',
-                borderColor: '#000000',
-                borderWidth: 1,
-                marginLeft: 5,
-              }}
-              size={'medium'}
-            />}
+              {Uri && (
+                <Avatar
+                  withBorder
+                  interactive
+                  uri={Uri}
+                  placeholderSource={require("../assets/NormalAvatar.png")}
+                  onPress={async () => {
+                    await onPressImage();
+                    firebase
+                      .storage()
+                      .ref()
+                      .child("images/" + firebase.auth().currentUser.email)
+                      .getDownloadURL()
+                      .then((result) => {
+                        setUri(result);
+                        firebase.auth().currentUser.updateProfile({
+                          photoURL: result,
+                        });
+                      });
+                  }}
+                  overlayColor={"#e8fbff"}
+                  style={{
+                    backgroundColor: "green",
+                    borderColor: "#000000",
+                    borderWidth: 1,
+                    marginLeft: 5,
+                  }}
+                  size={"medium"}
+                />
+              )}
             </View>
           </View>
 

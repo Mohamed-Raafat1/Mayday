@@ -389,7 +389,7 @@ export async function onPressImage() {
   if (!result.cancelled) {
     uploadImage(result.uri, firebase.auth().currentUser.email)
       .then(() => {
-        alert("Success");
+        console.log("Success");
       })
       .catch((error) => {
         alert(error);
@@ -397,26 +397,24 @@ export async function onPressImage() {
   }
 }
 
-export function uploadImage(uri, imageName) {
+export async function uploadImage(uri, imageName) {
   let firebaseAppDefined = false;
 
-  setInterval(() => {
+  setInterval(async () => {
     if (!firebaseAppDefined) {
       if (firebase.app()) {
-        uploadImage = async (uri, imageName) => {
-          var storageRef = firebase.storage().ref();
-          const response = await fetch(uri);
-          const blob = await response.blob();
+        var storageRef = firebase.storage().ref();
+        const response = await fetch(uri);
+        const blob = await response.blob();
 
-          var ref = storageRef.child("images/" + imageName);
+        var ref = storageRef.child("images/" + imageName);
 
-          ref.put(blob).then((snapshot) => {
-            console.log("Uploaded a blob or file!");
-          });
-        };
-
-        firebaseAppDefined = true;
+        ref.put(blob).then((snapshot) => {
+          console.log("Uploaded a blob or file!");
+        });
       }
+
+      firebaseAppDefined = true;
     }
   }, 500);
 }
