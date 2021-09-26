@@ -45,7 +45,7 @@ export function DrawerContent(props) {
             <View style={{ flexDirection: "row", marginTop: 15 }}>
               <Avatar.Image
                 source={{
-                  uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+                  uri: firebase.auth().currentUser.photoURL,
                 }}
                 size={50}
               />
