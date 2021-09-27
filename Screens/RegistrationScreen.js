@@ -560,7 +560,7 @@ function RegistrationScreen({ navigation }) {
                 Toast.show({ text: "Passwords Do Not Match" });
               }
             }
-            // await DailyTipsAlert();
+            if (!EmptyStatus) await DailyTipsAlert();
           }}
           block
         >
