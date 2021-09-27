@@ -161,6 +161,7 @@ function RegistrationScreen({ navigation }) {
               geohash: "",
               geopoint: new firebase.firestore.GeoPoint(0, 0),
             },
+            PhotoURI: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
           });
 
         //default profile pic

@@ -53,7 +53,7 @@ function EditProfileScreen({ navigation, route }) {
   const [Medications, setMedications] = useState(
     currentUser.MedicalID.Medications
   );
-  const [Uri, setUri] = useState(firebase.auth().currentUser.photoURL);
+  const [Uri, setUri] = useState(currentUser.PhotoURI);
   const [Render, setRender] = useState("");
   //uploading data to firestore (add rest of data)
   const onSave = () => {
@@ -134,7 +134,8 @@ function EditProfileScreen({ navigation, route }) {
                   placeholderSource={require("../assets/NormalAvatar.png")}
                   onPress={async () => {
                     let success = await onPressImage()
-                    
+                    console.log('UIRRRRIL:',Uri)
+                    console.log('the shet:',currentUser.PhotoURI)
                     if (success)
                       await firebase
                         .storage()
@@ -142,9 +143,16 @@ function EditProfileScreen({ navigation, route }) {
                         .child("images/" + firebase.auth().currentUser.email)
                         .getDownloadURL().then((result) => {
                           setUri(result);
-                          firebase.auth().currentUser.updateProfile({
-                            photoURL: result,
-                          });
+                          firebase
+                          .firestore()
+                          .collection('users')
+                          .doc(currentUser.uid)
+                          .update({
+                            PhotoURI: result
+                          })
+                          // .auth().currentUser.updateProfile({
+                          //   photoURL: result,
+                          // });
                         })
                         .catch(e => {
                           console.log('Error: ', e)

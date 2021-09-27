@@ -23,10 +23,7 @@ import QRCode from "react-native-qrcode-svg";
 
 function MedicalIdScreen({ navigation }) {
   const dispatch = useDispatch();
-  // const [Uri, setUri] = useState(
-  //   firebase.auth().currentUser.photoURL
-  //   // "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png"
-  // );
+
 
   useLayoutEffect(() => {
     const Unsubscribe = dispatch(fetchUser());
@@ -36,17 +33,7 @@ function MedicalIdScreen({ navigation }) {
     };
   }, []);
 
-  // useEffect(() => {
-  //   firebase
-  //     .storage()
-  //     .ref()
-  //     .child("images/" + firebase.auth().currentUser.email)
-  //     .getDownloadURL()
-  //     .then((result) => {
-  //       setUri(result);
-  //     });
-  //   return () => {};
-  // }, [Uri]);
+  
 
   const currentUser = useSelector((state) => state.userState.currentUser);
 
@@ -111,7 +98,7 @@ function MedicalIdScreen({ navigation }) {
           <Button
             transparent
             onPress={ () => {
-              // console.log("medicalid user\n",currentUser.uid)
+            
              
               navigation.navigate("EditProfile", { currentUser });
             }}
@@ -125,7 +112,7 @@ function MedicalIdScreen({ navigation }) {
           <View style={styles.avatar}>
             <Avatar.Image
               source={{
-                uri: firebase.auth().currentUser.photoURL,
+                uri: currentUser.PhotoURI,
               }}
               size={80}
             />

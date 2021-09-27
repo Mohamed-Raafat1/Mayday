@@ -68,7 +68,7 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
  */
 function DoctorsScreen() {
   //*_*_*_*_*_constants*_*_*_*_*_*_*
-  let usersunsubsrcibe = () => {};
+  let usersunsubsrcibe = () => { };
   //state of request (is button pressed or not?)
   const [isRequested, setisRequested] = useState(false);
   const [Err, setErr] = useState(null);
@@ -96,7 +96,7 @@ function DoctorsScreen() {
   const [count, setcount] = useState(0);
 
   //for unsubscribing
-  let UnsubscribeRequest = () => {};
+  let UnsubscribeRequest = () => { };
 
   //Request Permissions
   const requestPermissions = async () => {
@@ -176,6 +176,7 @@ function DoctorsScreen() {
         AccidentType: "",
         DoctorID: "",
         DoctorGeoHash: "",
+        Condition: '',
         coordinates: new firebase.firestore.GeoPoint(
           location.latitude,
           location.longitude
@@ -188,7 +189,7 @@ function DoctorsScreen() {
         PatientMedicalID: currentUser.MedicalID,
         PatientNumber: currentUser.PhoneNumber,
         PatientEmail: currentUser.Email,
-
+        
         RequestType: "Location",
         State: "Pending",
       })
