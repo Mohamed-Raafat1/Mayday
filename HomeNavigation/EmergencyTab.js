@@ -24,6 +24,8 @@ export default function EmergencyTab({ navigation }) {
 
     return () => {
       Unsubscribe();
+      
+
     };
   }, []);
 
@@ -33,6 +35,7 @@ export default function EmergencyTab({ navigation }) {
       navigation.addListener("beforeRemove", (e) => {
         if (!currentRequest) {
           // If we don't have unsaved changes, then we don't need to do anything
+          TaskManager.unregisterAllTasksAsync();
           return;
         }
 
@@ -58,7 +61,7 @@ export default function EmergencyTab({ navigation }) {
           ]
         );
       }),
-    [navigation, hasUnsavedChanges]
+    [navigation, currentRequest]
   );
 
   return (

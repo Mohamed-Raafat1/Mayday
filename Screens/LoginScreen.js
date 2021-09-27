@@ -23,7 +23,7 @@ import * as Notifications from "expo-notifications";
 
 // Notif. Token Registeration function
 async function registerForPushNotificationsAsync() {
-  let token;
+  let token ='';
   if (Constants.isDevice) {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync(); //PERMISSIONS REQUEST

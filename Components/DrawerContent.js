@@ -19,6 +19,7 @@ export function DrawerContent(props) {
 
   useLayoutEffect(() => {
     const Unsubscribe = dispatch(fetchUser());
+    
     return () => {
       Unsubscribe();
     };
@@ -45,7 +46,7 @@ export function DrawerContent(props) {
             <View style={{ flexDirection: "row", marginTop: 15 }}>
               <Avatar.Image
                 source={{
-                  uri: firebase.auth().currentUser.photoURL,
+                  uri: currentUser.photoURI,
                 }}
                 size={50}
               />

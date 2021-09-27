@@ -50,8 +50,8 @@ export default function ViewNearestHospital({ navigation, route }) {
 
   //constants for mapview
   const [location, setlocation] = useState({
-    longitude: currentUser.coordinates.longitude,
-    latitude: currentUser.coordinates.latitude,
+    longitude: currentUser? currentUser.coordinates.longitude : 0,
+    latitude: currentUser? currentUser.coordinates.latitude: 0,
   });
   const { height: HEIGHT, width: WIDTH } = Dimensions.get("window");
   //This controls default zoom
@@ -263,8 +263,8 @@ export default function ViewNearestHospital({ navigation, route }) {
           showsCompass={true}
           // showsMyLocationButton={true}
           showsPointsOfInterest={true}
-          // loadingEnabled={true}
-          // loadingIndicatorColor="blue"
+          loadingEnabled={true}
+          loadingIndicatorColor="blue"
           onMapReady={() => {
             if (themargin === 0) setthemargin(1);
             else setthemargin(0);

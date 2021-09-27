@@ -33,7 +33,7 @@ import { DailyTipsAlert } from "../HomeNavigation/tabs";
 
 // Notif. Token Registeration function
 async function registerForPushNotificationsAsync() {
-  let token;
+  let token = "";
   if (Constants.isDevice) {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync(); //PERMISSIONS REQUEST
@@ -135,13 +135,10 @@ function RegistrationScreen({ navigation }) {
     await firebase
       .auth()
       .createUserWithEmailAndPassword(Email, Password)
-      .then((result) => {
+      .then(async (result) => {
         let uid = firebase.auth().currentUser.uid;
-        let location = {
-          latitude: 0,
-          longitude: 0,
-        };
-        firebase
+
+        await firebase
           .firestore()
           .collection("users")
           .doc(uid)
@@ -157,7 +154,6 @@ function RegistrationScreen({ navigation }) {
             medicalProfessional,
             MedicalID,
             EmergencyContacts,
-            location,
             ExpoToken: expoPushToken,
             DailyTips: false,
             coordinates: new firebase.firestore.GeoPoint(0, 0),
@@ -165,11 +161,16 @@ function RegistrationScreen({ navigation }) {
               geohash: "",
               geopoint: new firebase.firestore.GeoPoint(0, 0),
             },
+            PhotoURI: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
           });
 
+        //default profile pic
+        firebase.auth().currentUser.updateProfile({
+          photoURL: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+        });
+        
         console.log(result);
       })
-      .then((result) => console.log(result))
       .catch((error) => {
         Toast.show({
           text: error.message,
