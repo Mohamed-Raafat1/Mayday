@@ -29,7 +29,7 @@ function MedicalIdScreen({ navigation }) {
 
   useLayoutEffect(() => {
     const Unsubscribe = dispatch(fetchUser());
-
+    
     return () => {
       Unsubscribe();
     };
