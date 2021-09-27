@@ -133,18 +133,23 @@ function EditProfileScreen({ navigation, route }) {
                   uri={Uri}
                   placeholderSource={require("../assets/NormalAvatar.png")}
                   onPress={async () => {
-                    await onPressImage();
-                    firebase
-                      .storage()
-                      .ref()
-                      .child("images/" + firebase.auth().currentUser.email)
-                      .getDownloadURL()
-                      .then((result) => {
-                        setUri(result);
-                        firebase.auth().currentUser.updateProfile({
-                          photoURL: result,
-                        });
-                      });
+                    let success = await onPressImage()
+                    
+                    if (success)
+                      await firebase
+                        .storage()
+                        .ref()
+                        .child("images/" + firebase.auth().currentUser.email)
+                        .getDownloadURL().then((result) => {
+                          setUri(result);
+                          firebase.auth().currentUser.updateProfile({
+                            photoURL: result,
+                          });
+                        })
+                        .catch(e => {
+                          console.log('Error: ', e)
+                        })
+                  
                   }}
                   overlayColor={"#e8fbff"}
                   style={{

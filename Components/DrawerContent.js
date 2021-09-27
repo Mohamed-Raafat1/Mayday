@@ -19,6 +19,7 @@ export function DrawerContent(props) {
 
   useLayoutEffect(() => {
     const Unsubscribe = dispatch(fetchUser());
+    
     return () => {
       Unsubscribe();
     };

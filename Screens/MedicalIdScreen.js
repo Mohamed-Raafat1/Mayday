@@ -23,9 +23,10 @@ import QRCode from "react-native-qrcode-svg";
 
 function MedicalIdScreen({ navigation }) {
   const dispatch = useDispatch();
-  const [Uri, setUri] = useState(
-    "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png"
-  );
+  // const [Uri, setUri] = useState(
+  //   firebase.auth().currentUser.photoURL
+  //   // "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png"
+  // );
 
   useLayoutEffect(() => {
     const Unsubscribe = dispatch(fetchUser());
@@ -35,17 +36,17 @@ function MedicalIdScreen({ navigation }) {
     };
   }, []);
 
-  useEffect(() => {
-    firebase
-      .storage()
-      .ref()
-      .child("images/" + firebase.auth().currentUser.email)
-      .getDownloadURL()
-      .then((result) => {
-        setUri(result);
-      });
-    return () => {};
-  }, [Uri]);
+  // useEffect(() => {
+  //   firebase
+  //     .storage()
+  //     .ref()
+  //     .child("images/" + firebase.auth().currentUser.email)
+  //     .getDownloadURL()
+  //     .then((result) => {
+  //       setUri(result);
+  //     });
+  //   return () => {};
+  // }, [Uri]);
 
   const currentUser = useSelector((state) => state.userState.currentUser);
 
@@ -109,8 +110,9 @@ function MedicalIdScreen({ navigation }) {
         <Right>
           <Button
             transparent
-            onPress={() => {
+            onPress={ () => {
               // console.log("medicalid user\n",currentUser.uid)
+             
               navigation.navigate("EditProfile", { currentUser });
             }}
           >
