@@ -30,7 +30,6 @@ import "react-native-gesture-handler";
 import RadioGroup from "react-native-radio-buttons-group";
 import GlobalStyles from "../GlobalStyles";
 import { DailyTipsAlert } from "../HomeNavigation/tabs";
-
 // Notif. Token Registeration function
 async function registerForPushNotificationsAsync() {
   let token = "";
@@ -47,7 +46,7 @@ async function registerForPushNotificationsAsync() {
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data; //GETTING TOKEN HERE
-    console.log(token);
+    //console.log(token);
   } else {
     alert("Must use physical device for Push Notifications");
   }
@@ -77,7 +76,7 @@ function RegistrationScreen({ navigation }) {
   const [PhoneNumber, setPhoneNumber] = useState("+20");
   const [FirstName, setFirstName] = useState("");
   const [LastName, setLastName] = useState("");
-
+  const [EmptyStatus, setEmptyStatus] = useState(true);
   //------------------medicalID objects---------------------------------------------
   const [height, setHeight] = useState("0");
   const [weight, setWeight] = useState("0");
@@ -110,80 +109,86 @@ function RegistrationScreen({ navigation }) {
   const ComparePassword = (text) => {
     setConfirmPass(text);
     if (Password === text) setEqual(true);
-    else setEqual(false);
+    else {
+      setEqual(false);
+    }
   };
 
   const onSignUp = async () => {
-    //Gathering MedicalID
-    let MedicalID = {
-      Height: height,
-      Weight: weight,
-      BloodType: bloodType,
-      MedicalConditions: medicalConditions,
-      Allergies: allergies,
-      Medications: medications,
-    };
+    console.log(EmptyStatus);
+    if (isEqual) {
+      if (!EmptyStatus) {
+        //Gathering MedicalID
+        let MedicalID = {
+          Height: height,
+          Weight: weight,
+          BloodType: bloodType,
+          MedicalConditions: medicalConditions,
+          Allergies: allergies,
+          Medications: medications,
+        };
 
-    //Emergency Contacts
-    let EmergencyContacts = [];
-    //retrieving gender
-    let gender = "";
-    radioButtons.map((radio) => {
-      if (radio.selected == true) gender = radio.value;
-    });
-
-    await firebase
-      .auth()
-      .createUserWithEmailAndPassword(Email, Password)
-      .then(async (result) => {
-        let uid = firebase.auth().currentUser.uid;
+        //Emergency Contacts
+        let EmergencyContacts = [];
+        //retrieving gender
+        let gender = "";
+        radioButtons.map((radio) => {
+          if (radio.selected == true) gender = radio.value;
+        });
 
         await firebase
-          .firestore()
-          .collection("users")
-          .doc(uid)
-          .set({
-            uid,
-            Email,
-            FirstName,
-            LastName,
-            Gender: gender,
-            Birthdate: date,
-            NationalID,
-            PhoneNumber,
-            medicalProfessional,
-            MedicalID,
-            EmergencyContacts,
-            ExpoToken: expoPushToken,
-            DailyTips: false,
-            currentRequestID: "",
-            coordinates: new firebase.firestore.GeoPoint(0, 0),
-            currentRequest: { chatid: "", Requestid: "" },
-            g: {
-              geohash: "",
-              geopoint: new firebase.firestore.GeoPoint(0, 0),
-            },
-            PhotoURI:
-              "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+          .auth()
+          .createUserWithEmailAndPassword(Email, Password)
+          .then(async (result) => {
+            let uid = firebase.auth().currentUser.uid;
+
+            await firebase
+              .firestore()
+              .collection("users")
+              .doc(uid)
+              .set({
+                uid,
+                Email,
+                FirstName,
+                LastName,
+                Gender: gender,
+                Birthdate: date,
+                NationalID,
+                PhoneNumber,
+                medicalProfessional,
+                MedicalID,
+                EmergencyContacts,
+                ExpoToken: expoPushToken,
+                DailyTips: false,
+                currentRequestID: "",
+                coordinates: new firebase.firestore.GeoPoint(0, 0),
+                currentRequest: { chatid: "", Requestid: "" },
+                g: {
+                  geohash: "",
+                  geopoint: new firebase.firestore.GeoPoint(0, 0),
+                },
+                PhotoURI:
+                  "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+              });
+
+            //default profile pic
+            firebase.auth().currentUser.updateProfile({
+              photoURL:
+                "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+            });
+
+            //console.log(result);
+          })
+          .catch((error) => {
+            Toast.show({
+              text: error.message,
+              duration: 2000,
+            });
+            console.log(error);
           });
-
-        //default profile pic
-        firebase.auth().currentUser.updateProfile({
-          photoURL:
-            "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
-        });
-
-        console.log(result);
-      })
-      .catch((error) => {
-        Toast.show({
-          text: error.message,
-          duration: 2000,
-        });
-        console.log(error);
-      });
+      }
+    }
   };
-
   //====================================================================//
 
   const Radio = [
@@ -233,6 +238,46 @@ function RegistrationScreen({ navigation }) {
   const showMode = (currentMode) => {
     setShow(true);
     setMode(currentMode);
+  };
+
+  const checkTextInput = () => {
+    if (!Email.trim()) {
+      alert("Please Enter Email");
+      setEmptyStatus(true);
+      return;
+    }
+    //Check for the Email TextInput
+    if (!Password.trim()) {
+      alert("Please Enter Email");
+      setEmptyStatus(true);
+      return;
+    }
+    if (!ConfirmPass.trim()) {
+      alert("Please Confirm Password");
+      setEmptyStatus(true);
+      return;
+    }
+    if (!NationalID.trim()) {
+      alert("Please Enter Your National ID");
+      setEmptyStatus(true);
+    }
+    if (!PhoneNumber.trim()) {
+      alert("Please Enter You Phone Number");
+      setEmptyStatus(true);
+      return;
+    }
+    if (!FirstName.trim()) {
+      alert("Please Enter Your First Name");
+      setEmptyStatus(true);
+      return;
+    }
+    if (!LastName.trim()) {
+      alert("Please Enter Your Last Name");
+      setEmptyStatus(true);
+      return;
+    }
+
+    setEmptyStatus(false);
   };
 
   return (
@@ -366,7 +411,9 @@ function RegistrationScreen({ navigation }) {
             style={styles.Item}
           >
             <Input
-              onChangeText={(text) => ComparePassword(text)}
+              onChangeText={(text) => {
+                ComparePassword(text);
+              }}
               textContentType="password"
               secureTextEntry={true}
               placeholderTextColor="gray"
@@ -507,7 +554,13 @@ function RegistrationScreen({ navigation }) {
           rounded
           onPress={async () => {
             onSignUp();
-            await DailyTipsAlert();
+            checkTextInput();
+            {
+              if (!isEqual) {
+                Toast.show({ text: "Passwords Do Not Match" });
+              }
+            }
+            // await DailyTipsAlert();
           }}
           block
         >
