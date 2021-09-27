@@ -117,11 +117,12 @@ function RegistrationScreen({ navigation }) {
     setConfirmPass(text);
     if (Password === text) setEqual(true);
     else {
-    setEqual(false);}
+      setEqual(false);
+    }
   };
 
   const onSignUp = async () => {
-    console.log(EmptyStatus)
+    console.log(EmptyStatus);
     if (isEqual) {
       if (!EmptyStatus) {
         //Gathering MedicalID
@@ -166,17 +167,21 @@ function RegistrationScreen({ navigation }) {
                 EmergencyContacts,
                 ExpoToken: expoPushToken,
                 DailyTips: false,
+                currentRequestID: "",
                 coordinates: new firebase.firestore.GeoPoint(0, 0),
+                currentRequest: { chatid: "", Requestid: "" },
                 g: {
                   geohash: "",
                   geopoint: new firebase.firestore.GeoPoint(0, 0),
                 },
-                PhotoURI: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+                PhotoURI:
+                  "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
               });
 
             //default profile pic
             firebase.auth().currentUser.updateProfile({
-              photoURL: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+              photoURL:
+                "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
             });
 
             //console.log(result);
@@ -188,9 +193,9 @@ function RegistrationScreen({ navigation }) {
             });
             console.log(error);
           });
-      };
+      }
     }
-  }
+  };
   //====================================================================//
 
   const Radio = [
@@ -244,42 +249,42 @@ function RegistrationScreen({ navigation }) {
 
   const checkTextInput = () => {
     if (!Email.trim()) {
-      alert('Please Enter Email');
+      alert("Please Enter Email");
       setEmptyStatus(true);
       return;
     }
     //Check for the Email TextInput
     if (!Password.trim()) {
-      alert('Please Enter Email');
+      alert("Please Enter Email");
       setEmptyStatus(true);
       return;
     }
     if (!ConfirmPass.trim()) {
-      alert('Please Confirm Password');
+      alert("Please Confirm Password");
       setEmptyStatus(true);
       return;
     }
     if (!NationalID.trim()) {
-      alert('Please Enter Your National ID');
+      alert("Please Enter Your National ID");
       setEmptyStatus(true);
     }
     if (!PhoneNumber.trim()) {
-      alert('Please Enter You Phone Number');
+      alert("Please Enter You Phone Number");
       setEmptyStatus(true);
       return;
     }
     if (!FirstName.trim()) {
-      alert('Please Ent\er Your First Name');
+      alert("Please Enter Your First Name");
       setEmptyStatus(true);
       return;
     }
     if (!LastName.trim()) {
-      alert('Please Enter Your Last Name');
+      alert("Please Enter Your Last Name");
       setEmptyStatus(true);
       return;
     }
 
-      setEmptyStatus(false);
+    setEmptyStatus(false);
   };
 
   return (
@@ -436,7 +441,9 @@ function RegistrationScreen({ navigation }) {
             style={styles.Item}
           >
             <Input
-              onChangeText={(text) =>{ ComparePassword(text)}}
+              onChangeText={(text) => {
+                ComparePassword(text);
+              }}
               textContentType="password"
               secureTextEntry={true}
               placeholderTextColor="gray"
@@ -584,10 +591,12 @@ function RegistrationScreen({ navigation }) {
           onPress={async () => {
             onSignUp();
             checkTextInput();
-            {if(!isEqual){
-              Toast.show({text:'Passwords Do Not Match'})
-            }}
-            // await DailyTipsAlert();
+            {
+              if (!isEqual) {
+                Toast.show({ text: "Passwords Do Not Match" });
+              }
+            }
+            if (!EmptyStatus) await DailyTipsAlert();
           }}
           block
         >
