@@ -124,7 +124,7 @@ export function fetchRequest(id) {
       .collection("requests")
       .doc(id)
       .onSnapshot((snapshot) => {
-        if (snapshot.data()) {
+        if (snapshot.data() && snapshot.data().State !== "Cancelled") {
           let data = snapshot.data();
 
           dispatch({

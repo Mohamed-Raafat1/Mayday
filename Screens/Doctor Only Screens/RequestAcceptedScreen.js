@@ -2,7 +2,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import firebase from "firebase";
-import { Spinner } from "native-base";
+import { Spinner, Toast } from "native-base";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   Alert,
@@ -40,17 +40,22 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
     let longitude = locations[0].coords.longitude;
     const hash = geofire.geohashForLocation([latitude, longitude]);
     const Geofirestore = geofirestore.initializeApp(firebase.firestore());
-    await Geofirestore.collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .update({
-        coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
-      })
-      .catch((error) => {
-        console.log(
-          "Error in Taskmanager when uploading to firestore: ",
-          error
-        );
-      });
+
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        await Geofirestore.collection("users")
+          .doc(firebase.auth().currentUser.uid)
+          .update({
+            coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
+          })
+          .catch((error) => {
+            console.log(
+              "Error in Taskmanager when uploading to firestore: ",
+              error
+            );
+          });
+      }
+    });
 
     if (AcceptedRequest)
       await firebase
@@ -83,10 +88,10 @@ function RequestAcceptedScreen({ route, navigation }) {
   const currentAcceptedRequest = useSelector(
     (state) => state.userState.AcceptedRequest
   );
+  AcceptedRequest = useSelector((state) => state.userState.AcceptedRequest);
 
   const requestid = route.params.requestid;
   const chatid = route.params.chatid;
-
   const currentUser = useSelector((state) => state.userState.currentUser);
 
   const hasUnsavedChanges = true;
@@ -208,15 +213,38 @@ function RequestAcceptedScreen({ route, navigation }) {
     });
   };
 
+  const CancelRequest = async () => {
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid)
+      .update({
+        currentRequest: {
+          chatid: "",
+          requestid: "",
+        },
+      });
+    AcceptedRequest = null;
+  };
   //useeffects
   //Done on mount and for cleanup
   useLayoutEffect(() => {
     const unsubscribe = dispatch(fetchUser());
-    UnsubscribeAcceptedRequest = dispatch(fetchAcceptedRequest(requestid));
-    console.log(UnsubscribeAcceptedRequest);
-    return () => {
+    if (
+      currentUser &&
+      currentUser.currentRequest.chatid &&
+      currentUser.currentRequest.requestid
+    )
+      UnsubscribeAcceptedRequest = dispatch(
+        fetchAcceptedRequest(currentUser.currentRequest.requestid)
+      );
+    else UnsubscribeAcceptedRequest = dispatch(fetchAcceptedRequest(requestid));
+
+    return async () => {
       unsubscribe();
-      UnsubscribeAcceptedRequest();
+      await StopTracking();
+      await UnsubscribeAcceptedRequest();
+      await dispatch(clearAcceptedRequest());
     };
   }, []);
 
@@ -233,6 +261,26 @@ function RequestAcceptedScreen({ route, navigation }) {
   );
 
   useEffect(() => {
+    (async () => {
+      if (
+        currentAcceptedRequest &&
+        currentAcceptedRequest.State === "Cancelled"
+      ) {
+        Toast.show({
+          text: "The request has been cancelled by the user",
+          duration: 3000,
+          position: "bottom",
+        });
+
+        await CancelRequest();
+
+        navigation.goBack();
+      }
+    })();
+    return () => {};
+  }, [currentAcceptedRequest]);
+
+  useEffect(() => {
     if (Err) {
       console.log("there is ERROR\n", Err);
       if (TrackingStatus == true) StopTracking();
@@ -247,16 +295,16 @@ function RequestAcceptedScreen({ route, navigation }) {
 
   //for putting the received accepted request from redux into
   //the global variable (acceptedrequest) to be used in taskmanager
-  useEffect(() => {
-    if (currentAcceptedRequest) AcceptedRequest = currentAcceptedRequest;
-  }, [currentAcceptedRequest]);
+  // useEffect(() => {
+  //   if (currentAcceptedRequest) AcceptedRequest = currentAcceptedRequest;
+  // }, [currentAcceptedRequest]);
 
   //for preventing back button functionality
-  React.useEffect(
-    () =>
-      navigation.addListener("beforeRemove", (e) => {
-        if (!hasUnsavedChanges) {
-          // If we don't have unsaved changes, then we don't need to do anything
+  React.useEffect(() => {
+    navigation.addListener("beforeRemove", (e) => {
+      if (AcceptedRequest) {
+        if (AcceptedRequest.State === "Cancelled") {
+          // If the user was cancelled on the userside
           return;
         }
 
@@ -280,7 +328,7 @@ function RequestAcceptedScreen({ route, navigation }) {
               // This will continue the action that had triggered the removal of the screen
 
               onPress: async () => {
-                await StopTracking(); //stop locationn tracking
+                //stop locationn tracking
                 await firebase
                   .firestore()
                   .collection("requests") // set the request to cancelled to remove it
@@ -295,18 +343,16 @@ function RequestAcceptedScreen({ route, navigation }) {
                     );
                   });
 
-                await UnsubscribeAcceptedRequest();
-                dispatch(clearAcceptedRequest());
-                AcceptedRequest = null;
+                await CancelRequest();
 
                 navigation.dispatch(e.data.action);
               },
             },
           ]
         );
-      }),
-    [navigation, hasUnsavedChanges]
-  );
+      }
+    });
+  }, [navigation, hasUnsavedChanges]);
 
   let screen;
   if (
@@ -372,18 +418,18 @@ function RequestAcceptedScreen({ route, navigation }) {
             borderRadius: 5,
             padding: 5,
             position: "absolute",
-            top: 70,
-            right: 13,
-            backgroundColor: "rgba(225, 225, 225, 0)",
+            top: 10,
+            left: 0,
+            backgroundColor: "rgba(225, 225, 225, 1)",
             flexDirection: "row",
             flex: 1,
           }}
         >
-          <Text style={{ fontSize: "10" }}> this is text</Text>
+          <Text style={{ fontSize: 20 }}> Chat</Text>
           <MaterialCommunityIcons
             name="message-text-outline"
-            size={40}
-            color="red"
+            size={30}
+            color="black"
           />
         </TouchableOpacity>
       </View>

@@ -156,19 +156,23 @@ function RegistrationScreen({ navigation }) {
             EmergencyContacts,
             ExpoToken: expoPushToken,
             DailyTips: false,
+            currentRequestID: "",
             coordinates: new firebase.firestore.GeoPoint(0, 0),
+            currentRequest: { chatid: "", Requestid: "" },
             g: {
               geohash: "",
               geopoint: new firebase.firestore.GeoPoint(0, 0),
             },
-            PhotoURI: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+            PhotoURI:
+              "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
           });
 
         //default profile pic
         firebase.auth().currentUser.updateProfile({
-          photoURL: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+          photoURL:
+            "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
         });
-        
+
         console.log(result);
       })
       .catch((error) => {
