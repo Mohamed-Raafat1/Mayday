@@ -33,15 +33,6 @@ function Settings({ navigation }) {
             </Body>
           </ListItem>
 
-          <ListItem avatar onPress={() => navigation.navigate("editProfile")}>
-            <Left>
-              <Ionicons name="medical" size={24} color="black" />
-            </Left>
-            <Body>
-              <Text>Medical ID</Text>
-            </Body>
-          </ListItem>
-
           <ListItem
             avatar
             onPress={() => navigation.navigate("LocationSettings")}

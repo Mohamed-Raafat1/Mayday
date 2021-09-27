@@ -26,6 +26,7 @@
     "expo-background-fetch": "^9.2.2",
     "expo-font": "~9.1.0",
     "expo-image-picker": "^10.2.3",
+    "expo-linear-gradient": "^9.2.0",
     "expo-location": "~12.0.4",
     "expo-notifications": "^0.12.3",
     "expo-permissions": "^12.1.1",

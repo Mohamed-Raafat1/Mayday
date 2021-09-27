@@ -16,8 +16,14 @@ import {
   Subtitle,
   Text,
   Textarea,
+  Body,
   Toast,
+  Header,
+  Left,
+  Card,
+  Title
 } from "native-base";
+
 import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
@@ -27,6 +33,7 @@ import {
   View,
 } from "react-native";
 import "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import RadioGroup from "react-native-radio-buttons-group";
 import GlobalStyles from "../GlobalStyles";
 import { DailyTipsAlert } from "../HomeNavigation/tabs";
@@ -276,10 +283,33 @@ function RegistrationScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      <ScrollView style={styles.Loginform}>
-        <Form>
+    <SafeAreaView style={{width:'100%'}} style={GlobalStyles.droidSafeArea}>
+      <ScrollView style={{width:'100%',backgroundColor:'white'}}>
+        <Header transparent style={{
+          borderBottomWidth:1,
+          width:'100%',
+          borderBottomColor: "black",
+        }} >
+          
+          <TouchableOpacity style={{marginTop:'50%',}}
+            onPress={() => {
+              // navigation.navigate("Home")
+              navigation.popToTop();
+            }}
+          >
+            <Icon style={{ color: "black" }} name="arrow-back" />
+          </TouchableOpacity> 
+            
+            <Body>
+            <Title style={{ color: 'black', fontSize: 27, marginLeft: 5, }}>Registeration</Title>
+            </Body>
+                
+      
+        </Header>
+        <Card style={{backgroundColor:'white', borderRadius: 10, marginLeft:10, marginRight:10, marginTop:20}}>
+        <Form style={{marginTop:15, marginRight:10}}>
           <Item
+          
             iconRight
             underline
             style={styles.Item}
@@ -296,7 +326,7 @@ function RegistrationScreen({ navigation }) {
             <Icon name="mail-outline"></Icon>
           </Item>
 
-          <Item underline iconRight style={styles.Item}>
+          <Item iconRight style={styles.Item}>
             <Input
               onChangeText={(text) => setFirstName(text)}
               placeholder="First Name"
@@ -434,9 +464,10 @@ function RegistrationScreen({ navigation }) {
             </Text>
           </ListItem>
         </Form>
-
+        </Card>
         {/**--------------------medical id part --------------------------------------- */}
-        <View style={styles.divider}>
+        <Card style={{backgroundColor:'white', borderRadius: 10, marginLeft:10, marginRight:10, marginTop: 10, paddingBottom: 20}}>
+        <View>
           <Text style={styles.title}>Medical ID</Text>
           <Subtitle style={{ color: "grey", textAlign: "center" }}>
             (can be filled later)
@@ -505,7 +536,7 @@ function RegistrationScreen({ navigation }) {
             style={styles.divider}
           /> */}
 
-          <View>
+          <View style={{marginTop: 10}}>
             <Text style={styles.medicalIDItem}>MEDICAL CONDITIONS</Text>
             <Textarea
               style={styles.medicalIdData}
@@ -523,28 +554,33 @@ function RegistrationScreen({ navigation }) {
             ></Textarea>
           </View>
         </View>
+        </Card>
         {/*-----------------------------*end of medicalIDpart----------------------------- */}
-
+<TouchableOpacity>
         <Text
           style={{
             textAlign: "right",
             marginBottom: 10,
             marginTop: 10,
+            color:'grey',
+            marginRight: 10
           }}
           onPress={() => navigation.navigate("Login")}
         >
           l Already have an account?
         </Text>
-
+        </TouchableOpacity>
         <Button
           style={{
             marginBottom: 10,
             alignContent: "center",
             backgroundColor: "rgb(250,91,90)",
+            borderRadius:15,
+            width:"80%",
+            alignSelf:"center"
           }}
           primary
           iconRight
-          rounded
           onPress={async () => {
             onSignUp();
             checkTextInput();
@@ -555,7 +591,7 @@ function RegistrationScreen({ navigation }) {
           }}
           block
         >
-          <Text>Register</Text>
+          <Text style={{fontFamily:'sans-serif-condensed',fontSize:17}}>Register</Text>
         </Button>
       </ScrollView>
     </SafeAreaView>
@@ -641,17 +677,17 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: "bold",
-    marginTop: 3,
-    marginBottom: 5,
+    marginTop: 15,
+    marginBottom: 7,
     textAlign: "center",
     color: "black",
+    
   },
 
   userInfoSection: {
     height: "20%",
-    justifyContent: "space-evenly",
     paddingHorizontal: 30,
     paddingBottom: 35,
     backgroundColor: "#e8fbff",
