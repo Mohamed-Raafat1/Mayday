@@ -1,25 +1,16 @@
-import "react-native-gesture-handler";
-
-import React, { useState, useEffect } from "react";
-import * as Animatable from "react-native-animatable";
-import firebase from "firebase";
-import {
-  Container,
-  Text,
-  View,
-  Button,
-  Icon,
-  Form,
-  Item,
-  Input,
-  Toast,
-} from "native-base";
-import { SafeAreaView, StyleSheet } from "react-native";
-import { Thumbnail } from "native-base";
-import GlobalStyles from "../GlobalStyles";
 import { Feather } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
+import firebase from "firebase";
+import {
+  Button, Container, Form, Icon, Input, Item, Text, Thumbnail, Toast, View
+} from "native-base";
+import React, { useEffect, useState } from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
+import * as Animatable from "react-native-animatable";
+import "react-native-gesture-handler";
+import GlobalStyles from "../GlobalStyles";
+
 
 // Notif. Token Registeration function
 async function registerForPushNotificationsAsync() {
@@ -129,7 +120,7 @@ function LoginScreen({ navigation }) {
           .update({
             ExpoToken: expoPushToken,
           });
-        console.log(result);
+        //console.log(result);
       })
       .catch((error) => {
         Toast.show({
@@ -208,7 +199,7 @@ function LoginScreen({ navigation }) {
                 paddingVertical: 20,
               }}
             >
-              forgot password?
+              Forgot Password?
             </Text>
             <Button
               style={styles.Button}
