@@ -14,6 +14,7 @@ import { View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchNotifications } from "../redux/actions/index";
 
+
 const NotificationScreen = ({ navigation }) => {
   //---------------------------redux/getting Notifications------------------------------
   const dispatch = useDispatch();
@@ -29,6 +30,13 @@ const NotificationScreen = ({ navigation }) => {
   //------------------------------------------------------------------------------------
   function displayNotifications() {
     return currentNotifications.map((item) => {
+      let time = {
+        Hours: item.data.createdAt.toDate().getHours().toString(),
+        Minutes: item.data.createdAt.toDate().getMinutes().toString(),
+        Day: item.data.createdAt.toDate().getDate().toString(),
+        Year: item.data.createdAt.toDate().getFullYear().toString(),
+        Month: item.data.createdAt.toDate().getMonth().toString(),
+      };
       if (item.data.category !== "chatMsg")
         return (
           <ListItem key={item.data.createdAt} thumbnail>
@@ -41,9 +49,19 @@ const NotificationScreen = ({ navigation }) => {
               />
             </Left>
             <Body>
-              <Text>{item.data.category + " - " + JSON.stringify(item.data.createdAt)}</Text>
+              <Text>{item.data.body}</Text>
               <Text note numberOfLines={1}>
-                {item.data.body}
+                {item.data.category +
+                  " - " +
+                  time.Day +
+                  "/" +
+                  time.Month +
+                  "/" +
+                  time.Year +
+                  "  " +
+                  time.Hours +
+                  ":" +
+                  time.Minutes}
               </Text>
             </Body>
             <Right>
