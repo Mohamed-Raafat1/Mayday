@@ -14,7 +14,7 @@ import { View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchNotifications } from "../redux/actions/index";
 
-const NotificationScreen = () => {
+const NotificationScreen = ({ navigation }) => {
   //---------------------------redux/getting Notifications------------------------------
   const dispatch = useDispatch();
   const currentNotifications = useSelector(
@@ -23,11 +23,9 @@ const NotificationScreen = () => {
 
   useLayoutEffect(() => {
     dispatch(fetchNotifications());
-
-    return () => {
-      
-    };
+    return () => {};
   }, []);
+
   //------------------------------------------------------------------------------------
   function displayNotifications() {
     return currentNotifications.map((item) => {
@@ -38,18 +36,25 @@ const NotificationScreen = () => {
               <Thumbnail
                 //if condition here needed on item.category of message if sos -> url if message another url and so
                 source={{
-                  uri: "https://i.pinimg.com/originals/37/34/8a/37348a499514a3d8e8414aeca055ea22.jpg",
+                  uri: item.data.photoURL,
                 }}
               />
             </Left>
             <Body>
-              <Text>{item.data.category}</Text>
+              <Text>{item.data.category + " - " + JSON.stringify(item.data.createdAt)}</Text>
               <Text note numberOfLines={1}>
                 {item.data.body}
               </Text>
             </Body>
             <Right>
-              <Button transparent>
+              <Button
+                transparent
+                onPress={() => {
+                  navigation.navigate("Notif2location", {
+                    userid: item.data.SOSuid,
+                  });
+                }}
+              >
                 <Text>VIEW</Text>
               </Button>
             </Right>
