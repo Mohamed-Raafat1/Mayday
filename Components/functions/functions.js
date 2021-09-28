@@ -374,7 +374,8 @@ export function addNotification(
   Title,
   Delivered,
   Category,
-  SoSuid = ""
+  SoSuid = "",
+  PhotoURL="https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png"
 ) {
   firebase
     .firestore()
@@ -388,6 +389,7 @@ export function addNotification(
       delivered: Delivered,
       category: Category,
       SOSuid: SoSuid,
+      photoURL:PhotoURL
     });
 }
 //

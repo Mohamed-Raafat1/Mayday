@@ -33,6 +33,7 @@ import {
   addNotification,
   sendPushNotification,
 } from "../Components/functions/functions";
+import Notif2location from "../Screens/Notif2location";
 
 // Function to send notifications given token and message
 //----------------------------setting Notifications to delivered--------------------------
@@ -421,6 +422,14 @@ const HomeStackScreen = ({ navigation }) => (
       component={NotificationScreen}
       options={{
         title: "Notifications",
+      }}
+    />
+      <HomeStack.Screen
+      name="Notif2location"
+      style={styles.icon}
+      component={Notif2location}
+      options={{
+        title: "User Location",
       }}
     />
     <HomeStack.Screen

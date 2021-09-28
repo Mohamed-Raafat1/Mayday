@@ -13,6 +13,7 @@ import {
   REQUEST_STATE_CHANGE,
   DOCTOR_REQUEST_CHANGE,
   ACCEPTED_REQUEST_CHANGE,
+  OTHER_USER_STATE_CHANGE,
 } from "../constants";
 
 export function fetchUser() {
@@ -25,6 +26,26 @@ export function fetchUser() {
         if (snapshot.exists) {
           dispatch({
             type: USER_STATE_CHANGE,
+            currentUser: snapshot.data(),
+          });
+        } else {
+          console.log("does not exist");
+        }
+      });
+    return Unsubscribe;
+  };
+}
+
+export function fetchUserbyID(id) {
+  return (dispatch) => {
+    const Unsubscribe = firebase
+      .firestore()
+      .collection("users")
+      .doc(id)
+      .onSnapshot((snapshot) => {
+        if (snapshot.exists) {
+          dispatch({
+            type: OTHER_USER_STATE_CHANGE,
             currentUser: snapshot.data(),
           });
         } else {
