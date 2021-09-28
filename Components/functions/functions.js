@@ -374,7 +374,7 @@ export function addNotification(
   Title,
   Delivered,
   Category,
-  SoSuid
+  SoSuid = ""
 ) {
   firebase
     .firestore()
@@ -396,34 +396,34 @@ export async function onPressImage() {
   let result = await ImagePicker.launchImageLibraryAsync();
   if (!result.cancelled) {
     await uploadImage(result.uri, firebase.auth().currentUser.email)
-      .then(() => {
-        
-      })
+      .then(() => {})
       .catch((error) => {
         alert(error);
       });
-      return true
+    return true;
   }
-  return false
+  return false;
 }
 
 export async function uploadImage(uri, imageName) {
   // let firebaseAppDefined = false;
 
   // setInterval(async () => {
-    // if (!firebaseAppDefined) {
-      if (firebase.app()) {
-        
-        const response = await fetch(uri);
-        const blob = await response.blob();
+  // if (!firebaseAppDefined) {
+  if (firebase.app()) {
+    const response = await fetch(uri);
+    const blob = await response.blob();
 
-        var ref = firebase.storage().ref().child("images/" + imageName);
+    var ref = firebase
+      .storage()
+      .ref()
+      .child("images/" + imageName);
 
-        return ref.put(blob)
-      }
+    return ref.put(blob);
+  }
 
-      // firebaseAppDefined = true;
-    // }
+  // firebaseAppDefined = true;
+  // }
   // }, 500);
 }
 
