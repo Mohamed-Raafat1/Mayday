@@ -11,7 +11,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../redux/actions/index";
-import { Button } from "native-base";
+import { Button, Text } from "native-base";
 import * as Notifications from "expo-notifications";
 
 export function DrawerContent(props) {
@@ -19,7 +19,7 @@ export function DrawerContent(props) {
 
   useLayoutEffect(() => {
     const Unsubscribe = dispatch(fetchUser());
-    
+
     return () => {
       Unsubscribe();
     };
@@ -37,7 +37,14 @@ export function DrawerContent(props) {
     firebase.auth().signOut();
   };
   const currentUser = useSelector((state) => state.userState.currentUser);
-  if (currentUser == undefined) return <View></View>;
+  if (currentUser == undefined)
+    return (
+      <View>
+        <Button onPress={onSignout}>
+          <Text> signout</Text>
+        </Button>
+      </View>
+    );
   return (
     <View style={{ flex: 1 }}>
       <DrawerContentScrollView {...props}>

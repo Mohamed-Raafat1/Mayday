@@ -1,21 +1,14 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import firebase from "firebase";
-import { Spinner, Toast } from "native-base";
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import {
-  Alert,
-  Dimensions,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import MapView, { Marker } from "react-native-maps";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { useDispatch, useSelector } from "react-redux";
 import * as geofirestore from "geofirestore";
+import { Button, Spinner, Toast } from "native-base";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { Alert, Dimensions, Image, Linking, Text, View } from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import { useDispatch, useSelector } from "react-redux";
 import { customstyleAcceptedRequests } from "../../Components/functions/functions";
 import {
   clearAcceptedRequest,
@@ -274,7 +267,7 @@ function RequestAcceptedScreen({ route, navigation }) {
 
         await CancelRequest();
 
-        navigation.goBack();
+        navigation.popToTop();
       }
     })();
     return () => {};
@@ -410,28 +403,62 @@ function RequestAcceptedScreen({ route, navigation }) {
             ></Image>
           </Marker>
         </MapView>
-        <TouchableOpacity
+        <Button
           onPress={() => {
             gotoChat(currentAcceptedRequest.PatientID, chatid);
           }}
           style={{
-            borderRadius: 5,
-            padding: 5,
+            borderTopRightRadius: 20,
+            borderBottomRightRadius: 20,
+
+            padding: 10,
+
             position: "absolute",
             top: 10,
             left: 0,
-            backgroundColor: "rgba(225, 225, 225, 1)",
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
             flexDirection: "row",
             flex: 1,
           }}
         >
-          <Text style={{ fontSize: 20 }}> Chat</Text>
-          <MaterialCommunityIcons
-            name="message-text-outline"
-            size={30}
-            color="black"
+          <Text style={{ marginRight: 10, marginBottom: 2, fontSize: 20 }}>
+            Chat with {currentAcceptedRequest.PatientFirstName}
+          </Text>
+          <Ionicons
+            style={{ marginTop: 3 }}
+            name="ios-chatbox-ellipses"
+            size={35}
+            color="#00b3ff"
           />
-        </TouchableOpacity>
+        </Button>
+        <Button
+          onPress={() => {
+            Linking.openURL(
+              "https://www.google.com/maps/dir/?api=1&destination=" +
+                currentAcceptedRequest.coordinates.latitude +
+                "," +
+                currentAcceptedRequest.coordinates.longitude
+            );
+          }}
+          style={{
+            borderTopRightRadius: 20,
+            borderBottomRightRadius: 20,
+
+            padding: 10,
+
+            position: "absolute",
+            top: 70,
+            left: 0,
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
+            flexDirection: "row",
+            flex: 1,
+          }}
+        >
+          <Text style={{ marginRight: 10, marginBottom: 2, fontSize: 20 }}>
+            Get Directions to {currentAcceptedRequest.PatientFirstName}
+          </Text>
+          <Ionicons name="md-location" size={24} color="red" />
+        </Button>
       </View>
     );
   }

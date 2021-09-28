@@ -12,7 +12,6 @@ export const request = (state = initialState, action) => {
         currentRequest: action.currentRequest,
       };
     default:
-     
       return state;
   }
 };

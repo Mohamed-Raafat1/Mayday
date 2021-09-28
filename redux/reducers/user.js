@@ -16,6 +16,7 @@ const initialState = {
   emergencyContacts: [],
   Requests: [],
   AcceptedRequest: null,
+  doctorAvailable: false,
 };
 
 export const user = (state = initialState, action) => {
@@ -24,6 +25,7 @@ export const user = (state = initialState, action) => {
       return {
         ...state,
         currentUser: action.currentUser,
+        doctorAvailable: action.doctorAvailable,
       };
     case USER_CHATLIST_CHANGE:
       return {

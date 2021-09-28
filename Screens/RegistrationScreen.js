@@ -1,7 +1,9 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
+
 import firebase from "firebase";
 import {
   Button,
@@ -15,13 +17,14 @@ import {
   Picker,
   Subtitle,
   Text,
+  Content,
   Textarea,
   Body,
   Toast,
   Header,
   Left,
   Card,
-  Title
+  Title,
 } from "native-base";
 
 import React, { useEffect, useState } from "react";
@@ -170,6 +173,7 @@ function RegistrationScreen({ navigation }) {
                 currentRequestID: "",
                 coordinates: new firebase.firestore.GeoPoint(0, 0),
                 currentRequest: { chatid: "", Requestid: "" },
+                doctorAvailable: true,
                 g: {
                   geohash: "",
                   geopoint: new firebase.firestore.GeoPoint(0, 0),
@@ -288,303 +292,305 @@ function RegistrationScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={{width:'100%'}} style={GlobalStyles.droidSafeArea}>
-      <ScrollView style={{width:'100%',backgroundColor:'white'}}>
-        <Header transparent style={{
-          borderBottomWidth:1,
-          width:'100%',
-          borderBottomColor: "black",
-        }} >
-          
-          <TouchableOpacity style={{marginTop:'50%',}}
-            onPress={() => {
-              // navigation.navigate("Home")
-              navigation.popToTop();
-            }}
-          >
-            <Icon style={{ color: "black" }} name="arrow-back" />
-          </TouchableOpacity> 
-            
-            <Body>
-            <Title style={{ color: 'black', fontSize: 27, marginLeft: 5, }}>Registeration</Title>
-            </Body>
-                
-      
-        </Header>
-        <Card style={{backgroundColor:'white', borderRadius: 10, marginLeft:10, marginRight:10, marginTop:20}}>
-        <Form style={{marginTop:15, marginRight:10}}>
-          <Item
-          
-            iconRight
-            underline
-            style={styles.Item}
-            success={isValid}
-            error={!isValid}
-          >
-            <Input
-              onChangeText={(text) => validateEmail(text)}
-              placeholder="Email"
-              placeholderTextColor="gray"
-              value={Email}
-            />
+    <SafeAreaView style={{ width: "100%" }} style={GlobalStyles.droidSafeArea}>
+      <ScrollView style={{ width: "100%", backgroundColor: "white" }}>
+        <Card
+          style={{
+            backgroundColor: "white",
+            borderRadius: 10,
+            marginLeft: 10,
+            marginRight: 10,
+            marginTop: 20,
+          }}
+        >
+          <Form style={{ marginTop: 15, marginRight: 10 }}>
+            <Item
+              iconRight
+              underline
+              style={styles.Item}
+              success={isValid}
+              error={!isValid}
+            >
+              <Input
+                onChangeText={(text) => validateEmail(text)}
+                placeholder="Email"
+                placeholderTextColor="gray"
+                value={Email}
+              />
 
-            <Icon name="mail-outline"></Icon>
-          </Item>
+              <Icon name="mail-outline"></Icon>
+            </Item>
 
-          <Item iconRight style={styles.Item}>
-            <Input
-              onChangeText={(text) => setFirstName(text)}
-              placeholder="First Name"
-              placeholderTextColor="gray"
-              value={FirstName}
-            />
-          </Item>
+            <Item iconRight style={styles.Item}>
+              <Input
+                onChangeText={(text) => setFirstName(text)}
+                placeholder="First Name"
+                placeholderTextColor="gray"
+                value={FirstName}
+              />
+            </Item>
 
-          <Item iconRight underline style={styles.Item}>
-            <Input
-              onChangeText={(text) => setLastName(text)}
-              placeholder="Last Name"
-              placeholderTextColor="gray"
-              value={LastName}
-            />
-          </Item>
+            <Item iconRight underline style={styles.Item}>
+              <Input
+                onChangeText={(text) => setLastName(text)}
+                placeholder="Last Name"
+                placeholderTextColor="gray"
+                value={LastName}
+              />
+            </Item>
 
-          <Item iconRight style={styles.Item}>
-            <Text style={{ color: "gray" }}>Gender</Text>
-            <View>
-              <RadioGroup
-                radioButtons={radioButtons}
-                onPress={() => {
-                  onPressRadioButton;
+            <Item iconRight style={styles.Item}>
+              <Text style={{ color: "gray" }}>Gender</Text>
+              <View>
+                <RadioGroup
+                  radioButtons={radioButtons}
+                  onPress={() => {
+                    onPressRadioButton;
 
-                  console.log(date);
+                    console.log(date);
+                  }}
+                  layout="row"
+                />
+              </View>
+              <MaterialCommunityIcons
+                name="gender-male-female"
+                size={24}
+                style={{ marginLeft: "auto", marginRight: 7 }}
+                color="black"
+              />
+            </Item>
+
+            <Item iconRight style={styles.Item}>
+              <Label style={{ alignSelf: "center", color: "gray" }}>
+                Birth Date
+              </Label>
+              <Button
+                style={{ alignSelf: "center" }}
+                transparent
+                onPress={() => showMode("date")}
+              >
+                <Text style={{ color: "black", fontSize: 20 }}>{text}</Text>
+              </Button>
+              <Icon
+                name="calendar-outline"
+                style={{ marginLeft: "auto" }}
+              ></Icon>
+              {show && (
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={date}
+                  mode={mode}
+                  is24Hour={true}
+                  display="default"
+                  onChange={onChange}
+                />
+              )}
+            </Item>
+
+            <Item iconRight underline style={styles.Item}>
+              <Input
+                onChangeText={(text) => setNationalID(text)}
+                keyboardType="numeric"
+                placeholder="National ID"
+                placeholderTextColor="gray"
+                value={NationalID}
+              />
+              <MaterialCommunityIcons
+                name="card-account-details-outline"
+                size={24}
+                style={{ marginRight: 7 }}
+                color="black"
+              />
+            </Item>
+
+            <Item iconRight underline style={styles.Item}>
+              <Input
+                onChangeText={(text) => setPhoneNumber(text)}
+                keyboardType="numeric"
+                placeholder="Phone Number"
+                placeholderTextColor="gray"
+                value={PhoneNumber}
+              />
+              <Icon name="call-outline"></Icon>
+            </Item>
+
+            <Item underline iconRight style={styles.Item} success={false}>
+              <Input
+                textContentType="password"
+                secureTextEntry={true}
+                placeholderTextColor="gray"
+                placeholder="Password"
+                onChangeText={(text) => setPassword(text)}
+              />
+
+              <Icon name="lock-closed-outline"></Icon>
+            </Item>
+
+            <Item
+              underline
+              success={isEqual}
+              error={!isEqual}
+              iconRight
+              style={styles.Item}
+            >
+              <Input
+                onChangeText={(text) => {
+                  ComparePassword(text);
                 }}
-                layout="row"
+                textContentType="password"
+                secureTextEntry={true}
+                placeholderTextColor="gray"
+                placeholder="Confirm Password"
               />
-            </View>
-            <MaterialCommunityIcons
-              name="gender-male-female"
-              size={24}
-              style={{ marginLeft: "auto", marginRight: 7 }}
-              color="black"
-            />
-          </Item>
 
-          <Item iconRight style={styles.Item}>
-            <Label style={{ alignSelf: "center", color: "gray" }}>
-              Birth Date
-            </Label>
-            <Button
-              style={{ alignSelf: "center" }}
-              transparent
-              onPress={() => showMode("date")}
-            >
-              <Text style={{ color: "black", fontSize: 20 }}>{text}</Text>
-            </Button>
-            <Icon name="calendar-outline" style={{ marginLeft: "auto" }}></Icon>
-            {show && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={date}
-                mode={mode}
-                is24Hour={true}
-                display="default"
-                onChange={onChange}
+              <Icon name="lock-closed-outline"></Icon>
+            </Item>
+
+            <ListItem style={{ borderBottomWidth: 0 }}>
+              <CheckBox
+                checked={medicalProfessional}
+                onPress={() =>
+                  setmedicalProfessional(medicalProfessional ? false : true)
+                }
+                color="rgb(250,91,90)"
               />
-            )}
-          </Item>
 
-          <Item iconRight underline style={styles.Item}>
-            <Input
-              onChangeText={(text) => setNationalID(text)}
-              keyboardType="numeric"
-              placeholder="National ID"
-              placeholderTextColor="gray"
-              value={NationalID}
-            />
-            <MaterialCommunityIcons
-              name="card-account-details-outline"
-              size={24}
-              style={{ marginRight: 7 }}
-              color="black"
-            />
-          </Item>
-
-          <Item iconRight underline style={styles.Item}>
-            <Input
-              onChangeText={(text) => setPhoneNumber(text)}
-              keyboardType="numeric"
-              placeholder="Phone Number"
-              placeholderTextColor="gray"
-              value={PhoneNumber}
-            />
-            <Icon name="call-outline"></Icon>
-          </Item>
-
-          <Item underline iconRight style={styles.Item} success={false}>
-            <Input
-              textContentType="password"
-              secureTextEntry={true}
-              placeholderTextColor="gray"
-              placeholder="Password"
-              onChangeText={(text) => setPassword(text)}
-            />
-
-            <Icon name="lock-closed-outline"></Icon>
-          </Item>
-
-          <Item
-            underline
-            success={isEqual}
-            error={!isEqual}
-            iconRight
-            style={styles.Item}
-          >
-            <Input
-              onChangeText={(text) => {
-                ComparePassword(text);
-              }}
-              textContentType="password"
-              secureTextEntry={true}
-              placeholderTextColor="gray"
-              placeholder="Confirm Password"
-            />
-
-            <Icon name="lock-closed-outline"></Icon>
-          </Item>
-
-          <ListItem style={{ borderBottomWidth: 0 }}>
-            <CheckBox
-              checked={medicalProfessional}
-              onPress={() =>
-                setmedicalProfessional(medicalProfessional ? false : true)
-              }
-              color="rgb(250,91,90)"
-            />
-
-            <Text
-              style={{
-                marginLeft: 10,
-              }}
-            >
-              Register as medical Personnel
-            </Text>
-          </ListItem>
-        </Form>
+              <Text
+                style={{
+                  marginLeft: 10,
+                }}
+              >
+                Register as medical Personnel
+              </Text>
+            </ListItem>
+          </Form>
         </Card>
         {/**--------------------medical id part --------------------------------------- */}
-        <Card style={{backgroundColor:'white', borderRadius: 10, marginLeft:10, marginRight:10, marginTop: 10, paddingBottom: 20}}>
-        <View>
-          <Text style={styles.title}>Medical ID</Text>
-          <Subtitle style={{ color: "grey", textAlign: "center" }}>
-            (can be filled later)
-          </Subtitle>
-
+        <Card
+          style={{
+            backgroundColor: "white",
+            borderRadius: 10,
+            marginLeft: 10,
+            marginRight: 10,
+            marginTop: 10,
+            paddingBottom: 20,
+          }}
+        >
           <View>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "space-evenly",
-                marginTop: 15,
-              }}
-            >
-              <Text style={{ fontSize: 18, color: "#777777", marginBottom: 0 }}>
-                Height{"\n"}
-                <View style={{ flexDirection: "row" }}>
-                  <TextInput
-                    style={{ borderBottomWidth: 1, minWidth: 35 }}
-                    keyboardType="numeric"
-                    onChangeText={setHeight}
-                  />
-                  <Text style={{ marginTop: 3 }}>cm</Text>
-                </View>
-              </Text>
-              <Text style={{ fontSize: 18, color: "#777777", marginBottom: 0 }}>
-                Weight{"\n"}
-                <View style={{ flexDirection: "row" }}>
-                  <TextInput
-                    style={{ borderBottomWidth: 1, minWidth: 35 }}
-                    onChangeText={setWeight}
-                    keyboardType="numeric"
-                  />
-                  <Text style={{ marginTop: 3 }}>kg</Text>
-                </View>
-              </Text>
+            <Text style={styles.title}>Medical ID</Text>
+            <Subtitle style={{ color: "grey", textAlign: "center" }}>
+              (can be filled later)
+            </Subtitle>
 
-              <View>
+            <View>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  justifyContent: "space-evenly",
+                  marginTop: 15,
+                }}
+              >
                 <Text
                   style={{ fontSize: 18, color: "#777777", marginBottom: 0 }}
                 >
-                  Blood Type
+                  Height{"\n"}
+                  <View style={{ flexDirection: "row" }}>
+                    <TextInput
+                      style={{ borderBottomWidth: 1, minWidth: 35 }}
+                      keyboardType="numeric"
+                      onChangeText={setHeight}
+                    />
+                    <Text style={{ marginTop: 3 }}>cm</Text>
+                  </View>
                 </Text>
-                <Picker
-                  mode="dropdown"
-                  iosIcon={<Icon name="arrow-dropdown-circle" />}
-                  selectedValue={bloodType}
-                  onValueChange={SetBloodType}
+                <Text
+                  style={{ fontSize: 18, color: "#777777", marginBottom: 0 }}
                 >
-                  <Picker.Item label="A+" value="A+"></Picker.Item>
-                  <Picker.Item label="A-" value="A-"></Picker.Item>
-                  <Picker.Item label="B+" value="B+"></Picker.Item>
-                  <Picker.Item label="B-" value="B-"></Picker.Item>
-                  <Picker.Item label="AB+" value="AB+"></Picker.Item>
-                  <Picker.Item label="AB-" value="AB-"></Picker.Item>
-                  <Picker.Item label="O+" value="O+"></Picker.Item>
-                  <Picker.Item label="O-" value="O-"></Picker.Item>
-                  <Picker.Item label="?" value="?"></Picker.Item>
-                </Picker>
+                  Weight{"\n"}
+                  <View style={{ flexDirection: "row" }}>
+                    <TextInput
+                      style={{ borderBottomWidth: 1, minWidth: 35 }}
+                      onChangeText={setWeight}
+                      keyboardType="numeric"
+                    />
+                    <Text style={{ marginTop: 3 }}>kg</Text>
+                  </View>
+                </Text>
+
+                <View>
+                  <Text
+                    style={{ fontSize: 18, color: "#777777", marginBottom: 0 }}
+                  >
+                    Blood Type
+                  </Text>
+                  <Picker
+                    mode="dropdown"
+                    iosIcon={<Icon name="arrow-dropdown-circle" />}
+                    selectedValue={bloodType}
+                    onValueChange={SetBloodType}
+                  >
+                    <Picker.Item label="A+" value="A+"></Picker.Item>
+                    <Picker.Item label="A-" value="A-"></Picker.Item>
+                    <Picker.Item label="B+" value="B+"></Picker.Item>
+                    <Picker.Item label="B-" value="B-"></Picker.Item>
+                    <Picker.Item label="AB+" value="AB+"></Picker.Item>
+                    <Picker.Item label="AB-" value="AB-"></Picker.Item>
+                    <Picker.Item label="O+" value="O+"></Picker.Item>
+                    <Picker.Item label="O-" value="O-"></Picker.Item>
+                    <Picker.Item label="?" value="?"></Picker.Item>
+                  </Picker>
+                </View>
               </View>
             </View>
-          </View>
 
-          {/* divider */}
-          {/* <View
+            {/* divider */}
+            {/* <View
             style={styles.divider}
           /> */}
 
-          <View style={{marginTop: 10}}>
-            <Text style={styles.medicalIDItem}>MEDICAL CONDITIONS</Text>
-            <Textarea
-              style={styles.medicalIdData}
-              onChangeText={setMedicalConditions}
-            ></Textarea>
-            <Text style={styles.medicalIDItem}>ALLERGIES</Text>
-            <Textarea
-              style={styles.medicalIdData}
-              onChangeText={setAllergies}
-            ></Textarea>
-            <Text style={styles.medicalIDItem}>MEDICATIONS</Text>
-            <Textarea
-              style={styles.medicalIdData}
-              onChangeText={setMedications}
-            ></Textarea>
+            <View style={{ marginTop: 10 }}>
+              <Text style={styles.medicalIDItem}>MEDICAL CONDITIONS</Text>
+              <Textarea
+                style={styles.medicalIdData}
+                onChangeText={setMedicalConditions}
+              ></Textarea>
+              <Text style={styles.medicalIDItem}>ALLERGIES</Text>
+              <Textarea
+                style={styles.medicalIdData}
+                onChangeText={setAllergies}
+              ></Textarea>
+              <Text style={styles.medicalIDItem}>MEDICATIONS</Text>
+              <Textarea
+                style={styles.medicalIdData}
+                onChangeText={setMedications}
+              ></Textarea>
+            </View>
           </View>
-        </View>
         </Card>
         {/*-----------------------------*end of medicalIDpart----------------------------- */}
-<TouchableOpacity>
-        <Text
-          style={{
-            textAlign: "right",
-            marginBottom: 10,
-            marginTop: 10,
-            color:'grey',
-            marginRight: 10
-          }}
-          onPress={() => navigation.navigate("Login")}
-        >
-          l Already have an account?
-        </Text>
+        <TouchableOpacity>
+          <Text
+            style={{
+              textAlign: "right",
+              marginBottom: 10,
+              marginTop: 10,
+              color: "grey",
+              marginRight: 10,
+            }}
+            onPress={() => navigation.navigate("Login")}
+          >
+            l Already have an account?
+          </Text>
         </TouchableOpacity>
         <Button
           style={{
             marginBottom: 10,
             alignContent: "center",
             backgroundColor: "rgb(250,91,90)",
-            borderRadius:15,
-            width:"80%",
-            alignSelf:"center"
+            borderRadius: 15,
+            width: "80%",
+            alignSelf: "center",
           }}
           primary
           iconRight
@@ -600,7 +606,9 @@ function RegistrationScreen({ navigation }) {
           }}
           block
         >
-          <Text style={{fontFamily:'sans-serif-condensed',fontSize:17}}>Register</Text>
+          <Text style={{ fontFamily: "sans-serif-condensed", fontSize: 17 }}>
+            Register
+          </Text>
         </Button>
       </ScrollView>
     </SafeAreaView>
@@ -692,7 +700,6 @@ const styles = StyleSheet.create({
     marginBottom: 7,
     textAlign: "center",
     color: "black",
-    
   },
 
   userInfoSection: {

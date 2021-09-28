@@ -79,7 +79,6 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
               };
             });
           });
-        console.log("these are the requests", Requests);
         updateRequestsFn(Requests);
       }
     });
@@ -198,6 +197,9 @@ const DoctorRequests = ({ navigation }) => {
       DoctorID: currentUser.uid,
       DoctorGeoHash: currentUser.g.geohash,
       DoctorCoordinates: currentUser.coordinates,
+      DoctorFirstName: currentUser.FirstName,
+      DoctorLastName: currentUser.LastName,
+      DoctorPhotoURI: currentUser.PhotoURI,
       chatid: sharedChatid,
     });
     firebase

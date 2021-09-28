@@ -26,6 +26,7 @@ export function fetchUser() {
           dispatch({
             type: USER_STATE_CHANGE,
             currentUser: snapshot.data(),
+            doctorAvailable: snapshot.data().doctorAvailable,
           });
         } else {
           console.log("does not exist");

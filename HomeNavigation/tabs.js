@@ -260,26 +260,28 @@ function Tabs({ navigation }) {
           ),
         }}
       />
-      {currentUser && currentUser.medicalProfessional && (
-        <Tab.Screen
-          name="DoctorRequests"
-          component={DoctorRequestsStackScreen}
-          options={({ route }) => ({
-            tabBarLabel: "Requests",
-            tabBarBadge: 1,
-            tabBarBadgeStyle: { color: "white", backgroundColor: "red" },
+      {currentUser &&
+        currentUser.medicalProfessional &&
+        currentUser.doctorAvailable && (
+          <Tab.Screen
+            name="DoctorRequests"
+            component={DoctorRequestsStackScreen}
+            options={({ route }) => ({
+              tabBarLabel: "Requests",
+              tabBarBadge: 1,
+              tabBarBadgeStyle: { color: "white", backgroundColor: "red" },
 
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons
-                style={{ marginTop: 10 }}
-                name="medical-bag"
-                size={24}
-                color={color}
-              />
-            ),
-          })}
-        />
-      )}
+              tabBarIcon: ({ color }) => (
+                <MaterialCommunityIcons
+                  style={{ marginTop: 10 }}
+                  name="medical-bag"
+                  size={24}
+                  color={color}
+                />
+              ),
+            })}
+          />
+        )}
     </Tab.Navigator>
   );
 }
@@ -391,7 +393,7 @@ const HomeStackScreen = ({ navigation }) => (
       style={styles.icon}
       component={Chat}
       options={{
-        headerShown: false,
+        headerShown: true,
         title: "Chat",
         tabBarLabel: "Chat",
       }}
