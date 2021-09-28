@@ -13,7 +13,9 @@ import {
   fetchRequest,
   fetchUser,
 } from "../redux/actions";
-
+import { Polyline } from "react-native-maps";
+import { customMapStyle } from "../Components/functions/functions";
+let alreadyAccepted = false;
 const RESCU_TRACKING = "background-doctor-screen-location-task";
 
 let Requestid = null;
@@ -39,26 +41,29 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
     let longitude = locations[0].coords.longitude;
     let location = { latitude, longitude };
 
-    await Geofirestore.collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .update({
-        coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
-      })
-      .catch((error) => {
-        console.log(
-          "Error in Taskmanager when uploading to firestore: ",
-          error
-        );
-      });
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        await Geofirestore.collection("users")
+          .doc(firebase.auth().currentUser.uid)
+          .update({
+            coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
+          })
+          .catch((error) => {
+            console.log(
+              "Error in Taskmanager when uploading to firestore: ",
+              error
+            );
+          });
+        if (Requestid) {
+          await Geofirestore.collection("requests")
+            .doc(Requestid)
+            .update({
+              coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
+            });
+        }
+      }
+    });
     // console.log("this is the request id", Requestid);
-
-    if (Requestid) {
-      await Geofirestore.collection("requests")
-        .doc(Requestid)
-        .update({
-          coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
-        });
-    }
   }
 });
 
@@ -176,6 +181,7 @@ function DoctorsScreen() {
         AccidentType: "",
         DoctorID: "",
         DoctorGeoHash: "",
+        Condition: "",
         coordinates: new firebase.firestore.GeoPoint(
           location.latitude,
           location.longitude
@@ -188,7 +194,7 @@ function DoctorsScreen() {
         PatientMedicalID: currentUser.MedicalID,
         PatientNumber: currentUser.PhoneNumber,
         PatientEmail: currentUser.Email,
-
+        chatid: "",
         RequestType: "Location",
         State: "Pending",
       })
@@ -196,6 +202,13 @@ function DoctorsScreen() {
         Requestid = result.id;
 
         setisRequested(true);
+        firebase
+          .firestore()
+          .collection("users")
+          .doc(firebase.auth().currentUser.uid)
+          .update({
+            currentRequestID: result.id,
+          });
 
         UnsubscribeRequest = dispatch(fetchRequest(result.id));
       })
@@ -241,7 +254,6 @@ function DoctorsScreen() {
 
   //  USE EFFECTS
 
-  console.log(currentRequest);
   //Done on mount + cleanup
   useLayoutEffect(() => {
     const UnsubscribeUser = dispatch(fetchUser());
@@ -266,6 +278,21 @@ function DoctorsScreen() {
       }
     }
   }, [PermissionGranted, isRequested, Err]);
+  const cancelRequest = async () => {
+    await StopTracking();
+
+    await UnsubscribeRequest();
+
+    await dispatch(CancelCurrentRequest());
+
+    await firebase
+      .firestore()
+      .collection("requests")
+      .doc(Requestid)
+      .update({ State: "Cancelled" });
+
+    Requestid = null;
+  };
 
   //focusing and unfocusing Screen
   useFocusEffect(
@@ -279,6 +306,29 @@ function DoctorsScreen() {
       };
     }, [])
   );
+
+  useEffect(() => {
+    if (currentRequest && currentRequest.State == "Accepted") {
+      alreadyAccepted = true;
+      Toast.show({
+        text: "Your Request has been accepted\n A Medical professional is on the way",
+        type: "success",
+      });
+    }
+
+    return () => {};
+  }, [currentRequest]);
+  //on mount
+  useEffect(() => {
+    if (currentUser && currentUser.currentRequestID !== "") {
+      UnsubscribeRequest = dispatch(fetchRequest(currentUser.currentRequestID));
+      Requestid = currentUser.currentRequestID;
+      requestPermissions();
+    }
+    return () => {
+      UnsubscribeRequest();
+    };
+  }, []);
   //rendering
   let screen;
   if (!currentUser) {
@@ -303,6 +353,7 @@ function DoctorsScreen() {
         screen = (
           <View style={{ flex: 1, width: "100%" }}>
             <MapView
+              customMapStyle={customMapStyle}
               initialRegion={{
                 latitude: location.latitude,
                 longitude: location.longitude,
@@ -333,12 +384,7 @@ function DoctorsScreen() {
                 users.length > 0 &&
                 users.map((marker) => (
                   <Marker
-                    onPress={() => {
-                      console.log(
-                        marker.g.geopoint.latitude,
-                        marker.g.geopoint.longitude
-                      );
-                    }}
+                    onPress={() => {}}
                     key={marker.id}
                     coordinate={{
                       latitude: marker.g.geopoint.latitude,
@@ -362,21 +408,35 @@ function DoctorsScreen() {
                   title="batee5"
                 ></Marker>
               )}
+              {currentRequest.State == "Accepted" && (
+                <Polyline
+                  coordinates={[
+                    {
+                      latitude: currentUser.coordinates.latitude,
+                      longitude: currentUser.coordinates.longitude,
+                    },
+                    {
+                      latitude: currentRequest.DoctorCoordinates.latitude,
+                      longitude: currentRequest.DoctorCoordinates.longitude,
+                    },
+                  ]}
+                  strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+                  strokeWidth={10}
+                />
+              )}
             </MapView>
+
             <Button
               style={[styles.button, { alignSelf: "center" }]}
               onPress={async () => {
-                await StopTracking();
-
-                await UnsubscribeRequest();
-
-                await dispatch(CancelCurrentRequest());
-
-                await firebase
+                cancelRequest();
+                firebase
                   .firestore()
-                  .collection("requests")
-                  .doc(Requestid)
-                  .delete();
+                  .collection("users")
+                  .doc(firebase.auth().currentUser.uid)
+                  .update({
+                    currentRequestID: "",
+                  });
               }}
             >
               <Text>Cancel Request</Text>
@@ -389,6 +449,7 @@ function DoctorsScreen() {
         <View style={styles.View}>
           <Button
             onPress={() => {
+              console.log("pressed");
               SendRequest();
               getNearByUsers();
             }}

@@ -395,37 +395,38 @@ export function addNotification(
 export async function onPressImage() {
   let result = await ImagePicker.launchImageLibraryAsync();
   if (!result.cancelled) {
-    uploadImage(result.uri, firebase.auth().currentUser.email)
+    await uploadImage(result.uri, firebase.auth().currentUser.email)
       .then(() => {
-        console.log("Success");
+        
       })
       .catch((error) => {
         alert(error);
       });
+      return true
   }
+  return false
 }
 
 export async function uploadImage(uri, imageName) {
-  let firebaseAppDefined = false;
+  // let firebaseAppDefined = false;
 
-  setInterval(async () => {
-    if (!firebaseAppDefined) {
+  // setInterval(async () => {
+    // if (!firebaseAppDefined) {
       if (firebase.app()) {
-        var storageRef = firebase.storage().ref();
+        
         const response = await fetch(uri);
         const blob = await response.blob();
 
-        var ref = storageRef.child("images/" + imageName);
+        var ref = firebase.storage().ref().child("images/" + imageName);
 
-        ref.put(blob).then((snapshot) => {
-          console.log("Uploaded a blob or file!");
-        });
+        return ref.put(blob)
       }
 
-      firebaseAppDefined = true;
-    }
-  }, 500);
+      // firebaseAppDefined = true;
+    // }
+  // }, 500);
 }
+
 export const deleteChat = async (uid, chatid) => {
   firebase
     .firestore()

@@ -1,29 +1,21 @@
-import "react-native-gesture-handler";
-
-import React, { useState, useEffect } from "react";
-import * as Animatable from "react-native-animatable";
-import firebase from "firebase";
-import {
-  Container,
-  Text,
-  View,
-  Button,
-  Icon,
-  Form,
-  Item,
-  Input,
-  Toast,
-} from "native-base";
-import { SafeAreaView, StyleSheet } from "react-native";
-import { Thumbnail } from "native-base";
-import GlobalStyles from "../GlobalStyles";
 import { Feather } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
+import firebase from "firebase";
+import {
+  Button, Container, Form, Icon, Input, Item, Text, Thumbnail, Toast, View
+} from "native-base";
+import React, { useEffect, useState } from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
+import * as Animatable from "react-native-animatable";
+import "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import GlobalStyles from "../GlobalStyles";
+
 
 // Notif. Token Registeration function
 async function registerForPushNotificationsAsync() {
-  let token;
+  let token ='';
   if (Constants.isDevice) {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync(); //PERMISSIONS REQUEST
@@ -129,7 +121,7 @@ function LoginScreen({ navigation }) {
           .update({
             ExpoToken: expoPushToken,
           });
-        console.log(result);
+        //console.log(result);
       })
       .catch((error) => {
         Toast.show({
@@ -142,8 +134,8 @@ function LoginScreen({ navigation }) {
 
   return (
     <Container>
-      <SafeAreaView style={GlobalStyles.droidSafeArea}>
-        <Animatable.View style={styles.Loginform} animation="fadeInUpBig">
+      <SafeAreaView style={GlobalStyles.droidSafeArea} >
+        <Animatable.View style={styles.Loginform} styles={{paddingLeft: 10, marginRight: 10}} animation="fadeInUpBig">
           <View>
             <Thumbnail
               resizeMode="contain"
@@ -202,14 +194,7 @@ function LoginScreen({ navigation }) {
               </Item>
             </Form>
 
-            <Text
-              style={{
-                textAlign: "right",
-                paddingVertical: 20,
-              }}
-            >
-              forgot password?
-            </Text>
+            <TouchableOpacity>
             <Button
               style={styles.Button}
               primary
@@ -220,15 +205,20 @@ function LoginScreen({ navigation }) {
             >
               <Text>LOGIN</Text>
             </Button>
+            </TouchableOpacity>
+            <TouchableOpacity>
             <Button
+            
               bordered
               block
-              style={{ marginTop: 10, borderColor: "rgb(250,91,90)" }}
+              style={{ marginTop: 10, borderColor: "rgb(250,91,90)",borderBottomWidth:3,borderLeftWidth:3,borderRightWidth:3,borderTopWidth:3, marginRight: 30,
+              marginLeft: 30}}
               rounded
               onPress={() => navigation.navigate("Registration")}
             >
               <Text style={{ color: "black" }}> Register</Text>
             </Button>
+            </TouchableOpacity>
           </View>
         </Animatable.View>
       </SafeAreaView>
@@ -255,12 +245,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   Button: {
-    shadowColor: "rgba(0, 0, 255, 255)",
-    shadowOpacity: 1,
-    elevation: 20,
-    shadowRadius: 20,
-    shadowOffset: { width: 100, height: 100 },
+    marginTop:15,
     backgroundColor: "rgb(250,91,90)",
     marginBottom: 10,
+    marginRight: 30,
+    marginLeft: 30
   },
 });

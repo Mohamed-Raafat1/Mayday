@@ -16,7 +16,7 @@ import {
   View,
 } from "native-base";
 import React, { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 import { createChat } from "../../Components/functions/functions";
@@ -40,43 +40,49 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
   }
   if (data) {
     const { locations } = data;
-
+    console.log("ana hena");
     let latitude = locations[0].coords.latitude;
     let longitude = locations[0].coords.longitude;
+    console.log("this is the location", latitude, longitude);
     const Geofirestore = geofirestore.initializeApp(firebase.firestore());
-    await Geofirestore.collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .update({
-        coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
-      })
-      .catch((error) => {
-        console.log(
-          "Error in Taskmanager when uploading to firestore: ",
-          error
-        );
-      });
-    // doctor querying for nearby requests
-    await Geofirestore.collection("requests")
-      .near({
-        center: new firebase.firestore.GeoPoint(latitude, longitude),
-        radius: 10,
-      })
-      .where("State", "==", "Pending")
-      .get()
-      .then((snapshot) => {
-        Requests = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          const id = doc.id;
-          const distance = doc.distance;
-          return {
-            ...data,
-            Requestid: id,
-            distance: distance,
-          };
-        });
-      });
 
-    updateRequestsFn(Requests);
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        await Geofirestore.collection("users")
+          .doc(firebase.auth().currentUser.uid)
+          .update({
+            coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
+          })
+          .catch((error) => {
+            console.log(
+              "Error in Taskmanager when uploading to firestore: ",
+              error
+            );
+          });
+        // doctor querying for nearby requests
+        await Geofirestore.collection("requests")
+          .near({
+            center: new firebase.firestore.GeoPoint(latitude, longitude),
+            radius: 5,
+          })
+          .where("State", "==", "Pending")
+          .get()
+          .then((snapshot) => {
+            Requests = snapshot.docs.map((doc) => {
+              const data = doc.data();
+              const id = doc.id;
+              const distance = doc.distance;
+              return {
+                ...data,
+                Requestid: id,
+                distance: distance,
+              };
+            });
+          });
+        console.log("these are the requests", Requests);
+        updateRequestsFn(Requests);
+      }
+    });
   }
 });
 const DoctorRequests = ({ navigation }) => {
@@ -187,27 +193,28 @@ const DoctorRequests = ({ navigation }) => {
   };
 
   const AcceptRequest = async (request) => {
-    await firebase
-      .firestore()
-      .collection("requests")
-      .doc(request.Requestid)
-      .update({
-        State: "Accepted",
-        DoctorID: currentUser.uid,
-        DoctorGeoHash: currentUser.g.geohash,
-        DoctorCoordinates: currentUser.coordinates,
-        chatid: sharedChatid,
-      });
-    await firebase.firestore().collection("users").doc(currentUser.uid).update({
-      currentRequest: request,
+    firebase.firestore().collection("requests").doc(request.Requestid).update({
+      State: "Accepted",
+      DoctorID: currentUser.uid,
+      DoctorGeoHash: currentUser.g.geohash,
+      DoctorCoordinates: currentUser.coordinates,
+      chatid: sharedChatid,
     });
-    await firebase
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid)
+      .update({
+        currentRequest: { requestid: request.Requestid, chatid: sharedChatid },
+      });
+    firebase
       .firestore()
       .collection("users")
       .doc(currentUser.uid)
       .collection("requests")
       .doc(request.Requestid)
       .set({ ...request, State: "Accepted", current: true });
+
     navigation.navigate("CurrentRequest", {
       requestid: request.Requestid,
       chatid: sharedChatid,
@@ -239,11 +246,11 @@ const DoctorRequests = ({ navigation }) => {
               <View
                 style={{ flexDirection: "row", justifyContent: "flex-end" }}
               >
-                <Button transparent>
+                <TouchableOpacity>
                   <Icon style={{ marginRight: -10 }} active name="location" />
                   <Text>Location</Text>
-                </Button>
-                <Button
+                </TouchableOpacity>
+                <TouchableOpacity
                   onPress={async () => {
                     sharedChatid = await createChat(
                       request.PatientID,
@@ -251,10 +258,9 @@ const DoctorRequests = ({ navigation }) => {
                     );
                     AcceptRequest(request);
                   }}
-                  transparent
                 >
                   <Text>Accept</Text>
-                </Button>
+                </TouchableOpacity>
                 <Button transparent>
                   <Text style={{ color: "red" }}>Decline</Text>
                 </Button>
@@ -269,10 +275,26 @@ const DoctorRequests = ({ navigation }) => {
   //for onmount and cleanup
   useEffect(() => {
     const unsubscribeUser = dispatch(fetchUser());
+    console.log("in the scurrent user use effect");
+    if (
+      currentUser &&
+      currentUser.currentRequest.requestid &&
+      currentUser.currentRequest.chatid
+    ) {
+      console.log("7amraaaaaaaaaaaaaaa", currentUser.currentRequest.requestid);
+      navigation.navigate("CurrentRequest", {
+        requestid: currentUser.currentRequest.requestid,
+        chatid: currentUser.currentRequest.chatid,
+      });
+    }
 
     return () => {
       unsubscribeUser();
     };
+  }, []);
+
+  useEffect(() => {
+    return () => {};
   }, []);
 
   //-------------------for focusing and unfocusing Screen

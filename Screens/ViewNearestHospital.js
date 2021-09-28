@@ -24,17 +24,22 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
 
     let latitude = locations[0].coords.latitude;
     let longitude = locations[0].coords.longitude;
-    await Geofirestore.collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .update({
-        coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
-      })
-      .catch((error) => {
-        console.log(
-          "Error in Taskmanager when uploading to firestore: ",
-          error
-        );
-      });
+
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        await Geofirestore.collection("users")
+          .doc(firebase.auth().currentUser.uid)
+          .update({
+            coordinates: new firebase.firestore.GeoPoint(latitude, longitude),
+          })
+          .catch((error) => {
+            console.log(
+              "Error in Taskmanager when uploading to firestore: ",
+              error
+            );
+          });
+      }
+    });
   }
 });
 
@@ -50,8 +55,8 @@ export default function ViewNearestHospital({ navigation, route }) {
 
   //constants for mapview
   const [location, setlocation] = useState({
-    longitude: currentUser.coordinates.longitude,
-    latitude: currentUser.coordinates.latitude,
+    longitude: currentUser ? currentUser.coordinates.longitude : 0,
+    latitude: currentUser ? currentUser.coordinates.latitude : 0,
   });
   const { height: HEIGHT, width: WIDTH } = Dimensions.get("window");
   //This controls default zoom
@@ -263,8 +268,8 @@ export default function ViewNearestHospital({ navigation, route }) {
           showsCompass={true}
           // showsMyLocationButton={true}
           showsPointsOfInterest={true}
-          // loadingEnabled={true}
-          // loadingIndicatorColor="blue"
+          loadingEnabled={true}
+          loadingIndicatorColor="blue"
           onMapReady={() => {
             if (themargin === 0) setthemargin(1);
             else setthemargin(0);

@@ -113,6 +113,7 @@ function Chat({ route, navigation }) {
         user={{
           _id: firebase.auth().currentUser.uid,
           name: currentUser.FirstName + " " + currentUser.LastName,
+          avatar: firebase.auth().currentUser.photoURL,
         }}
         alwaysShowSend={true}
         renderChatEmpty={renderChatEmpty}
@@ -120,6 +121,7 @@ function Chat({ route, navigation }) {
         renderBubble={renderBubble}
         renderSend={renderSend}
         renderchat
+        renderAvatarOnTop
         scrollToBottomComponent={scrolllToBottomComponent}
       />
     );

@@ -75,6 +75,9 @@ export default function App({ props }) {
       }
     });
     firebase;
+    return (()=>{
+      unregisterTasks()
+    })
   }, []);
   if (isLoading) {
     return (

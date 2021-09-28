@@ -16,8 +16,14 @@ import {
   Subtitle,
   Text,
   Textarea,
+  Body,
   Toast,
+  Header,
+  Left,
+  Card,
+  Title
 } from "native-base";
+
 import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
@@ -27,13 +33,13 @@ import {
   View,
 } from "react-native";
 import "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import RadioGroup from "react-native-radio-buttons-group";
 import GlobalStyles from "../GlobalStyles";
 import { DailyTipsAlert } from "../HomeNavigation/tabs";
-
 // Notif. Token Registeration function
 async function registerForPushNotificationsAsync() {
-  let token;
+  let token = "";
   if (Constants.isDevice) {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync(); //PERMISSIONS REQUEST
@@ -47,7 +53,7 @@ async function registerForPushNotificationsAsync() {
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data; //GETTING TOKEN HERE
-    console.log(token);
+    //console.log(token);
   } else {
     alert("Must use physical device for Push Notifications");
   }
@@ -77,7 +83,7 @@ function RegistrationScreen({ navigation }) {
   const [PhoneNumber, setPhoneNumber] = useState("+20");
   const [FirstName, setFirstName] = useState("");
   const [LastName, setLastName] = useState("");
-
+  const [EmptyStatus, setEmptyStatus] = useState(true);
   //------------------medicalID objects---------------------------------------------
   const [height, setHeight] = useState("0");
   const [weight, setWeight] = useState("0");
@@ -110,75 +116,86 @@ function RegistrationScreen({ navigation }) {
   const ComparePassword = (text) => {
     setConfirmPass(text);
     if (Password === text) setEqual(true);
-    else setEqual(false);
+    else {
+      setEqual(false);
+    }
   };
 
   const onSignUp = async () => {
-    //Gathering MedicalID
-    let MedicalID = {
-      Height: height,
-      Weight: weight,
-      BloodType: bloodType,
-      MedicalConditions: medicalConditions,
-      Allergies: allergies,
-      Medications: medications,
-    };
-
-    //Emergency Contacts
-    let EmergencyContacts = [];
-    //retrieving gender
-    let gender = "";
-    radioButtons.map((radio) => {
-      if (radio.selected == true) gender = radio.value;
-    });
-
-    await firebase
-      .auth()
-      .createUserWithEmailAndPassword(Email, Password)
-      .then((result) => {
-        let uid = firebase.auth().currentUser.uid;
-        let location = {
-          latitude: 0,
-          longitude: 0,
+    console.log(EmptyStatus);
+    if (isEqual) {
+      if (!EmptyStatus) {
+        //Gathering MedicalID
+        let MedicalID = {
+          Height: height,
+          Weight: weight,
+          BloodType: bloodType,
+          MedicalConditions: medicalConditions,
+          Allergies: allergies,
+          Medications: medications,
         };
-        firebase
-          .firestore()
-          .collection("users")
-          .doc(uid)
-          .set({
-            uid,
-            Email,
-            FirstName,
-            LastName,
-            Gender: gender,
-            Birthdate: date,
-            NationalID,
-            PhoneNumber,
-            medicalProfessional,
-            MedicalID,
-            EmergencyContacts,
-            location,
-            ExpoToken: expoPushToken,
-            DailyTips: false,
-            coordinates: new firebase.firestore.GeoPoint(0, 0),
-            g: {
-              geohash: "",
-              geopoint: new firebase.firestore.GeoPoint(0, 0),
-            },
-          });
 
-        console.log(result);
-      })
-      .then((result) => console.log(result))
-      .catch((error) => {
-        Toast.show({
-          text: error.message,
-          duration: 2000,
+        //Emergency Contacts
+        let EmergencyContacts = [];
+        //retrieving gender
+        let gender = "";
+        radioButtons.map((radio) => {
+          if (radio.selected == true) gender = radio.value;
         });
-        console.log(error);
-      });
-  };
 
+        await firebase
+          .auth()
+          .createUserWithEmailAndPassword(Email, Password)
+          .then(async (result) => {
+            let uid = firebase.auth().currentUser.uid;
+
+            await firebase
+              .firestore()
+              .collection("users")
+              .doc(uid)
+              .set({
+                uid,
+                Email,
+                FirstName,
+                LastName,
+                Gender: gender,
+                Birthdate: date,
+                NationalID,
+                PhoneNumber,
+                medicalProfessional,
+                MedicalID,
+                EmergencyContacts,
+                ExpoToken: expoPushToken,
+                DailyTips: false,
+                currentRequestID: "",
+                coordinates: new firebase.firestore.GeoPoint(0, 0),
+                currentRequest: { chatid: "", Requestid: "" },
+                g: {
+                  geohash: "",
+                  geopoint: new firebase.firestore.GeoPoint(0, 0),
+                },
+                PhotoURI:
+                  "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+              });
+
+            //default profile pic
+            firebase.auth().currentUser.updateProfile({
+              photoURL:
+                "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+            });
+
+            //console.log(result);
+          })
+          .catch((error) => {
+            Toast.show({
+              text: error.message,
+              duration: 2000,
+            });
+            console.log(error);
+          });
+      }
+    }
+  };
   //====================================================================//
 
   const Radio = [
@@ -230,11 +247,74 @@ function RegistrationScreen({ navigation }) {
     setMode(currentMode);
   };
 
+  const checkTextInput = () => {
+    if (!Email.trim()) {
+      alert("Please Enter Email");
+      setEmptyStatus(true);
+      return;
+    }
+    //Check for the Email TextInput
+    if (!Password.trim()) {
+      alert("Please Enter Email");
+      setEmptyStatus(true);
+      return;
+    }
+    if (!ConfirmPass.trim()) {
+      alert("Please Confirm Password");
+      setEmptyStatus(true);
+      return;
+    }
+    if (!NationalID.trim()) {
+      alert("Please Enter Your National ID");
+      setEmptyStatus(true);
+    }
+    if (!PhoneNumber.trim()) {
+      alert("Please Enter You Phone Number");
+      setEmptyStatus(true);
+      return;
+    }
+    if (!FirstName.trim()) {
+      alert("Please Enter Your First Name");
+      setEmptyStatus(true);
+      return;
+    }
+    if (!LastName.trim()) {
+      alert("Please Enter Your Last Name");
+      setEmptyStatus(true);
+      return;
+    }
+
+    setEmptyStatus(false);
+  };
+
   return (
-    <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      <ScrollView style={styles.Loginform}>
-        <Form>
+    <SafeAreaView style={{width:'100%'}} style={GlobalStyles.droidSafeArea}>
+      <ScrollView style={{width:'100%',backgroundColor:'white'}}>
+        <Header transparent style={{
+          borderBottomWidth:1,
+          width:'100%',
+          borderBottomColor: "black",
+        }} >
+          
+          <TouchableOpacity style={{marginTop:'50%',}}
+            onPress={() => {
+              // navigation.navigate("Home")
+              navigation.popToTop();
+            }}
+          >
+            <Icon style={{ color: "black" }} name="arrow-back" />
+          </TouchableOpacity> 
+            
+            <Body>
+            <Title style={{ color: 'black', fontSize: 27, marginLeft: 5, }}>Registeration</Title>
+            </Body>
+                
+      
+        </Header>
+        <Card style={{backgroundColor:'white', borderRadius: 10, marginLeft:10, marginRight:10, marginTop:20}}>
+        <Form style={{marginTop:15, marginRight:10}}>
           <Item
+          
             iconRight
             underline
             style={styles.Item}
@@ -251,7 +331,7 @@ function RegistrationScreen({ navigation }) {
             <Icon name="mail-outline"></Icon>
           </Item>
 
-          <Item underline iconRight style={styles.Item}>
+          <Item iconRight style={styles.Item}>
             <Input
               onChangeText={(text) => setFirstName(text)}
               placeholder="First Name"
@@ -361,7 +441,9 @@ function RegistrationScreen({ navigation }) {
             style={styles.Item}
           >
             <Input
-              onChangeText={(text) => ComparePassword(text)}
+              onChangeText={(text) => {
+                ComparePassword(text);
+              }}
               textContentType="password"
               secureTextEntry={true}
               placeholderTextColor="gray"
@@ -389,9 +471,10 @@ function RegistrationScreen({ navigation }) {
             </Text>
           </ListItem>
         </Form>
-
+        </Card>
         {/**--------------------medical id part --------------------------------------- */}
-        <View style={styles.divider}>
+        <Card style={{backgroundColor:'white', borderRadius: 10, marginLeft:10, marginRight:10, marginTop: 10, paddingBottom: 20}}>
+        <View>
           <Text style={styles.title}>Medical ID</Text>
           <Subtitle style={{ color: "grey", textAlign: "center" }}>
             (can be filled later)
@@ -460,7 +543,7 @@ function RegistrationScreen({ navigation }) {
             style={styles.divider}
           /> */}
 
-          <View>
+          <View style={{marginTop: 10}}>
             <Text style={styles.medicalIDItem}>MEDICAL CONDITIONS</Text>
             <Textarea
               style={styles.medicalIdData}
@@ -478,35 +561,46 @@ function RegistrationScreen({ navigation }) {
             ></Textarea>
           </View>
         </View>
+        </Card>
         {/*-----------------------------*end of medicalIDpart----------------------------- */}
-
+<TouchableOpacity>
         <Text
           style={{
             textAlign: "right",
             marginBottom: 10,
             marginTop: 10,
+            color:'grey',
+            marginRight: 10
           }}
           onPress={() => navigation.navigate("Login")}
         >
           l Already have an account?
         </Text>
-
+        </TouchableOpacity>
         <Button
           style={{
             marginBottom: 10,
             alignContent: "center",
             backgroundColor: "rgb(250,91,90)",
+            borderRadius:15,
+            width:"80%",
+            alignSelf:"center"
           }}
           primary
           iconRight
-          rounded
           onPress={async () => {
             onSignUp();
-            await DailyTipsAlert();
+            checkTextInput();
+            {
+              if (!isEqual) {
+                Toast.show({ text: "Passwords Do Not Match" });
+              }
+            }
+            if (!EmptyStatus) await DailyTipsAlert();
           }}
           block
         >
-          <Text>Register</Text>
+          <Text style={{fontFamily:'sans-serif-condensed',fontSize:17}}>Register</Text>
         </Button>
       </ScrollView>
     </SafeAreaView>
@@ -592,17 +686,17 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: "bold",
-    marginTop: 3,
-    marginBottom: 5,
+    marginTop: 15,
+    marginBottom: 7,
     textAlign: "center",
     color: "black",
+    
   },
 
   userInfoSection: {
     height: "20%",
-    justifyContent: "space-evenly",
     paddingHorizontal: 30,
     paddingBottom: 35,
     backgroundColor: "#e8fbff",

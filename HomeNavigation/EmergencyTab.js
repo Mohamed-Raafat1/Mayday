@@ -8,6 +8,7 @@ import { fetchUser } from "../redux/actions";
 import CurrentReport from "../Screens/CurrentReport";
 import DoctorsScreen from "../Screens/DoctorsScreen";
 import ViewNearestHospital from "../Screens/ViewNearestHospital";
+import firebase from "firebase";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -18,6 +19,7 @@ export default function EmergencyTab({ navigation }) {
   const currentRequest = useSelector(
     (state) => state.requestState.currentRequest
   );
+
   const dispatch = useDispatch();
   useLayoutEffect(() => {
     const Unsubscribe = dispatch(fetchUser());
@@ -33,6 +35,7 @@ export default function EmergencyTab({ navigation }) {
       navigation.addListener("beforeRemove", (e) => {
         if (!currentRequest) {
           // If we don't have unsaved changes, then we don't need to do anything
+          TaskManager.unregisterAllTasksAsync();
           return;
         }
 
@@ -52,13 +55,23 @@ export default function EmergencyTab({ navigation }) {
               // This will continue the action that had triggered the removal of the screen
               onPress: async () => {
                 await TaskManager.unregisterAllTasksAsync();
+                firebase
+                  .firestore()
+                  .collection("users")
+                  .doc(firebase.auth().currentUser.uid)
+                  .update({ currentRequestID: "" });
+                firebase
+                  .firestore()
+                  .collection("requests")
+                  .doc(currentRequest.id)
+                  .update({ State: "Cancelled" });
                 navigation.dispatch(e.data.action);
               },
             },
           ]
         );
       }),
-    [navigation, hasUnsavedChanges]
+    [navigation, currentRequest]
   );
 
   return (
