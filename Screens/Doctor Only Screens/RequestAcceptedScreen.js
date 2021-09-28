@@ -296,7 +296,11 @@ function RequestAcceptedScreen({ route, navigation }) {
   React.useEffect(() => {
     navigation.addListener("beforeRemove", (e) => {
       if (AcceptedRequest) {
-        if (AcceptedRequest.State === "Cancelled") {
+        if (
+          AcceptedRequest.State === "Cancelled" ||
+          AcceptedRequest.State === "Done"
+        ) {
+          AcceptedRequest = null;
           // If the user was cancelled on the userside
           return;
         }
@@ -346,6 +350,22 @@ function RequestAcceptedScreen({ route, navigation }) {
       }
     });
   }, [navigation, hasUnsavedChanges]);
+  const onRequestFinish = async () => {
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid)
+      .update({
+        currentRequest: {
+          chatid: "",
+          requestid: "",
+        },
+      });
+    await firebase.firestore().collection("requests").doc(requestid).update({
+      State: "Done",
+    });
+    navigation.popToTop();
+  };
 
   let screen;
   if (
@@ -459,13 +479,29 @@ function RequestAcceptedScreen({ route, navigation }) {
           </Text>
           <Ionicons name="md-location" size={24} color="red" />
         </Button>
+        <Button
+          onPress={() => {
+            onRequestFinish();
+          }}
+          style={{
+            alignSelf: "center",
+            position: "absolute",
+            bottom: 50,
+            padding: 20,
+          }}
+          rounded
+          success
+        >
+          <Text style={{ color: "white" }}> Finish the request</Text>
+        </Button>
       </View>
     );
   }
   if (!currentAcceptedRequest)
     return (
-      <View>
-        <Text> done</Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text> Fetching current Request</Text>
+        <Spinner style={{ alignContent: "center" }} color="red"></Spinner>
       </View>
     );
   else

@@ -276,6 +276,11 @@ function DoctorsScreen({ navigation }) {
   //Done on mount + cleanup
   useLayoutEffect(() => {
     const UnsubscribeUser = dispatch(fetchUser());
+    if (currentUser && currentUser.currentRequestID !== "") {
+      UnsubscribeRequest = dispatch(fetchRequest(currentUser.currentRequestID));
+      Requestid = currentUser.currentRequestID;
+      requestPermissions();
+    }
 
     return async () => {
       UnsubscribeUser();
@@ -325,29 +330,38 @@ function DoctorsScreen({ navigation }) {
       };
     }, [])
   );
+  const onFinish = async () => {
+    await StopTracking();
 
+    await UnsubscribeRequest();
+
+    await dispatch(CancelCurrentRequest());
+
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        currentRequestID: "",
+      });
+    Requestid = null;
+    navigation.replace("Home");
+  };
   useEffect(() => {
-    if (currentRequest && currentRequest.State == "Accepted") {
+    if (currentRequest && currentRequest.State === "Accepted") {
       alreadyAccepted = true;
       Toast.show({
         text: "Your Request has been accepted\n A Medical professional is on the way",
         type: "success",
       });
     }
-
+    if (currentRequest && currentRequest.State === "Done") {
+      onFinish();
+    }
     return () => {};
   }, [currentRequest]);
   //on mount
-  useEffect(() => {
-    if (currentUser && currentUser.currentRequestID !== "") {
-      UnsubscribeRequest = dispatch(fetchRequest(currentUser.currentRequestID));
-      Requestid = currentUser.currentRequestID;
-      requestPermissions();
-    }
-    return () => {
-      UnsubscribeRequest();
-    };
-  }, []);
+
   //rendering
   let screen;
   if (!currentUser) {
@@ -482,7 +496,6 @@ function DoctorsScreen({ navigation }) {
             )}
             <Button
               rounded
-              bordered
               style={[styles.button, { alignSelf: "center" }]}
               onPress={async () => {
                 Alert.alert(

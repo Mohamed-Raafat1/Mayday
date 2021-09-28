@@ -269,8 +269,6 @@ function Tabs({ navigation }) {
             component={DoctorRequestsStackScreen}
             options={({ route }) => ({
               tabBarLabel: "Requests",
-              tabBarBadge: 1,
-              tabBarBadgeStyle: { color: "white", backgroundColor: "red" },
 
               tabBarIcon: ({ color }) => (
                 <MaterialCommunityIcons
@@ -308,12 +306,6 @@ const HomeStackScreen = ({ navigation }) => (
         headerRight: () => (
           <View style={{ flexDirection: "row" }}>
             <Button transparent>
-              <Badge
-                badgeStyle={{}}
-                value="3"
-                status="primary"
-                containerStyle={{ position: "absolute", top: -2, right: -2 }}
-              />
               <MaterialCommunityIcons
                 name="message-text-outline"
                 size={24}
@@ -323,12 +315,6 @@ const HomeStackScreen = ({ navigation }) => (
               />
             </Button>
             <Button transparent>
-              <Badge
-                badgeStyle={{}}
-                value="4"
-                status="primary"
-                containerStyle={{ position: "absolute", top: -2, right: -2 }}
-              />
               <MaterialCommunityIcons
                 name="bell-outline"
                 size={26}
@@ -426,7 +412,7 @@ const HomeStackScreen = ({ navigation }) => (
         title: "Notifications",
       }}
     />
-      <HomeStack.Screen
+    <HomeStack.Screen
       name="Notif2location"
       style={styles.icon}
       component={Notif2location}

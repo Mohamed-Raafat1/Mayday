@@ -232,6 +232,7 @@ const DoctorRequests = ({ navigation }) => {
           <ListItem thumbnail key={request.Requestid}>
             <Left>
               <Thumbnail
+                style={{ marginTop: -40 }}
                 source={{
                   uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
                 }}
@@ -241,18 +242,20 @@ const DoctorRequests = ({ navigation }) => {
               <Text style={{ fontWeight: "bold" }}>
                 {request.PatientFirstName + " " + request.PatientLastName}
               </Text>
-              <Text>Distance: {request.distance}</Text>
+              <Text>Distance: {request.distance.toFixed(3)} KM</Text>
               <Text note numberOfLines={1}>
                 Accident Type: {request.AccidentType}
               </Text>
               <View
                 style={{ flexDirection: "row", justifyContent: "flex-end" }}
               >
-                <TouchableOpacity>
-                  <Icon style={{ marginRight: -10 }} active name="location" />
-                  <Text>Location</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
+                <Button
+                  rounded
+                  style={{
+                    marginTop: -40,
+                    marginRight: 10,
+                    backgroundColor: "rgba(40,40,40,1)",
+                  }}
                   onPress={async () => {
                     sharedChatid = await createChat(
                       request.PatientID,
@@ -262,9 +265,6 @@ const DoctorRequests = ({ navigation }) => {
                   }}
                 >
                   <Text>Accept</Text>
-                </TouchableOpacity>
-                <Button transparent>
-                  <Text style={{ color: "red" }}>Decline</Text>
                 </Button>
               </View>
             </Body>
