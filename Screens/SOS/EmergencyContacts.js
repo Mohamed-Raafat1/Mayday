@@ -150,6 +150,7 @@ function SOS({ navigation }) {
         LastName: contact.LastName,
         PhoneNumber: contact.PhoneNumber,
         Email: contact.Email,
+        PhotoURI: contact.PhotoURI,
       };
       EmergencyContacts.push(EContact);
       Toast.show({ text: "Contact is added Successfully" });
@@ -314,7 +315,7 @@ function SOS({ navigation }) {
           <Left>
             <Thumbnail
               source={{
-                uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+                uri: item.PhotoURI,
               }}
             />
           </Left>
