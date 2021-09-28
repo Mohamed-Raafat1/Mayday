@@ -1,4 +1,6 @@
 import { useFocusEffect } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import firebase from "firebase";
@@ -291,6 +293,19 @@ export default function ViewNearestHospital({ navigation, route }) {
           <Text>Stop Tracking</Text>
         </Button>
         <Button
+          style={{
+            borderTopRightRadius: 20,
+            borderBottomRightRadius: 20,
+
+            padding: 10,
+
+            position: "absolute",
+            top: 20,
+            left: 0,
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
+            flexDirection: "row",
+            flex: 1,
+          }}
           onPress={() => {
             console.log(MarkerPosition);
             Linking.openURL(
@@ -304,6 +319,7 @@ export default function ViewNearestHospital({ navigation, route }) {
           }}
         >
           <Text>Get Direction To {MarkerName}</Text>
+          <Ionicons name="md-location" size={24} color="red" />
         </Button>
       </View>
     );
@@ -346,7 +362,6 @@ export default function ViewNearestHospital({ navigation, route }) {
         <Button
           style={[styles.button, { alignSelf: "center" }]}
           onPress={() => {
-            console.log("------------------pressed-------------");
             StopTracking();
           }}
         >

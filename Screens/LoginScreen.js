@@ -3,7 +3,16 @@ import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import firebase from "firebase";
 import {
-  Button, Container, Form, Icon, Input, Item, Text, Thumbnail, Toast, View
+  Button,
+  Container,
+  Form,
+  Icon,
+  Input,
+  Item,
+  Text,
+  Thumbnail,
+  Toast,
+  View,
 } from "native-base";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
@@ -12,10 +21,9 @@ import "react-native-gesture-handler";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import GlobalStyles from "../GlobalStyles";
 
-
 // Notif. Token Registeration function
 async function registerForPushNotificationsAsync() {
-  let token ='';
+  let token = "";
   if (Constants.isDevice) {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync(); //PERMISSIONS REQUEST
@@ -134,8 +142,12 @@ function LoginScreen({ navigation }) {
 
   return (
     <Container>
-      <SafeAreaView style={GlobalStyles.droidSafeArea} >
-        <Animatable.View style={styles.Loginform} styles={{paddingLeft: 10, marginRight: 10}} animation="fadeInUpBig">
+      <SafeAreaView style={GlobalStyles.droidSafeArea}>
+        <Animatable.View
+          style={styles.Loginform}
+          styles={{ paddingLeft: 10, marginRight: 10 }}
+          animation="fadeInUpBig"
+        >
           <View>
             <Thumbnail
               resizeMode="contain"
@@ -175,14 +187,14 @@ function LoginScreen({ navigation }) {
                 <Button transparent onPress={updateSecureTextEntry}>
                   {data.secureTextEntry ? (
                     <Feather
-                      style={{ marginRight: 10 }}
+                      style={{ marginTop: 7, marginRight: 10 }}
                       name="eye-off"
                       size={20}
                       color="black"
                     />
                   ) : (
                     <Feather
-                      style={{ marginRight: 10 }}
+                      style={{ marginTop: 7, marginRight: 10 }}
                       name="eye"
                       size={20}
                       color="black"
@@ -195,29 +207,36 @@ function LoginScreen({ navigation }) {
             </Form>
 
             <TouchableOpacity>
-            <Button
-              style={styles.Button}
-              primary
-              iconRight
-              rounded
-              onPress={onSignIn}
-              block
-            >
-              <Text>LOGIN</Text>
-            </Button>
+              <Button
+                style={styles.Button}
+                primary
+                iconRight
+                rounded
+                onPress={onSignIn}
+                block
+              >
+                <Text>LOGIN</Text>
+              </Button>
             </TouchableOpacity>
             <TouchableOpacity>
-            <Button
-            
-              bordered
-              block
-              style={{ marginTop: 10, borderColor: "rgb(250,91,90)",borderBottomWidth:3,borderLeftWidth:3,borderRightWidth:3,borderTopWidth:3, marginRight: 30,
-              marginLeft: 30}}
-              rounded
-              onPress={() => navigation.navigate("Registration")}
-            >
-              <Text style={{ color: "black" }}> Register</Text>
-            </Button>
+              <Button
+                bordered
+                block
+                style={{
+                  marginTop: 10,
+                  borderColor: "rgb(250,91,90)",
+                  borderBottomWidth: 3,
+                  borderLeftWidth: 3,
+                  borderRightWidth: 3,
+                  borderTopWidth: 3,
+                  marginRight: 30,
+                  marginLeft: 30,
+                }}
+                rounded
+                onPress={() => navigation.navigate("Registration")}
+              >
+                <Text style={{ color: "black" }}> Register</Text>
+              </Button>
             </TouchableOpacity>
           </View>
         </Animatable.View>
@@ -245,10 +264,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   Button: {
-    marginTop:15,
+    marginTop: 15,
     backgroundColor: "rgb(250,91,90)",
     marginBottom: 10,
     marginRight: 30,
-    marginLeft: 30
+    marginLeft: 30,
   },
 });

@@ -5,7 +5,10 @@ import GettingStarted from "./GettingStarted";
 import LoginScreen from "./LoginScreen";
 import RegistrationScreen from "./RegistrationScreen";
 const RootStack = createStackNavigator();
-const RootStackScreen = ({ navigation }) => {
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { Button, Content } from "native-base";
+
+const RootStackScreen = () => {
   const [isFirstLaunch, setisFirstLaunch] = useState(null);
   useEffect(() => {
     AsyncStorage.getItem("alreadyLaunched").then((value) => {
@@ -27,7 +30,7 @@ const RootStackScreen = ({ navigation }) => {
   }
 
   return (
-    <RootStack.Navigator initialRouteName={routeName} headerMode="none">
+    <RootStack.Navigator initialRouteName={routeName} headerMode="screen">
       <RootStack.Screen
         options={{ headerShown: false }}
         name="GettingStarted"
@@ -39,7 +42,13 @@ const RootStackScreen = ({ navigation }) => {
         name="Login"
         component={LoginScreen}
       />
-      <RootStack.Screen name="Registration" component={RegistrationScreen} />
+      <RootStack.Screen
+        name="Registration"
+        component={RegistrationScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
     </RootStack.Navigator>
   );
 };

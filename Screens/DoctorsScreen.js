@@ -1,11 +1,20 @@
 import { useFocusEffect } from "@react-navigation/native";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
+import { Ionicons } from "@expo/vector-icons";
 import firebase from "firebase";
 import * as geofirestore from "geofirestore";
-import { Button, Spinner, Text, Toast, View } from "native-base";
+
+import { Button, Spinner, Toast, View } from "native-base";
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Dimensions, Image, StyleSheet } from "react-native";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Alert,
+} from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -15,6 +24,8 @@ import {
 } from "../redux/actions";
 import { Polyline } from "react-native-maps";
 import { customMapStyle } from "../Components/functions/functions";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+
 let alreadyAccepted = false;
 const RESCU_TRACKING = "background-doctor-screen-location-task";
 
@@ -71,7 +82,7 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
   Main Component
   -------------------------------
  */
-function DoctorsScreen() {
+function DoctorsScreen({ navigation }) {
   //*_*_*_*_*_constants*_*_*_*_*_*_*
   let usersunsubsrcibe = () => {};
   //state of request (is button pressed or not?)
@@ -195,6 +206,7 @@ function DoctorsScreen() {
         PatientNumber: currentUser.PhoneNumber,
         PatientEmail: currentUser.Email,
         chatid: "",
+        PatientPhotoURI: currentUser.PhotoURI,
         RequestType: "Location",
         State: "Pending",
       })
@@ -220,6 +232,13 @@ function DoctorsScreen() {
         console.log(error);
       });
   }
+
+  const gotoChat = (uid, chatid) => {
+    navigation.navigate("Chat", {
+      userid: uid,
+      chatid: chatid,
+    });
+  };
 
   const getNearByUsers = () => {
     const Geofirestore = geofirestore.initializeApp(firebase.firestore());
@@ -257,6 +276,11 @@ function DoctorsScreen() {
   //Done on mount + cleanup
   useLayoutEffect(() => {
     const UnsubscribeUser = dispatch(fetchUser());
+    if (currentUser && currentUser.currentRequestID !== "") {
+      UnsubscribeRequest = dispatch(fetchRequest(currentUser.currentRequestID));
+      Requestid = currentUser.currentRequestID;
+      requestPermissions();
+    }
 
     return async () => {
       UnsubscribeUser();
@@ -306,29 +330,38 @@ function DoctorsScreen() {
       };
     }, [])
   );
+  const onFinish = async () => {
+    await StopTracking();
 
+    await UnsubscribeRequest();
+
+    await dispatch(CancelCurrentRequest());
+
+    await firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .update({
+        currentRequestID: "",
+      });
+    Requestid = null;
+    navigation.replace("Home");
+  };
   useEffect(() => {
-    if (currentRequest && currentRequest.State == "Accepted") {
+    if (currentRequest && currentRequest.State === "Accepted") {
       alreadyAccepted = true;
       Toast.show({
         text: "Your Request has been accepted\n A Medical professional is on the way",
         type: "success",
       });
     }
-
+    if (currentRequest && currentRequest.State === "Done") {
+      onFinish();
+    }
     return () => {};
   }, [currentRequest]);
   //on mount
-  useEffect(() => {
-    if (currentUser && currentUser.currentRequestID !== "") {
-      UnsubscribeRequest = dispatch(fetchRequest(currentUser.currentRequestID));
-      Requestid = currentUser.currentRequestID;
-      requestPermissions();
-    }
-    return () => {
-      UnsubscribeRequest();
-    };
-  }, []);
+
   //rendering
   let screen;
   if (!currentUser) {
@@ -425,21 +458,78 @@ function DoctorsScreen() {
                 />
               )}
             </MapView>
+            {currentRequest.State == "Accepted" && (
+              <Button
+                onPress={() => {
+                  gotoChat(currentRequest.DoctorID, currentRequest.chatid);
+                }}
+                style={{
+                  borderTopRightRadius: 20,
+                  borderBottomRightRadius: 20,
 
+                  padding: 10,
+
+                  position: "absolute",
+                  top: 10,
+                  left: 0,
+                  backgroundColor: "rgba(255, 255, 255, 0.8)",
+                  flexDirection: "row",
+                  flex: 1,
+                }}
+              >
+                <Text
+                  style={{
+                    marginRight: 10,
+                    marginBottom: 2,
+                    fontSize: 20,
+                  }}
+                >
+                  Chat with Dr. {currentRequest.DoctorFirstName}
+                </Text>
+                <Ionicons
+                  style={{ marginTop: 3 }}
+                  name="ios-chatbox-ellipses"
+                  size={35}
+                  color="#00b3ff"
+                />
+              </Button>
+            )}
             <Button
+              rounded
               style={[styles.button, { alignSelf: "center" }]}
               onPress={async () => {
-                cancelRequest();
-                firebase
-                  .firestore()
-                  .collection("users")
-                  .doc(firebase.auth().currentUser.uid)
-                  .update({
-                    currentRequestID: "",
-                  });
+                Alert.alert(
+                  "Discard changes?",
+                  "You have an ongoing request are you sure you want to cancel?",
+                  [
+                    {
+                      text: "Don't cancel Request",
+                      style: "cancel",
+                      onPress: () => {},
+                    },
+                    {
+                      text: "Cancel Request",
+                      style: "destructive",
+                      // If the user confirmed, then we dispatch the action we blocked earlier
+                      // This will continue the action that had triggered the removal of the screen
+
+                      onPress: async () => {
+                        //stop locationn tracking
+                        cancelRequest();
+                        firebase
+                          .firestore()
+                          .collection("users")
+                          .doc(firebase.auth().currentUser.uid)
+                          .update({
+                            currentRequestID: "",
+                          });
+                      },
+                    },
+                  ]
+                );
               }}
             >
-              <Text>Cancel Request</Text>
+              <Text style={{ color: "white" }}>Cancel Request</Text>
             </Button>
           </View>
         );
@@ -515,12 +605,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     marginHorizontal: 10,
     marginBottom: 10,
+    padding: 10,
     backgroundColor: "rgb(250,91,90)",
     shadowColor: "rgba(0, 0, 255, 255)",
     shadowOpacity: 1,
     shadowRadius: 20,
     shadowOffset: { width: 100, height: 100 },
     elevation: 10,
+    bottom: 20,
   },
   View: {
     flexDirection: "row",

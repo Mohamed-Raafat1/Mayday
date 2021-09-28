@@ -27,11 +27,10 @@ function NotificationSettings() {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.userState.currentUser);
   useLayoutEffect(() => {
-    const unsubscribe =
-      dispatch(fetchUser());
+    const unsubscribe = dispatch(fetchUser());
     return () => {
-      unsubscribe()
-    }
+      unsubscribe();
+    };
   }, []);
   //--------------------------------------------------------
   //to listen to change in permission and cancel scheduled next tips if it was enabled before

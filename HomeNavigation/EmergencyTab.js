@@ -90,14 +90,14 @@ export default function EmergencyTab({ navigation }) {
       style={{ backgroundColor: "red" }}
     >
       <Tab.Screen
-        options={{ tabBarLabel: "Nearby Hospitals" }}
-        name="View Nearest Hospital"
-        component={ViewNearestHospital}
-      />
-      <Tab.Screen
         options={{ tabBarLabel: "Request Doctor" }}
         name="RequestDoctor"
         component={DoctorsScreen}
+      />
+      <Tab.Screen
+        options={{ tabBarLabel: "Nearby Hospitals" }}
+        name="View Nearest Hospital"
+        component={ViewNearestHospital}
       />
 
       {/*checking if request was sent*/}

@@ -1,5 +1,11 @@
-import React, { useEffect, useLayoutEffect } from "react";
-import { StyleSheet, TouchableWithoutFeedback, Text } from "react-native";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+
+import {
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Text,
+  Switch,
+} from "react-native";
 import { Button, Container, View } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
@@ -24,11 +30,24 @@ const HomeScreen = ({ navigation, route }) => {
   const currentAcceptedRequest = useSelector(
     (state) => state.userState.AcceptedRequest
   );
+
   let ECs;
   let message;
   let messageNearby;
   let NUs;
   let users = [];
+  const isEnabled = useSelector(
+    (state) => state.userState.doctorAvailable //7ot hena el doctor avaialae
+  );
+
+  const toggleSwitch = (value) => {
+    console.log(value);
+    firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid)
+      .update({ doctorAvailable: value });
+  };
 
   //for unsubscribing to conversations
   let UnsubscribeConversations = () => {};
@@ -124,6 +143,44 @@ const HomeScreen = ({ navigation, route }) => {
 
   return (
     <Container style={styles.container}>
+      {currentUser && currentUser.medicalProfessional && (
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "column",
+            justifyContent: "center",
+            right: 0,
+            top: 15,
+            position: "absolute",
+            alignItems: "center",
+            borderTopRightRadius: 0,
+            borderBottomRightRadius: 0,
+            borderTopLeftRadius: 30,
+            borderBottomLeftRadius: 30,
+            borderRightWidth: 0,
+            borderColor: "black",
+            borderWidth: 1,
+            backgroundColor: "white",
+            padding: 10,
+          }}
+        >
+          <Switch
+            style={{
+              transform: [{ scale: 1.5 }],
+            }}
+            trackColor={{ false: "gray", true: "gray" }}
+            thumbColor={isEnabled ? "#4BB543" : "red"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleSwitch}
+            value={isEnabled}
+          />
+          {isEnabled ? (
+            <Text style={{ marginTop: 10 }}> Available </Text>
+          ) : (
+            <Text style={{ marginTop: 10 }}> Unavailable</Text>
+          )}
+        </View>
+      )}
       <View style={styles.sosButton}>
         <TouchableWithoutFeedback onPress={requestSOS}>
           <LottieView
@@ -207,11 +264,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#eff2f9",
   },
   sosButton: {
-    width: 350,
-    height: 350,
+    width: 330,
+    height: 330,
     marginLeft: "auto",
     marginRight: "auto",
-    marginTop: "auto",
+    marginTop: 110,
     marginBottom: "auto",
   },
   button: {
@@ -248,8 +305,8 @@ const styles = StyleSheet.create({
     height: "25%",
     backgroundColor: "#fcfcfc",
     marginTop: "auto",
-    borderTopRightRadius: 40,
-    borderTopLeftRadius: 40,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
   },
   buttons: {
     marginTop: 50,

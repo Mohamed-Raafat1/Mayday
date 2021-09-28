@@ -18,6 +18,7 @@ const initialState = {
   emergencyContacts: [],
   Requests: [],
   AcceptedRequest: null,
+  doctorAvailable: false,
 };
 
 export const user = (state = initialState, action) => {
@@ -26,6 +27,7 @@ export const user = (state = initialState, action) => {
       return {
         ...state,
         currentUser: action.currentUser,
+        doctorAvailable: action.doctorAvailable,
       };
     case OTHER_USER_STATE_CHANGE:
       return {

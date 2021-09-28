@@ -261,26 +261,26 @@ function Tabs({ navigation }) {
           ),
         }}
       />
-      {currentUser && currentUser.medicalProfessional && (
-        <Tab.Screen
-          name="DoctorRequests"
-          component={DoctorRequestsStackScreen}
-          options={({ route }) => ({
-            tabBarLabel: "Requests",
-            tabBarBadge: 1,
-            tabBarBadgeStyle: { color: "white", backgroundColor: "red" },
+      {currentUser &&
+        currentUser.medicalProfessional &&
+        currentUser.doctorAvailable && (
+          <Tab.Screen
+            name="DoctorRequests"
+            component={DoctorRequestsStackScreen}
+            options={({ route }) => ({
+              tabBarLabel: "Requests",
 
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons
-                style={{ marginTop: 10 }}
-                name="medical-bag"
-                size={24}
-                color={color}
-              />
-            ),
-          })}
-        />
-      )}
+              tabBarIcon: ({ color }) => (
+                <MaterialCommunityIcons
+                  style={{ marginTop: 10 }}
+                  name="medical-bag"
+                  size={24}
+                  color={color}
+                />
+              ),
+            })}
+          />
+        )}
     </Tab.Navigator>
   );
 }
@@ -306,12 +306,6 @@ const HomeStackScreen = ({ navigation }) => (
         headerRight: () => (
           <View style={{ flexDirection: "row" }}>
             <Button transparent>
-              <Badge
-                badgeStyle={{}}
-                value="3"
-                status="primary"
-                containerStyle={{ position: "absolute", top: -2, right: -2 }}
-              />
               <MaterialCommunityIcons
                 name="message-text-outline"
                 size={24}
@@ -321,12 +315,6 @@ const HomeStackScreen = ({ navigation }) => (
               />
             </Button>
             <Button transparent>
-              <Badge
-                badgeStyle={{}}
-                value="4"
-                status="primary"
-                containerStyle={{ position: "absolute", top: -2, right: -2 }}
-              />
               <MaterialCommunityIcons
                 name="bell-outline"
                 size={26}
@@ -392,7 +380,7 @@ const HomeStackScreen = ({ navigation }) => (
       style={styles.icon}
       component={Chat}
       options={{
-        headerShown: false,
+        headerShown: true,
         title: "Chat",
         tabBarLabel: "Chat",
       }}
@@ -424,7 +412,7 @@ const HomeStackScreen = ({ navigation }) => (
         title: "Notifications",
       }}
     />
-      <HomeStack.Screen
+    <HomeStack.Screen
       name="Notif2location"
       style={styles.icon}
       component={Notif2location}
