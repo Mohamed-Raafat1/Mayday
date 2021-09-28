@@ -72,11 +72,9 @@ const HomeScreen = ({ navigation, route }) => {
       getNearBySOSUsers().then((result) => {
         NUs = result;
       });
-      message = "🆘 " + currentUser.FirstName + " is sending you for help";
+      message = "🆘 " + currentUser.FirstName + " needs Help!";
       messageNearby =
-        "🆘 " +
-        currentUser.FirstName +
-        " is Nearby you,Please help him if possible";
+        "🆘 " + currentUser.FirstName + " is nearby and needs Help!";
     }
   }, [currentUser]);
 
