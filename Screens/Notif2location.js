@@ -6,6 +6,7 @@ import { fetchUserbyID, fetchUser } from "../redux/actions/index";
 import MapView, { Marker } from "react-native-maps";
 import { Polyline } from "react-native-maps";
 import { customMapStyle } from "../Components/functions/functions";
+import { Ionicons } from "@expo/vector-icons";
 
 function Notif2location({ route, navigation }) {
   const userid = route.params.userid;
@@ -95,8 +96,19 @@ function Notif2location({ route, navigation }) {
           />
         </MapView>
         <Button
-          style={[styles.button, { alignSelf: "center" }]}
+          style={[
+            styles.button,
+            {
+              alignSelf: "center",
+              position: "absolute",
+              bottom: 50,
+              padding: 20,
+            },
+          ]}
           transparent
+          primary
+          iconRight
+          rounded
           onPress={() => {
             Linking.openURL(
               "https://www.google.com/maps/dir/?api=1&destination=" +
@@ -106,7 +118,10 @@ function Notif2location({ route, navigation }) {
             );
           }}
         >
-          <Text>{"Get Directions to "+otherUser.FirstName}</Text>
+          <Text style={{ color: "white" }}>
+            {"Get Directions to " + otherUser.FirstName}
+          </Text>
+          <Ionicons name="md-location" size={24} color="white" />
         </Button>
       </View>
     );
@@ -125,11 +140,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginBottom: 10,
     backgroundColor: "rgb(250,91,90)",
-    shadowColor: "rgba(0, 0, 255, 255)",
+    borderColor: "blue",
+    borderWidth: 0,
+    shadowColor: "rgba(0, 0, 0, 0)",
     shadowOpacity: 1,
     shadowRadius: 20,
     shadowOffset: { width: 100, height: 100 },
     elevation: 10,
+    bottom: 20,
   },
   View: {
     flexDirection: "row",
