@@ -6,7 +6,7 @@ import {
   Text,
   Switch,
 } from "react-native";
-import { Button, Container, View } from "native-base";
+import { Button, Container, Toast, View } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 
@@ -40,13 +40,26 @@ const HomeScreen = ({ navigation, route }) => {
     (state) => state.userState.doctorAvailable //7ot hena el doctor avaialae
   );
 
-  const toggleSwitch = (value) => {
+  const toggleSwitch = async (value) => {
     console.log(value);
-    firebase
+
+    await firebase
       .firestore()
       .collection("users")
       .doc(currentUser.uid)
       .update({ doctorAvailable: value });
+    if (isEnabled === true) {
+      Toast.show({
+        text: "You are currently not available to accept Requests",
+        position: "bottom",
+      });
+    }
+    if (isEnabled === false) {
+      Toast.show({
+        text: "You are currently available to accept Requests",
+        position: "bottom",
+      });
+    }
   };
 
   //for unsubscribing to conversations
@@ -146,13 +159,14 @@ const HomeScreen = ({ navigation, route }) => {
   return (
     <Container style={styles.container}>
       {currentUser && currentUser.medicalProfessional && (
-        <View
+        <Button
           style={{
             flex: 1,
             flexDirection: "column",
             justifyContent: "center",
             right: 0,
             top: 15,
+            padding: 0,
             position: "absolute",
             alignItems: "center",
             borderTopRightRadius: 0,
@@ -160,28 +174,52 @@ const HomeScreen = ({ navigation, route }) => {
             borderTopLeftRadius: 30,
             borderBottomLeftRadius: 30,
             borderRightWidth: 0,
-            borderColor: "black",
+            borderColor: "white",
             borderWidth: 1,
             backgroundColor: "white",
+            paddingTop: 15,
             padding: 10,
+            paddingLeft: 10,
+            elevation: 7,
           }}
         >
           <Switch
             style={{
-              transform: [{ scale: 1.5 }],
+              paddingTop: 3,
+              transform: [{ scale: 1.2 }],
             }}
-            trackColor={{ false: "gray", true: "gray" }}
-            thumbColor={isEnabled ? "#4BB543" : "red"}
+            trackColor={{ false: "#C9CCD5", true: "#C9CCD5" }}
+            thumbColor={isEnabled ? "#46B3E6" : "#FF5C58"}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleSwitch}
             value={isEnabled}
           />
+
           {isEnabled ? (
-            <Text style={{ marginTop: 10 }}> Available </Text>
+            <Text
+              style={{
+                paddingLeft: 10,
+                paddingBottom: 10,
+                fontWeight: "bold",
+                marginTop: -3,
+              }}
+            >
+              Available
+            </Text>
           ) : (
-            <Text style={{ marginTop: 10 }}> Unavailable</Text>
+            <Text
+              style={{
+                paddingLeft: 10,
+                paddingBottom: 10,
+                fontWeight: "bold",
+                marginTop: -3,
+              }}
+            >
+              {" "}
+              Unavailable
+            </Text>
           )}
-        </View>
+        </Button>
       )}
       <View style={styles.sosButton}>
         <TouchableWithoutFeedback onPress={requestSOS}>
@@ -197,7 +235,6 @@ const HomeScreen = ({ navigation, route }) => {
         <View style={styles.buttons}>
           <Button
             style={styles.button}
-            bordered
             onPress={() => {
               UnsubscribeConversations = dispatch(fetchConversations());
               navigation.navigate("View Nearest Hospital");
@@ -206,7 +243,7 @@ const HomeScreen = ({ navigation, route }) => {
             <MaterialCommunityIcons
               name="hospital-box-outline"
               size={24}
-              color="black"
+              color="#FF5C58"
             />
             <Text
               style={{
@@ -221,12 +258,11 @@ const HomeScreen = ({ navigation, route }) => {
           </Button>
           <Button
             style={styles.button}
-            bordered
             onPress={() => {
               navigation.navigate("Chat");
             }}
           >
-            <Icon name="call-outline" size={24} />
+            <Icon name="call-outline" color="#50CB93" size={24} />
             <Text
               style={{
                 color: "black",
@@ -239,8 +275,8 @@ const HomeScreen = ({ navigation, route }) => {
             </Text>
           </Button>
 
-          <Button style={styles.button} bordered onPress={helpOthers}>
-            <Icon name="people-outline" size={24} />
+          <Button style={styles.button} onPress={helpOthers}>
+            <Icon name="people-outline" color="#F9D5A7" size={24} />
             <Text
               style={{
                 color: "black",
@@ -263,24 +299,26 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#eff2f9",
+    backgroundColor: "white",
   },
   sosButton: {
-    width: 330,
-    height: 330,
+    width: "80%",
+    height: "70%",
     marginLeft: "auto",
     marginRight: "auto",
-    marginTop: 110,
+    marginTop: "13%",
     marginBottom: "auto",
   },
   button: {
-    backgroundColor: "#fff",
-    width: 100,
-    height: 100,
-    borderRadius: 10,
+    backgroundColor: "white",
+    width: "30%",
+    height: "90%",
+    paddingHorizontal: 10,
+
+    borderRadius: 30,
     flexDirection: "column",
     justifyContent: "center",
-    elevation: 3,
+    elevation: 7,
   },
 
   actionButton: {
@@ -305,13 +343,14 @@ const styles = StyleSheet.create({
   bottomSheet: {
     width: "100%",
     height: "25%",
-    backgroundColor: "#fcfcfc",
-    marginTop: "auto",
+    backgroundColor: "rgba(0,0,0,0)",
+    marginTop: 0,
+    marginBottom: "0%",
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
   },
   buttons: {
-    marginTop: 50,
+    marginTop: 10,
     flexDirection: "row",
     justifyContent: "space-evenly",
   },
