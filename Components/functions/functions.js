@@ -368,7 +368,14 @@ export async function sendPushNotification(
   });
 }
 // ----------------------------adding Notifications to firestore--------------------------
-export function addNotification(RecieverId, Body, Title, Delivered, Category) {
+export function addNotification(
+  RecieverId,
+  Body,
+  Title,
+  Delivered,
+  Category,
+  SoSuid
+) {
   firebase
     .firestore()
     .collection("users")
@@ -380,6 +387,7 @@ export function addNotification(RecieverId, Body, Title, Delivered, Category) {
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       delivered: Delivered,
       category: Category,
+      SOSuid: SoSuid,
     });
 }
 //
