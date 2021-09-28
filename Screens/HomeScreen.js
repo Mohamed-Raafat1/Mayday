@@ -110,7 +110,15 @@ const HomeScreen = ({ navigation, route }) => {
     // Sending SOS notificition to Emergency Contacts
     if (ECs)
       for (var i = 0; i < ECs.length; i++) {
-        addNotification(ECs[i].uid, message, "🚨RESCU", false, "SOS");
+        addNotification(
+          ECs[i].uid,
+          message,
+          "🚨RESCU",
+          false,
+          "SOS",
+          currentUser.uid,
+          currentUser.PhotoURI
+        );
         // to get the latest ExpoTokens of the Emergency contacts
         getExpoTokenById(ECs[i].uid).then((result) => {
           sendPushNotification(result, "🚨RESCU", message, "SOS");
@@ -119,7 +127,15 @@ const HomeScreen = ({ navigation, route }) => {
     if (NUs)
       // Sending SOS notificition to Nearby Users
       for (var i = 0; i < NUs.length; i++) {
-        addNotification(NUs[i].uid, messageNearby, "🚨RESCU", false, "SOS");
+        addNotification(
+          NUs[i].uid,
+          messageNearby,
+          "🚨RESCU",
+          false,
+          "SOS",
+          currentUser.uid,
+          currentUser.PhotoURI
+        );
         sendPushNotification(NUs[i].ExpoToken, "🚨RESCU", messageNearby, "SOS");
       }
   };

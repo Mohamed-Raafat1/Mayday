@@ -4,12 +4,14 @@ import {
   USER_MESSAGES_CHANGE,
   USER_CHATLIST_CHANGE,
   EMERGENCY_CONTACTS_CHANGE,
+  OTHER_USER_STATE_CHANGE,
   DOCTOR_REQUEST_CHANGE,
   ACCEPTED_REQUEST_CHANGE,
 } from "../constants";
 
 const initialState = {
   currentUser: null,
+  otherUser: null,
   conversations: [],
   messages: [],
   medicalID: [],
@@ -26,6 +28,11 @@ export const user = (state = initialState, action) => {
         ...state,
         currentUser: action.currentUser,
         doctorAvailable: action.doctorAvailable,
+      };
+    case OTHER_USER_STATE_CHANGE:
+      return {
+        ...state,
+        otherUser: action.currentUser,
       };
     case USER_CHATLIST_CHANGE:
       return {

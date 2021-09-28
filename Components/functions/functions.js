@@ -368,7 +368,15 @@ export async function sendPushNotification(
   });
 }
 // ----------------------------adding Notifications to firestore--------------------------
-export function addNotification(RecieverId, Body, Title, Delivered, Category) {
+export function addNotification(
+  RecieverId,
+  Body,
+  Title,
+  Delivered,
+  Category,
+  SoSuid = "",
+  PhotoURL="https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png"
+) {
   firebase
     .firestore()
     .collection("users")
@@ -380,6 +388,8 @@ export function addNotification(RecieverId, Body, Title, Delivered, Category) {
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       delivered: Delivered,
       category: Category,
+      SOSuid: SoSuid,
+      photoURL:PhotoURL
     });
 }
 //
@@ -388,34 +398,34 @@ export async function onPressImage() {
   let result = await ImagePicker.launchImageLibraryAsync();
   if (!result.cancelled) {
     await uploadImage(result.uri, firebase.auth().currentUser.email)
-      .then(() => {
-        
-      })
+      .then(() => {})
       .catch((error) => {
         alert(error);
       });
-      return true
+    return true;
   }
-  return false
+  return false;
 }
 
 export async function uploadImage(uri, imageName) {
   // let firebaseAppDefined = false;
 
   // setInterval(async () => {
-    // if (!firebaseAppDefined) {
-      if (firebase.app()) {
-        
-        const response = await fetch(uri);
-        const blob = await response.blob();
+  // if (!firebaseAppDefined) {
+  if (firebase.app()) {
+    const response = await fetch(uri);
+    const blob = await response.blob();
 
-        var ref = firebase.storage().ref().child("images/" + imageName);
+    var ref = firebase
+      .storage()
+      .ref()
+      .child("images/" + imageName);
 
-        return ref.put(blob)
-      }
+    return ref.put(blob);
+  }
 
-      // firebaseAppDefined = true;
-    // }
+  // firebaseAppDefined = true;
+  // }
   // }, 500);
 }
 
