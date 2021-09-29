@@ -79,6 +79,9 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
               };
             });
           });
+        Requests = Requests.filter(
+          (request) => request.PatientID !== firebase.auth().currentUser.uid
+        );
         updateRequestsFn(Requests);
       }
     });

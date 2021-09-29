@@ -261,12 +261,15 @@ function DoctorsScreen({ navigation }) {
             id,
           };
         });
+        users = users.filter(
+          (user) => user.id !== firebase.auth().currentUser.uid
+        );
       });
     // users = users.filter((x) => x.uid != firebase.auth().currentUser.uid);
     // console.log("this is the first user....\n", users[0]);
     setcount(count + 1);
 
-    // users = users.filter((user) => user.id != currentUser.uid);
+    console.log(users);
 
     return users;
   };
@@ -281,7 +284,7 @@ function DoctorsScreen({ navigation }) {
       Requestid = currentUser.currentRequestID;
       requestPermissions();
     }
-
+    getNearByUsers();
     return async () => {
       UnsubscribeUser();
       await UnsubscribeRequest();
@@ -541,7 +544,6 @@ function DoctorsScreen({ navigation }) {
             onPress={() => {
               console.log("pressed");
               SendRequest();
-              getNearByUsers();
             }}
             style={[
               styles.button,

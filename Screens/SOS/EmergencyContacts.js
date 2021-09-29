@@ -24,6 +24,7 @@ import { Avatar, Title } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUser } from "../../redux/actions";
 let sharedChatid;
+let EmergencyContacts = [];
 
 const Stack = createStackNavigator();
 function SOS({ navigation }) {
@@ -37,7 +38,7 @@ function SOS({ navigation }) {
   //redux
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.userState.currentUser);
-  let EmergencyContacts = useSelector(
+  EmergencyContacts = useSelector(
     (state) => state.userState.currentUser.EmergencyContacts
   );
   //useeffect
@@ -355,7 +356,8 @@ function SOS({ navigation }) {
       );
     });
   }
-  if (EmergencyContacts)
+  if (!currentUser) return <View></View>;
+  if (currentUser || EmergencyContacts)
     return (
       <Container>
         <Modal
@@ -413,7 +415,7 @@ function SOS({ navigation }) {
             Search
           </Text>
         </Header>
-        <View>{display()}</View>
+        {EmergencyContacts && <View>{display()}</View>}
       </Container>
     );
 }
