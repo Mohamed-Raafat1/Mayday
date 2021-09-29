@@ -317,28 +317,6 @@ export async function createChat(uid, currentUser) {
           uid: "",
         },
       });
-    await firebase
-      .firestore()
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .update(
-        "chats",
-        firebase.firestore.FieldValue.arrayUnion({
-          chatid: chatid,
-          Recepient: uid,
-        })
-      );
-    await firebase
-      .firestore()
-      .collection("users")
-      .doc(uid)
-      .update(
-        "chats",
-        firebase.firestore.FieldValue.arrayUnion({
-          chatid: chatid,
-          Recepient: firebase.auth().currentUser.uid,
-        })
-      );
   }
   return sharedChatid;
 }
@@ -375,7 +353,7 @@ export function addNotification(
   Delivered,
   Category,
   SoSuid = "",
-  PhotoURL="https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png"
+  PhotoURL = "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png"
 ) {
   firebase
     .firestore()
@@ -389,7 +367,7 @@ export function addNotification(
       delivered: Delivered,
       category: Category,
       SOSuid: SoSuid,
-      photoURL:PhotoURL
+      photoURL: PhotoURL,
     });
 }
 //

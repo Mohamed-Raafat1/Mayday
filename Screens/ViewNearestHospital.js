@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginBottom: 10,
     alignContent: "center",
-    alignSelf: "center",
+    alignSelf: "center",  ,
     backgroundColor: "rgb(250,91,90)",
   },
 });

@@ -276,28 +276,6 @@ function SOS({ navigation }) {
             uid: "",
           },
         });
-      await firebase
-        .firestore()
-        .collection("users")
-        .doc(firebase.auth().currentUser.uid)
-        .update(
-          "chats",
-          firebase.firestore.FieldValue.arrayUnion({
-            chatid: chatid,
-            Recepient: uid,
-          })
-        );
-      await firebase
-        .firestore()
-        .collection("users")
-        .doc(uid)
-        .update(
-          "chats",
-          firebase.firestore.FieldValue.arrayUnion({
-            chatid: chatid,
-            Recepient: firebase.auth().currentUser.uid,
-          })
-        );
     }
     navigation.navigate("Chat", {
       userid: uid,

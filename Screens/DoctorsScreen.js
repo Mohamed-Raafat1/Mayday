@@ -4,6 +4,7 @@ import * as TaskManager from "expo-task-manager";
 import { Ionicons } from "@expo/vector-icons";
 import firebase from "firebase";
 import * as geofirestore from "geofirestore";
+import Icon from "react-native-vector-icons/Ionicons";
 
 import { Button, Spinner, Toast, View } from "native-base";
 import React, { useEffect, useLayoutEffect, useState } from "react";
@@ -539,21 +540,31 @@ function DoctorsScreen({ navigation }) {
       }
     } else if (!Err) {
       screen = (
-        <View style={styles.View}>
+        <View
+          style={{
+            flexDirection: "row",
+          }}
+        >
           <Button
             onPress={() => {
               console.log("pressed");
               SendRequest();
             }}
-            style={[
-              styles.button,
-              { position: "relative", alignSelf: "center" },
-            ]}
-            primary
-            iconRight
-            rounded
+            style={styles.requestbutton}
           >
-            <Text>Request Doctor</Text>
+            {/* <Icon name="call-outline" color="light" size={40} /> */}
+            <MaterialCommunityIcons name="doctor" size={40} color="white" />
+            <Text
+              style={{
+                fontSize: 20,
+                color: "white",
+                fontWeight: "bold",
+                textAlign: "center",
+                padding: 10,
+              }}
+            >
+              Request Doctor
+            </Text>
           </Button>
         </View>
       );
@@ -573,7 +584,9 @@ function DoctorsScreen({ navigation }) {
             iconRight
             rounded
           >
-            <Text>Enable Tracking</Text>
+            <Text style={{ textAlign: "center", padding: 10 }}>
+              Enable Tracking
+            </Text>
           </Button>
         </View>
       );
@@ -616,9 +629,26 @@ const styles = StyleSheet.create({
     elevation: 10,
     bottom: 20,
   },
+  requestbutton: {
+    // position: "relative",
+    backgroundColor: "rgb(250,91,90)",
+    shadowColor: "rgba(0, 0, 255, 255)",
+    // alignSelf: "center",
+    // flexDirection: "row",
+    flexDirection: "column",
+    justifyContent: "center",
+    // justifyContent: "space-evenly",
+    borderRadius: 180,
+    elevation: 10,
+    width: "65%",
+    height: "80%",
+    // flex: 1,
+  },
   View: {
-    flexDirection: "row",
+    // flexDirection: "column",
     justifyContent: "space-evenly",
+    backgroundColor: "blue",
     marginBottom: 10,
+    flex: 1,
   },
 });
