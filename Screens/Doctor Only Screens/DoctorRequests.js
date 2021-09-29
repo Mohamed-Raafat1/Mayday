@@ -212,14 +212,6 @@ const DoctorRequests = ({ navigation }) => {
       .update({
         currentRequest: { requestid: request.Requestid, chatid: sharedChatid },
       });
-    firebase
-      .firestore()
-      .collection("users")
-      .doc(currentUser.uid)
-      .collection("requests")
-      .doc(request.Requestid)
-      .set({ ...request, State: "Accepted", current: true });
-
     navigation.navigate("CurrentRequest", {
       requestid: request.Requestid,
       chatid: sharedChatid,
