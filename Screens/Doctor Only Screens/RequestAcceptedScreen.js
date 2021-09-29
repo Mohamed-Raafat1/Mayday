@@ -9,7 +9,12 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Alert, Dimensions, Image, Linking, Text, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { useDispatch, useSelector } from "react-redux";
-import { customstyleAcceptedRequests } from "../../Components/functions/functions";
+import {
+  addNotification,
+  customstyleAcceptedRequests,
+  getExpoTokenById,
+  sendPushNotification,
+} from "../../Components/functions/functions";
 import {
   clearAcceptedRequest,
   fetchAcceptedRequest,
@@ -207,6 +212,27 @@ function RequestAcceptedScreen({ route, navigation }) {
   };
 
   const CancelRequest = async () => {
+    //-----------------Notification----------
+    // let Message =
+    //   "Dr. " +
+    //   currentUser.FirstName +
+    //   " " +
+    //   currentUser.LastName +
+    //   " cancelled your request";
+    // getExpoTokenById(currentAcceptedRequest.PatientID).then((result) => {
+    //   console.log(
+    //     "This is notification patient id" + currentAcceptedRequest.PatientID
+    //   );
+    //   sendPushNotification(result, "🚨RESCU", Message, "Request");
+    //   addNotification(
+    //     currentAcceptedRequest.PatientID,
+    //     Message,
+    //     "🚨RESCU",
+    //     false,
+    //     "Request"
+    //   );
+    // });
+    //-----------------------------------------------------------------
     await firebase
       .firestore()
       .collection("users")
@@ -325,6 +351,31 @@ function RequestAcceptedScreen({ route, navigation }) {
               // This will continue the action that had triggered the removal of the screen
 
               onPress: async () => {
+                // ---------------------send notification ---------------------------------
+                await console.log(
+                  "This is notification patient id" + AcceptedRequest.PatientID
+                );
+                let Message =
+                  "Dr. " +
+                  currentUser.FirstName +
+                  " " +
+                  currentUser.LastName +
+                  " cancelled your request";
+                getExpoTokenById(AcceptedRequest.PatientID).then((result) => {
+                  console.log(
+                    "This is notification patient id" +
+                      AcceptedRequest.PatientID
+                  );
+                  sendPushNotification(result, "🚨RESCU", Message, "Request");
+                  addNotification(
+                    AcceptedRequest.PatientID,
+                    Message,
+                    "🚨RESCU",
+                    false,
+                    "Request"
+                  );
+                });
+                //-----------------------------------------------------------------
                 //stop locationn tracking
                 await firebase
                   .firestore()

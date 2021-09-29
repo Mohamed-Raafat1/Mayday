@@ -96,7 +96,7 @@ function Chat({ route, navigation }) {
           transform: [{ scaleY: -1 }],
         }}
       >
-        <Text> Start sending messages :)</Text>
+        <Text> Chat is currently empty</Text>
       </View>
     );
   }
@@ -113,7 +113,7 @@ function Chat({ route, navigation }) {
         user={{
           _id: firebase.auth().currentUser.uid,
           name: currentUser.FirstName + " " + currentUser.LastName,
-          avatar: firebase.auth().currentUser.photoURL,
+          avatar: JSON.stringify(currentUser.PhotoURI),
         }}
         alwaysShowSend={true}
         renderChatEmpty={renderChatEmpty}

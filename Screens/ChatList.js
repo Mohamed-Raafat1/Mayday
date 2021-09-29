@@ -74,7 +74,7 @@ const ChatList = ({ navigation, previous }) => {
           <Left>
             <Thumbnail
               source={{
-                uri: "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+                uri: chat.data.talkingtoPhotoURI,
               }}
             />
           </Left>

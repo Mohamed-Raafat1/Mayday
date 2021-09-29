@@ -283,7 +283,7 @@ export default function ViewNearestHospital({ navigation, route }) {
             alignSelf: "center",
           }}
         />
-        <Button
+        {/* <Button
           style={[styles.button, { alignSelf: "center" }]}
           onPress={() => {
             console.log("------------------pressed-------------");
@@ -291,7 +291,7 @@ export default function ViewNearestHospital({ navigation, route }) {
           }}
         >
           <Text>Stop Tracking</Text>
-        </Button>
+        </Button> */}
         <Button
           style={{
             borderTopRightRadius: 20,
@@ -321,6 +321,9 @@ export default function ViewNearestHospital({ navigation, route }) {
           <Text>Get Direction To {MarkerName}</Text>
           <Ionicons name="md-location" size={24} color="red" />
         </Button>
+        <Text style={styles.button}>
+          Click on any hospital to get directions
+        </Text>
       </View>
     );
   } else {
@@ -359,14 +362,17 @@ export default function ViewNearestHospital({ navigation, route }) {
             alignSelf: "center",
           }}
         />
-        <Button
+        <Text style={styles.button}>
+          Click on any hospital to get directions
+        </Text>
+        {/* <Button
           style={[styles.button, { alignSelf: "center" }]}
           onPress={() => {
             StopTracking();
           }}
         >
           <Text>Stop Tracking</Text>
-        </Button>
+        </Button> */}
       </View>
     );
   }
@@ -383,10 +389,17 @@ const styles = StyleSheet.create({
   },
 
   button: {
+    bottom: "15%",
     marginTop: 50,
     marginBottom: 10,
     alignContent: "center",
-    alignSelf: "center",  ,
-    backgroundColor: "rgb(250,91,90)",
+    fontWeight: "bold",
+    fontSize: 18,
+    padding: 10,
+    margin: 10,
+    alignSelf: "center",
+    position: "absolute",
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.8)",
   },
 });

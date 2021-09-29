@@ -1,4 +1,9 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 
 import {
   StyleSheet,
@@ -9,6 +14,7 @@ import {
 import { Button, Container, Toast, View } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
+import * as TaskManager from "expo-task-manager";
 
 import Icon from "react-native-vector-icons/Ionicons";
 import {
@@ -30,7 +36,11 @@ const HomeScreen = ({ navigation, route }) => {
   const currentAcceptedRequest = useSelector(
     (state) => state.userState.AcceptedRequest
   );
-
+  const unregisterTasks = useCallback(async () => {
+    await TaskManager.unregisterAllTasksAsync().catch((err) =>
+      console.log("ops! error unregistering alltasks", err)
+    );
+  }, []);
   let ECs;
   let message;
   let messageNearby;
@@ -80,10 +90,11 @@ const HomeScreen = ({ navigation, route }) => {
 
   useLayoutEffect(() => {
     const UnsubscribeUser = dispatch(fetchUser());
-
+    unregisterTasks();
     return () => {
       UnsubscribeUser();
       UnsubscribeConversations();
+      unregisterTasks();
     };
   }, []);
   //------------------------------getting nearby Users-------------------------------------------
@@ -254,7 +265,7 @@ const HomeScreen = ({ navigation, route }) => {
               Nearest Hospital
             </Text>
           </Button>
-          <Button
+          {/* <Button
             style={styles.button}
             onPress={() => {
               navigation.navigate("Chat");
@@ -271,7 +282,7 @@ const HomeScreen = ({ navigation, route }) => {
             >
               Contact Doctor
             </Text>
-          </Button>
+          </Button> */}
 
           <Button style={styles.button} onPress={helpOthers}>
             <Icon name="people-outline" color="#F9D5A7" size={24} />

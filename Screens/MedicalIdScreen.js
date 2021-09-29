@@ -24,16 +24,13 @@ import QRCode from "react-native-qrcode-svg";
 function MedicalIdScreen({ navigation }) {
   const dispatch = useDispatch();
 
-
   useLayoutEffect(() => {
     const Unsubscribe = dispatch(fetchUser());
-    
+
     return () => {
       Unsubscribe();
     };
   }, []);
-
-  
 
   const currentUser = useSelector((state) => state.userState.currentUser);
 
@@ -95,16 +92,22 @@ function MedicalIdScreen({ navigation }) {
           </Title>
         </Body>
         <Right>
-          <Button
-            transparent
-            onPress={ () => {
-            
-             
+          <TouchableOpacity
+            onPress={() => {
               navigation.navigate("EditProfile", { currentUser });
             }}
           >
-            <Text style={{ color: "black" }}>Edit</Text>
-          </Button>
+            <Text
+              style={{
+                paddingRight: 10,
+                fontWeight: "bold",
+                fontSize: 15,
+                color: "black",
+              }}
+            >
+              Edit
+            </Text>
+          </TouchableOpacity>
         </Right>
       </Header>
       <Content>

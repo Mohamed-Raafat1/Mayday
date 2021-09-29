@@ -218,6 +218,7 @@ function SOS({ navigation }) {
         .collection("conversations")
         .add({
           talkingto: user.FirstName + " " + user.LastName,
+          talkingtoPhotoURI: user.PhotoURI,
           userid: uid,
           timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
           userOne: {
@@ -253,6 +254,7 @@ function SOS({ navigation }) {
         .doc(chatid)
         .set({
           talkingto: currentUser.FirstName + " " + currentUser.LastName,
+          talkingtoPhotoURI: currentUser.PhotoURI,
           userid: firebase.auth().currentUser.uid,
           timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
           userOne: {

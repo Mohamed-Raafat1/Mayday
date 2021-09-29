@@ -181,6 +181,10 @@ function Tabs({ navigation }) {
           response.notification.request.content.data.category === "chatMsg"
         )
           navigation.navigate("ChatList");
+        else if (
+          response.notification.request.content.data.category === "Request"
+        )
+          navigation.navigate("RequestDoctor");
       });
 
     // freeing Handlers
@@ -363,7 +367,7 @@ const HomeStackScreen = ({ navigation }) => (
     <HomeStack.Screen
       name="EmergencyTab"
       component={EmergencyTab}
-      options={{}}
+      options={{ title: "Emergency center" }}
     />
 
     <HomeStack.Screen

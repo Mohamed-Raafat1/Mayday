@@ -17,6 +17,7 @@ import {
   View,
 } from "native-base";
 import React, { useEffect, useState } from "react";
+import { TouchableOpacity } from "react-native";
 import { StyleSheet, TextInput } from "react-native";
 import Avatar from "react-native-interactive-avatar";
 import { onPressImage } from "../Components/functions/functions";
@@ -87,39 +88,41 @@ function EditProfileScreen({ navigation, route }) {
     navigation.replace("Medical ID");
   };
 
-
   if (currentUser == undefined) return <View></View>;
   else
     return (
       <Container style={styles.container}>
         <Header
           androidStatusBarColor="gray"
-          style={{ flexDirection: "row", justifyContent: "space-between" }}
+          style={{
+            backgroundColor: "white",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
         >
           <Left>
-            <Button
-              transparent
+            <TouchableOpacity
               onPress={() => {
                 navigation.goBack();
               }}
             >
               <Icon name="arrow-back" />
-            </Button>
+            </TouchableOpacity>
           </Left>
           <Body>
-            <Title>Edit Profile</Title>
+            <Title style={{ color: "black" }}>Edit Profile</Title>
           </Body>
 
           <Right>
-            <Button
+            <TouchableOpacity
               transparent
               onPress={() => {
                 // console.log("editprofile user\n",currentUser,"\n----------")
                 onSave();
               }}
             >
-              <Text>Save</Text>
-            </Button>
+              <Text style={{ fontWeight: "bold" }}>Save</Text>
+            </TouchableOpacity>
           </Right>
         </Header>
         <Content>
@@ -133,31 +136,31 @@ function EditProfileScreen({ navigation, route }) {
                   uri={Uri}
                   placeholderSource={require("../assets/NormalAvatar.png")}
                   onPress={async () => {
-                    let success = await onPressImage()
-                    console.log('UIRRRRIL:',Uri)
-                    console.log('the shet:',currentUser.PhotoURI)
+                    let success = await onPressImage();
+                    console.log("UIRRRRIL:", Uri);
+                    console.log("the shet:", currentUser.PhotoURI);
                     if (success)
                       await firebase
                         .storage()
                         .ref()
                         .child("images/" + firebase.auth().currentUser.email)
-                        .getDownloadURL().then((result) => {
+                        .getDownloadURL()
+                        .then((result) => {
                           setUri(result);
                           firebase
-                          .firestore()
-                          .collection('users')
-                          .doc(currentUser.uid)
-                          .update({
-                            PhotoURI: result
-                          })
+                            .firestore()
+                            .collection("users")
+                            .doc(currentUser.uid)
+                            .update({
+                              PhotoURI: result,
+                            });
                           // .auth().currentUser.updateProfile({
                           //   photoURL: result,
                           // });
                         })
-                        .catch(e => {
-                          console.log('Error: ', e)
-                        })
-                  
+                        .catch((e) => {
+                          console.log("Error: ", e);
+                        });
                   }}
                   overlayColor={"#e8fbff"}
                   style={{

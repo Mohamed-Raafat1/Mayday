@@ -19,7 +19,12 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
-import { createChat } from "../../Components/functions/functions";
+import {
+  addNotification,
+  createChat,
+  getExpoTokenById,
+  sendPushNotification,
+} from "../../Components/functions/functions";
 import { fetchUser } from "../../redux/actions";
 let sharedChatid;
 import * as geofirestore from "geofirestore";
@@ -218,6 +223,16 @@ const DoctorRequests = ({ navigation }) => {
     });
 
     //need to notify other user that their request has been accepted
+    let Message =
+      "Dr. " +
+      currentUser.FirstName +
+      " " +
+      currentUser.LastName +
+      " accepted your request";
+    getExpoTokenById(request.PatientID).then((result) => {
+      sendPushNotification(result, "🚨RESCU", Message, "Request");
+      addNotification(request.PatientID, Message, "🚨RESCU", false, "Request");
+    });
   };
 
   const RequestsList = () => {
