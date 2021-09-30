@@ -128,7 +128,7 @@ export function DrawerContent(props) {
                 props.navigation.navigate("User Rating");
               }}
             />
-            <DrawerItem
+            {/* <DrawerItem
               icon={({ color, size }) => (
                 <MaterialCommunityIcons
                   name="history"
@@ -140,7 +140,7 @@ export function DrawerContent(props) {
               onPress={() => {
                 props.navigation.navigate("Accidents List");
               }}
-            />
+            /> */}
 
             <DrawerItem
               icon={({ color, size }) => (
