@@ -477,6 +477,9 @@ function RequestAcceptedScreen({ route, navigation }) {
         <Button
           onPress={() => {
             gotoChat(currentAcceptedRequest.PatientID, chatid);
+            // navigation.navigate("CurrentReport", {
+            //   reportid: currentAcceptedRequest.id,
+            // });
           }}
           style={{
             borderTopRightRadius: 20,
@@ -502,6 +505,32 @@ function RequestAcceptedScreen({ route, navigation }) {
             color="#00b3ff"
           />
         </Button>
+        <Button
+          onPress={() => {
+            // gotoChat(currentAcceptedRequest.PatientID, chatid);
+            navigation.navigate("CurrentReport", {
+              reportid: currentAcceptedRequest.id,
+            });
+          }}
+          style={{
+            borderTopRightRadius: 20,
+            borderBottomRightRadius: 20,
+
+            padding: 10,
+
+            position: "absolute",
+            top: 130,
+            left: 0,
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
+            flexDirection: "row",
+            flex: 1,
+          }}
+        >
+          <Text style={{ marginRight: 10, marginBottom: 2, fontSize: 20 }}>
+            Go to current report
+          </Text>
+        </Button>
+
         <Button
           onPress={() => {
             Linking.openURL(

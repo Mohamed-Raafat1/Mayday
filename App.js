@@ -28,20 +28,20 @@ require("core-js/fn/array/find");
 LogBox.ignoreLogs(["Setting a timer"]);
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBK6CkkYHCBrNLXAZ6v6XwWMyujzA6EVPw",
-  authDomain: "rescu-free.firebaseapp.com",
-  projectId: "rescu-free",
-  storageBucket: "rescu-free.appspot.com",
-  messagingSenderId: "382730157690",
-  appId: "1:382730157690:web:e638de85abab51941b05c3",
-  measurementId: "G-RVJD3CSLFG",
-  // apiKey: "AIzaSyCH4QqZ1C8cgycNz3X8uaaubH3R3gPoIGg",
-  // authDomain: "rescu-dev.firebaseapp.com",
-  // projectId: "rescu-dev",
-  // storageBucket: "rescu-dev.appspot.com",
-  // messagingSenderId: "993325528560",
-  // appId: "1:993325528560:web:d907645f689b19fe161935",
-  // measurementId: "G-JFLZQPN8BD",
+  // apiKey: "AIzaSyBK6CkkYHCBrNLXAZ6v6XwWMyujzA6EVPw",
+  // authDomain: "rescu-free.firebaseapp.com",
+  // projectId: "rescu-free",
+  // storageBucket: "rescu-free.appspot.com",
+  // messagingSenderId: "382730157690",
+  // appId: "1:382730157690:web:e638de85abab51941b05c3",
+  // measurementId: "G-RVJD3CSLFG",
+  apiKey: "AIzaSyCH4QqZ1C8cgycNz3X8uaaubH3R3gPoIGg",
+  authDomain: "rescu-dev.firebaseapp.com",
+  projectId: "rescu-dev",
+  storageBucket: "rescu-dev.appspot.com",
+  messagingSenderId: "993325528560",
+  appId: "1:993325528560:web:d907645f689b19fe161935",
+  measurementId: "G-JFLZQPN8BD",
 };
 
 if (firebase.apps.length === 0) {

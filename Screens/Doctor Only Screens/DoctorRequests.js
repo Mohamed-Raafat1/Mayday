@@ -45,10 +45,8 @@ TaskManager.defineTask(RESCU_TRACKING, async ({ data, error }) => {
   }
   if (data) {
     const { locations } = data;
-    console.log("ana hena");
     let latitude = locations[0].coords.latitude;
     let longitude = locations[0].coords.longitude;
-    console.log("this is the location", latitude, longitude);
     const Geofirestore = geofirestore.initializeApp(firebase.firestore());
 
     firebase.auth().onAuthStateChanged(async (user) => {

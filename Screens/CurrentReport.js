@@ -1,75 +1,82 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import {
-  Button, Card,
-  CardItem, Container, Content, Form, Icon, Input, Item, Label, Picker, Text, Textarea, Toast, View
-} from "native-base";
-import React, { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { Avatar } from "react-native-paper";
 import firebase from "firebase";
+import {
+  Button,
+  Card,
+  CardItem,
+  Container,
+  Content,
+  Form,
+  Input,
+  Item,
+  Label,
+  Spinner,
+  Text,
+  Toast,
+  View,
+} from "native-base";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { StyleSheet } from "react-native";
+import { Avatar } from "react-native-paper";
+import { useSelector } from "react-redux";
 
-function CurrentReport() {
+function CurrentReport({ navigation, route }) {
   const currentUser = useSelector((state) => state.userState.currentUser);
+  let reportid = "";
+  if (route.params) reportid = route.params.reportid;
+  console.log(reportid);
 
-  const currentRequest = useSelector(
-    (state) => state.requestState.currentRequest
-  );
+  let currentRequest = null;
 
+  //if user made the request and viewing the current report
+  if (!reportid)
+    currentRequest = useSelector((state) => state.requestState.currentRequest);
 
-  const [Patient, setPatient] = useState(null)
-  const [Doctor, setDoctor] = useState(null)
-
-const [Condition, setCondition] = useState(null)
+  const [Report, setReport] = useState(null);
+  const [Condition, setCondition] = useState(null);
   // console.log("this is the current request", currentUser.uid, currentRequest);
-  const dispatch = useDispatch();
 
   const [Selected, setSelected] = useState("Nothing Selected");
 
   //update the report in the firestore
   const UpdateReport = () => {
-    firebase.firestore().collection('requests').doc(currentRequest.id).update({
-      Condition: Condition
-    })
-    Toast.show({text:'Report Updated'})
+    firebase.firestore().collection("requests").doc(currentRequest.id).update({
+      Condition: Condition,
+    });
+    Toast.show({ text: "Report Updated" });
   };
-
-  //retrieve the patient and doctor using the IDs in the request
-  const ExtractUsers = async () => {
-    if (currentRequest.PatientID)
-      await firebase.firestore().collection('users').doc(currentRequest.PatientID).get().then((snapshot) => {
-        if (snapshot.exists) {
-          setPatient(snapshot.data())
-        }
-      })
-    if (currentRequest.DoctorID)
-      await firebase.firestore().collection('users').doc(currentRequest.DoctorID).get().then((snapshot) => {
-        if (snapshot.exists) {
-          setDoctor(snapshot.data())
-        }
-      })
-  }
 
   useEffect(() => {
     if (currentRequest) {
-      ExtractUsers()
-      setCondition(currentRequest.Condition)
+      setReport(currentRequest);
     }
-  }, [currentRequest])
+  }, [currentRequest]);
 
+  useLayoutEffect(() => {
+    if (reportid)
+      firebase
+        .firestore()
+        .collection("requests")
+        .doc(reportid)
+        .get()
+        .then((snapshot) => {
+          console.log("sdsdsd0", snapshot.data());
+          setReport(snapshot.data());
+        });
+  }, []);
 
-//REMEMBER need to apply all the other conditions (with dr, without dr, self patient, other patient)
-  if (currentRequest && Patient)
+  //REMEMBER need to apply all the other conditions (with dr, without dr, self patient, other patient)
+  if (Report)
     return (
       <Container>
         <Content>
-
           <Card style={styles.Card}>
             <CardItem header style={styles.CardItem}>
-
               <Avatar.Image
                 source={{
-                  uri: Patient ? Patient.PhotoURI : "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+                  uri: Report.PatientPhotoURI
+                    ? Report.PatientPhotoURI
+                    : "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
                 }}
                 size={80}
               />
@@ -85,22 +92,17 @@ const [Condition, setCondition] = useState(null)
             <Form>
               <Item stackedLabel style={styles.Item}>
                 <Label>Patient Name</Label>
-                <Input disabled >{Patient.FirstName + " " + Patient.LastName}</Input>
-              </Item>
-
-              <Item last style={styles.Item} onPress={() => { console.log('waw?') }}>
-                <Ionicons name="location" size={24} color="black" />
-                <Label>Location</Label>
+                <Input disabled>
+                  {Report.PatientFirstName + " " + Report.PatientLastName}
+                </Input>
               </Item>
 
               <Item floatingLabel last style={styles.Item}>
                 <Label>Condition</Label>
-                <Input onChangeText={setCondition} >{Condition}</Input>
-              </Item> 
-
+                <Input onChangeText={setCondition}>{Report.Condition}</Input>
+              </Item>
             </Form>
           </Card>
-
 
           <Card style={styles.Card}>
             <CardItem header style={styles.CardItem2}>
@@ -117,15 +119,15 @@ const [Condition, setCondition] = useState(null)
             >
               <Text style={{ fontSize: 18, color: "#777777" }}>
                 HEIGHT{"\n"}
-                <Text>{Patient.MedicalID.Height} cm</Text>
+                <Text>{Report.PatientMedicalID.Height} cm</Text>
               </Text>
               <Text style={{ fontSize: 18, color: "#777777" }}>
                 WEIGHT{"\n"}
-                <Text>{Patient.MedicalID.Weight} Kg</Text>
+                <Text>{Report.PatientMedicalID.Weight} Kg</Text>
               </Text>
               <Text style={{ fontSize: 18, color: "#777777" }}>
                 BLOOD TYPE{"\n"}
-                <Text>{Patient.MedicalID.BloodType}</Text>
+                <Text>{Report.PatientMedicalID.BloodType}</Text>
               </Text>
             </View>
 
@@ -137,40 +139,47 @@ const [Condition, setCondition] = useState(null)
               }}
             />
 
-
-            <View style={{marginBottom:15}}>
+            <View style={{ marginBottom: 15 }}>
               <Text style={styles.medicalIDItem}>MEDICAL CONDITIONS</Text>
               <Text style={styles.medicalIdData}>
-                {Patient.MedicalID.MedicalConditions}
+                {Report.PatientMedicalID.MedicalConditions}
               </Text>
               <Text style={styles.medicalIDItem}>ALLERGIES</Text>
               <Text style={styles.medicalIdData}>
-                {Patient.MedicalID.Allergies}
+                {Report.PatientMedicalID.Allergies}
               </Text>
               <Text style={styles.medicalIDItem}>MEDICATIONS</Text>
               <Text style={styles.medicalIdData}>
-                {Patient.MedicalID.Medications}
+                {Report.PatientMedicalID.Medications}
               </Text>
             </View>
           </Card>
-          
 
           <Card style={styles.Card}>
             <CardItem header style={styles.CardItem3}>
-              <MaterialCommunityIcons name="medical-bag" size={30} />
+              <Avatar.Image
+                source={{
+                  uri: Report.DoctorPhotoURI
+                    ? Report.DoctorPhotoURI
+                    : "https://p.kindpng.com/picc/s/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png",
+                }}
+                size={80}
+              />
               <Text style={styles.Title}>Medical Support Details</Text>
             </CardItem>
 
             <Form style={styles.Form}>
-              <Item floatingLabel style={styles.Item}>
+              <Item stackedLabel style={styles.Item}>
                 <Label>Contacted Doctor Name</Label>
-                <Input />
+                <Input disabled>
+                  {Report.DoctorFirstName + " " + Report.DoctorLastName}
+                </Input>
               </Item>
 
-              <Item floatingLabel last style={styles.Item}>
+              {/* <Item floatingLabel last style={styles.Item}>
                 <Label>Hospital Name</Label>
                 <Input />
-              </Item>
+              </Item> */}
 
               {/* <Item floatingLabel last style={styles.Item}>
                 <Label>Ambulance Current State</Label>
@@ -193,12 +202,15 @@ const [Condition, setCondition] = useState(null)
         </Content>
       </Container>
     );
-  return (<View><Text>NOthin</Text></View>)
-
+  return (
+    <View>
+      <Text>Loading current report</Text>
+      <Spinner></Spinner>
+    </View>
+  );
 }
 
 //--------- to be added when we figure out what to put
- 
 
 //               <Item picker style={styles.Item}>
 //                 <Picker
@@ -221,10 +233,9 @@ const [Condition, setCondition] = useState(null)
 //                 </Picker>
 //               </Item>
 
-
-
 //---------for nearby users
-{/* <Card style={styles.Card}>
+{
+  /* <Card style={styles.Card}>
 <CardItem header style={styles.CardItem2}>
   <Ionicons name="medical" size={30} color="black" />
   <Text style={styles.Title}>Medical History</Text>
@@ -266,8 +277,8 @@ const [Condition, setCondition] = useState(null)
 >
   <Text>Add a User{"\n"}Medical ID</Text>
 </Button>
-</View> */}
-
+</View> */
+}
 
 export default CurrentReport;
 
