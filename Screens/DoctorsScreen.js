@@ -270,7 +270,7 @@ function DoctorsScreen({ navigation }) {
     // console.log("this is the first user....\n", users[0]);
     setcount(count + 1);
 
-    console.log(users);
+    // console.log(users);
 
     return users;
   };
@@ -352,14 +352,8 @@ function DoctorsScreen({ navigation }) {
     navigation.replace("Home");
   };
   useEffect(() => {
-    if (currentRequest && currentRequest.State === "Accepted") {
-      alreadyAccepted = true;
-      Toast.show({
-        text: "Your Request has been accepted\n A Medical professional is on the way",
-        type: "success",
-      });
-    }
     if (currentRequest && currentRequest.State === "Done") {
+      Toast.show({ text: "Doctor has ended the request", type: "success" });
       onFinish();
     }
     return () => {};
@@ -442,8 +436,12 @@ function DoctorsScreen({ navigation }) {
                     latitude: currentRequest.DoctorCoordinates.latitude,
                     longitude: currentRequest.DoctorCoordinates.longitude,
                   }}
-                  title="batee5"
-                ></Marker>
+                >
+                  <Image
+                    source={require("../assets/doctor.png")}
+                    style={{ height: 35, width: 35 }}
+                  ></Image>
+                </Marker>
               )}
               {currentRequest.State == "Accepted" && (
                 <Polyline

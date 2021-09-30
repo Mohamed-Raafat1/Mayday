@@ -14,7 +14,6 @@ import { View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchNotifications } from "../redux/actions/index";
 
-
 const NotificationScreen = ({ navigation }) => {
   //---------------------------redux/getting Notifications------------------------------
   const dispatch = useDispatch();
@@ -37,7 +36,7 @@ const NotificationScreen = ({ navigation }) => {
         Year: item.data.createdAt.toDate().getFullYear().toString(),
         Month: item.data.createdAt.toDate().getMonth().toString(),
       };
-      if (item.data.category !== "chatMsg")
+      if (item.data.category !== "chatMsg" || item.data.category !== "Request")
         return (
           <ListItem key={item.data.createdAt} thumbnail>
             <Left>

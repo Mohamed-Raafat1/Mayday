@@ -259,7 +259,9 @@ export async function createChat(uid, currentUser) {
       .collection("conversations")
       .add({
         talkingto: user.FirstName + " " + user.LastName,
+        talkingtoPhotoURI: user.PhotoURI,
         userid: uid,
+
         timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
         userOne: {
           firsName: currentUser.FirstName,
@@ -294,6 +296,7 @@ export async function createChat(uid, currentUser) {
       .doc(chatid)
       .set({
         talkingto: currentUser.FirstName + " " + currentUser.LastName,
+        talkingtoPhotoURI: currentUser.PhotoURI,
         userid: firebase.auth().currentUser.uid,
         timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
         userOne: {
