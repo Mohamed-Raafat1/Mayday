@@ -10,3 +10,5 @@ This app was made with the intention of providing an all encompassing hub for em
 ○ The ability to add Emergency contacts in the case of an emergency <br/>
 ○ Sending an SOS containing Location to nearby users and emergency contacts as well as medical professionals <br/>
 ○ A different UI depending on the user type (Medical Professional or User) <br/>
+○ First Aid Section
+
